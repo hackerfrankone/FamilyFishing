@@ -1,5 +1,5 @@
 # FamilyFishing
 
-Chickamauga scores: 
+Chickamauga scores
 
-Watts Bar score: 
+Watts Bar scores
