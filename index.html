@@ -1,21 +1,9 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
 <head>
   <title>Family Fishing Fun</title>
 
   <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
-
-  <link rel="icon" href="favicon.png" type="image/png">
-
-  <style>
-    /* your CSS here */
-  </style>
-</head>
-<body>
-  <!-- your content here -->
-</body>
-</html>
   <link rel="icon" href="favicon.png" type="image/png">
 
   <style>
@@ -36,7 +24,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 20vh; /* moved higher on the screen */
+      height: 20vh;
       text-align: center;
     }
   </style>
@@ -45,11 +33,28 @@
   <div class="center-title">
     <h1>🎣 Welcome to Family Fishing Fun!</h1>
   </div>
-  
-  <p>Chickamauga <a href=" " target="_blank">In Progress </a></p>
-  <p>Watts Bar <a href=" " target="_blank">In Progress </a></p>
+
+  <p>Chickamauga <a href=" " target="_blank">In Progress</a></p>
+  <p>Watts Bar <a href=" " target="_blank">In Progress</a></p>
   <p>Submit Fish to email: 
-  <a href="mailto:familyfishingfun2025@gmail.com">familyfishingfun2025@gmail.com</a>
-</p>
+    <a href="mailto:familyfishingfun2025@gmail.com">familyfishingfun2025@gmail.com</a>
+  </p>
+
+  <!-- PayPal Donation Button -->
+  <div id="donate-button-container" style="margin-top: 2rem;">
+    <div id="donate-button"></div>
+    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+    <script>
+      PayPal.Donation.Button({
+        env: 'production',
+        hosted_button_id: 'SFKH9BBQVKYDU',
+        image: {
+          src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',
+          alt: 'Donate with PayPal button',
+          title: 'PayPal - The safer, easier way to pay online!',
+        }
+      }).render('#donate-button');
+    </script>
+  </div>
 </body>
 </html>
