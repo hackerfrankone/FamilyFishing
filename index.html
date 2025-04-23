@@ -3,17 +3,17 @@
 <head>
   <title>Family Fishing Fun</title>
 
-  <!-- Security Meta Tags -->
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; frame-ancestors 'none';">
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta name="referrer" content="no-referrer-when-downgrade">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <!-- Site Favicon -->
+  <!-- Favicon -->
   <link rel="icon" href="favicon.png" type="image/png">
 
+  <!-- Style -->
   <style>
     body {
       background: url('background.jpg') no-repeat center top 0px fixed;
@@ -35,13 +35,6 @@
       height: 20vh;
       text-align: center;
     }
-
-    .donate-section {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
   </style>
 </head>
 <body>
@@ -55,8 +48,8 @@
     <a href="mailto:familyfishingfun2025@gmail.com">familyfishingfun2025@gmail.com</a>
   </p>
 
-  <!-- PayPal Donation Button Only -->
-  <div id="donate-button-container" class="donate-section">
+  <!-- PayPal Donation Button -->
+  <div id="donate-button-container" style="margin-top: 2rem;">
     <div id="donate-button"></div>
     <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
     <script>
