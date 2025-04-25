@@ -38,19 +38,6 @@
       text-decoration: none;
     }
 
-    .center-title {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      margin-top: -2rem;
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      margin-top: 0.5rem;
-    }
-
     .submit-button {
       display: inline-block;
       background-color: #28a745;
@@ -71,13 +58,6 @@
       margin-top: 1rem;
     }
 
-    @media (max-width: 768px) {
-      .discord-container iframe {
-        width: 100%;
-        height: 400px;
-      }
-    }
-
     .feedback-link {
       position: fixed;
       bottom: 10px;
@@ -90,26 +70,54 @@
     .feedback-link a {
       color: #00ffff;
     }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header-container h1 {
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .discord-container iframe {
+        width: 100%;
+        height: 400px;
+      }
+
+      .header-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .header-container a {
+        margin-top: 0.5rem;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <div class="center-title">
+  <div class="header-container">
     <h1>🎣 Welcome to Family Fishing Fun!</h1>
-    <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
-    <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
+    <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
+      💬 Join Us on Discord
+    </a>
   </div>
+
+  <p class="subtitle" style="text-align:center;">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
+  <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff; display: block; margin: 1rem auto; width: fit-content;">📄 Rules</a>
 
   <p>Chickamauga <a href="Leaderboard.pdf" target="_blank">Leader Board</a></p>
   <p>Watts Bar <a href="#">Coming soon</a></p>
 
   <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
   <p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier: FFF</strong></p>
-
-  <!-- Join Us on Discord -->
-  <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
-    💬 Join Us on Discord
-  </a>
 
   <!-- Donate Button -->
   <div class="footer-buttons">
@@ -128,7 +136,7 @@
     </script>
   </div>
 
-  <!-- Google AdSense Ad - Bottom Left -->
+  <!-- Google AdSense Ad - Bottom Center -->
   <div style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000;">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
       crossorigin="anonymous"></script>
