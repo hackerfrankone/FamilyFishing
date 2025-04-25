@@ -138,27 +138,38 @@
 
   <div class="top-bar">
 
-<!-- Social Buttons -->
-<div class="social-buttons">
-  <!-- Facebook Button without link -->
-  <a href="#" class="facebook-button" aria-label="Facebook">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
-  </a>
+    <!-- Social Buttons -->
+    <div class="social-buttons">
+      <!-- Facebook Button -->
+      <a href=" " target="_blank" class="facebook-button" aria-label="Facebook">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+      </a>
 
-  <!-- YouTube Text Button -->
-  <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" class="facebook-button" aria-label="YouTube" style="background-color:#c4302b; color: white; font-size: 16px; padding: 10px 16px; border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
-    YouTube
-  </a>
+      <!-- YouTube Text Button -->
+      <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" class="facebook-button" aria-label="YouTube" style="background-color:#c4302b; color: white; font-size: 16px; padding: 10px 16px; border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+        YouTube
+      </a>
 
-  <!-- Discord Button -->
-  <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button" aria-label="Discord">
-    Join us on Discord
-  </a>
-</div>
+      <!-- Discord Button -->
+      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button" aria-label="Discord">
+        Join us on Discord
+      </a>
+    </div>
 
     <!-- Welcome and Rules -->
     <p class="subtitle">All kayak anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
     <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
+
+    <!-- PayPal Ticket Purchase Button -->
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+      <input type="hidden" name="cmd" value="_xclick">
+      <input type="hidden" name="business" value="YOUR_PAYPAL_EMAIL">
+      <input type="hidden" name="item_name" value="Fishing Tournament Ticket">
+      <input type="hidden" name="amount" value="20.00">
+      <input type="hidden" name="currency_code" value="USD">
+      <input type="submit" value="Buy Ticket for $20" class="submit-button" style="background-color: #28a745;" />
+    </form>
+
   </div>
 
   <p>Chickamauga <a href="Leaderboard.pdf" target="_blank">Leader Board</a></p>
