@@ -1,114 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Family Fishing Fun</title>
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-6EBHYE2X44');
-  </script>
-
-  <!-- Security Headers -->
-  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="X-Frame-Options" content="DENY">
-  <meta http-equiv="Referrer-Policy" content="no-referrer">
-  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.png" type="image/png">
-
-  <!-- Style -->
-  <style>
-    body {
-      background: url('background.jpg') no-repeat center top 0px fixed;
-      background-size: cover;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      margin: 0;
-    }
-
-    a {
-      color: #00ffff;
-    }
-
-    .center-title {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      height: 25vh;
-      text-align: center;
-      margin-top: -2rem; /* Moves it up */
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      margin-top: 0.5rem;
-    }
-
-    .submit-button {
-      display: inline-block;
-      background-color: #28a745;
-      color: white;
-      padding: 12px 24px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      margin: 1rem 0;
-    }
-  </style>
-</head>
-<body>
-<div class="center-title">
-  <h1>🎣 Welcome to Family Fishing Fun!</h1>
-  <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
+<!-- Donate Button (Left) + Discord Widget (Right) -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2rem; flex-wrap: wrap;">
   
-  <!-- Rules Button -->
-  <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">
-    📄 Rules
-  </a>
-</div>
-
-  
-
-  <p>Chickamauga <a href="Leader Board.pdf" target="_blank">Leader Board</a></p>
-  <p>Watts Bar <a href=" " target="_blank">Coming soon</a></p>
-
-  <!-- Submit Fish Button -->
-  <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">
-    📸 Submit Fish
-  </a>
-  
-<p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier FFF</strong></p>
-  
-  <p>Feedback: 
-    <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
-  </p>
-
-  <!-- Google AdSense Ad - Bottom Left -->
-  <div style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
-      crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-      style="display:inline-block;width:300px;height:100px"
-      data-ad-client="ca-pub-9237571676231200"
-      data-ad-slot="4524170531"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
-
-<!-- PayPal Donation Button + Discord Widget Side by Side -->
-<div style="display: flex; gap: 2rem; justify-content: center; align-items: flex-start; margin-top: 2rem; flex-wrap: wrap;">
-  <!-- Donate Button -->
+  <!-- Donate Button on the Left -->
   <div id="donate-button-container">
     <div id="donate-button"></div>
     <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
@@ -125,15 +18,16 @@
     </script>
   </div>
 
-  <!-- Discord Widget -->
-  <div>
+  <!-- Discord Widget on the Right -->
+  <div style="max-width: 350px;">
     <iframe 
-      src="https://discord.com/widget?id=1365135965617914006&theme=dark" 
-      width="350" 
-      height="500" 
-      allowtransparency="true" 
-      frameborder="0" 
+      src="https://discord.com/widget?id=1365135965617914006&theme=dark"
+      width="350"
+      height="500"
+      allowtransparency="true"
+      frameborder="0"
       sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
     </iframe>
   </div>
+
 </div>
