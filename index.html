@@ -106,8 +106,10 @@
     </script>
   </div>
 
-  <!-- PayPal Donation Button -->
-  <div id="donate-button-container" style="margin-top: 0.5rem;">
+<!-- PayPal Donation Button + Discord Widget Side by Side -->
+<div style="display: flex; gap: 2rem; justify-content: center; align-items: flex-start; margin-top: 2rem; flex-wrap: wrap;">
+  <!-- Donate Button -->
+  <div id="donate-button-container">
     <div id="donate-button"></div>
     <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
     <script>
@@ -122,5 +124,16 @@
       }).render('#donate-button');
     </script>
   </div>
-</body>
-</html>
+
+  <!-- Discord Widget -->
+  <div>
+    <iframe 
+      src="https://discord.com/widget?id=1365135965617914006&theme=dark" 
+      width="350" 
+      height="500" 
+      allowtransparency="true" 
+      frameborder="0" 
+      sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
+    </iframe>
+  </div>
+</div>
