@@ -64,19 +64,18 @@
     }
 
     .discord-button {
-      background-color: #1a237e; /* Darker blue */
+      background-color: #1a237e;
     }
 
     .footer-buttons {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
       margin-top: 2rem;
     }
 
-    .footer-column {
-      flex: 1 1 300px;
-      margin: 1rem;
+    @media (max-width: 768px) {
+      .discord-container iframe {
+        width: 100%;
+        height: 400px;
+      }
     }
   </style>
 </head>
@@ -85,7 +84,6 @@
   <div class="center-title">
     <h1>🎣 Welcome to Family Fishing Fun!</h1>
     <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
-
     <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
   </div>
 
@@ -96,6 +94,28 @@
   <p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier: FFF</strong></p>
 
   <p>Feedback: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a></p>
+
+  <!-- Join Us on Discord -->
+  <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
+    💬 Join Us on Discord
+  </a>
+
+  <!-- Donate Button -->
+  <div class="footer-buttons">
+    <div id="donate-button"></div>
+    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+    <script>
+      PayPal.Donation.Button({
+        env: 'production',
+        hosted_button_id: 'SFKH9BBQVKYDU',
+        image: {
+          src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',
+          alt: 'Donate with PayPal button',
+          title: 'PayPal - The safer, easier way to pay online!',
+        }
+      }).render('#donate-button');
+    </script>
+  </div>
 
   <!-- Google AdSense Ad - Bottom Left -->
   <div style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
@@ -108,30 +128,6 @@
     <script>
       (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
-  </div>
-
-  <!-- Donate & Discord Section -->
-  <div class="footer-buttons">
-    <div class="footer-column">
-      <div id="donate-button"></div>
-      <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
-      <script>
-        PayPal.Donation.Button({
-          env: 'production',
-          hosted_button_id: 'SFKH9BBQVKYDU',
-          image: {
-            src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',
-            alt: 'Donate with PayPal button',
-            title: 'PayPal - The safer, easier way to pay online!',
-          }
-        }).render('#donate-button');
-      </script>
-
-      <!-- Join Us on Discord Button -->
-      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
-        💬 Join Us on Discord
-      </a>
-    </div>
   </div>
 
 </body>
