@@ -56,7 +56,12 @@
       margin: 1rem;
     }
 
-    .facebook-button,
+    .facebook-button img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
     .discord-button {
       display: flex;
       align-items: center;
@@ -69,14 +74,9 @@
       text-decoration: none;
     }
 
-    .facebook-button img {
-      width: 20px;
-      height: 20px;
-    }
-
     .subtitle {
       font-size: 1rem;
-      margin: 3rem auto 0.25rem auto;
+      margin: 6rem auto 0.25rem auto;
       max-width: 500px;
     }
 
@@ -105,7 +105,11 @@
         margin-bottom: 1rem;
       }
 
-      .facebook-button,
+      .facebook-button img {
+        width: 28px;
+        height: 28px;
+      }
+
       .discord-button {
         font-size: 14px;
         padding: 8px 16px;
@@ -136,13 +140,12 @@
 
     <!-- Social Buttons -->
     <div class="social-buttons">
-<!-- Facebook Icon Only -->
-<a href="https://facebook.com/YourPageHere" target="_blank" aria-label="Facebook">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png"
-       alt="Facebook" style="width: 32px; height: 32px; border-radius: 50%;">
-</a>
+      <!-- Facebook Icon Only (no link) -->
+      <span class="facebook-button">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook">
+      </span>
 
-      <!-- Discord Text Button (Original Style) -->
+      <!-- Discord Text Button -->
       <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button" aria-label="Discord">
         Join us on Discord
       </a>
