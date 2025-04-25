@@ -199,34 +199,6 @@
   <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
   <p style="margin-top: 0.2rem; margin-bottom: 1.5rem;"><strong>May Identifier: FFF</strong></p>
 
-  <!-- Footer with Donate Button -->
-  <footer>
-    <div class="footer-buttons">
-      <div id="donate-button"></div>
-    </div>
-  </footer>
-
-  <!-- PayPal Donation Button Script -->
-  <script src="https://www.paypalobjects.com/js/external/donation.js"></script>
-  <script>
-    paypal.Buttons({
-      createOrder: function(data, actions) {
-        return actions.order.create({
-          purchase_units: [{
-            amount: {
-              value: '10.00' // Donation amount, change as needed
-            }
-          }]
-        });
-      },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(function(details) {
-          alert('Donation completed by ' + details.payer.name.given_name);
-        });
-      }
-    }).render('#donate-button');
-  </script>
-
   <!-- Google AdSense Ad - Bottom Center -->
   <div style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000;">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
