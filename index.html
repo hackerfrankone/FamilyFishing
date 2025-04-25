@@ -68,7 +68,7 @@
     }
 
     .footer-buttons {
-      margin-top: 2rem;
+      margin-top: 1rem;
     }
 
     @media (max-width: 768px) {
@@ -76,6 +76,19 @@
         width: 100%;
         height: 400px;
       }
+    }
+
+    .feedback-link {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      color: white;
+      font-size: 0.9rem;
+      z-index: 1000;
+    }
+
+    .feedback-link a {
+      color: #00ffff;
     }
   </style>
 </head>
@@ -92,8 +105,6 @@
 
   <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
   <p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier: FFF</strong></p>
-
-  <p>Feedback or Questions: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a></p>
 
   <!-- Join Us on Discord -->
   <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
@@ -118,7 +129,7 @@
   </div>
 
   <!-- Google AdSense Ad - Bottom Left -->
-  <div style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
+  <div style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000;">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
       crossorigin="anonymous"></script>
     <ins class="adsbygoogle"
@@ -129,6 +140,9 @@
       (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
   </div>
+
+  <!-- Feedback Link -->
+  <p class="feedback-link">Feedback or Questions: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a></p>
 
 </body>
 </html>
