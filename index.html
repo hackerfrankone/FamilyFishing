@@ -29,13 +29,25 @@
       background-size: cover;
       color: #fff;
       font-family: Arial, sans-serif;
-      padding: 2rem;
+      padding: 0 2rem 2rem 2rem; /* Removed top padding */
       margin: 0;
     }
 
     a {
       color: #00ffff;
       text-decoration: none;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      text-align: center;
     }
 
     .submit-button {
@@ -58,6 +70,13 @@
       margin-top: 1rem;
     }
 
+    @media (max-width: 768px) {
+      .discord-container iframe {
+        width: 100%;
+        height: 400px;
+      }
+    }
+
     .feedback-link {
       position: fixed;
       bottom: 10px;
@@ -70,49 +89,25 @@
     .feedback-link a {
       color: #00ffff;
     }
-
-    .header-container {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-
-    @media (max-width: 768px) {
-      .discord-container iframe {
-        width: 100%;
-        height: 400px;
-      }
-
-      .header-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .header-container a {
-        margin-top: 0.5rem;
-      }
-    }
   </style>
 </head>
 <body>
 
+  <!-- Discord Button Top Right -->
   <div class="header-container">
     <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
       💬 Join Us on Discord
     </a>
   </div>
 
-  <p class="subtitle" style="text-align:center;">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
-  <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff; display: block; margin: 1rem auto; width: fit-content;">📄 Rules</a>
+  <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
+  <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
 
   <p>Chickamauga <a href="Leaderboard.pdf" target="_blank">Leader Board</a></p>
   <p>Watts Bar <a href="#">Coming soon</a></p>
 
   <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
-  <p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>May Identifier: FFF</strong></p>
+  <p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier: FFF</strong></p>
 
   <!-- Donate Button -->
   <div class="footer-buttons">
