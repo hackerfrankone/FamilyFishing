@@ -64,6 +64,23 @@
       text-decoration: none;
       margin: 1rem 0;
     }
+
+    /* Discord Widget Styling */
+    .discord-container {
+      width: 350px;
+      height: 500px;
+      overflow: hidden;
+    }
+
+    .discord-small iframe {
+      width: 100%;
+      height: 100%;
+    }
+
+    .discord-large iframe {
+      width: 700px;
+      height: 700px;
+    }
   </style>
 </head>
 <body>
@@ -77,34 +94,32 @@
   </a>
 </div>
 
-  
+<p>Chickamauga <a href="Leader Board.pdf" target="_blank">Leader Board</a></p>
+<p>Watts Bar <a href=" " target="_blank">Coming soon</a></p>
 
-  <p>Chickamauga <a href="Leader Board.pdf" target="_blank">Leader Board</a></p>
-  <p>Watts Bar <a href=" " target="_blank">Coming soon</a></p>
+<!-- Submit Fish Button -->
+<a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">
+  📸 Submit Fish
+</a>
 
-  <!-- Submit Fish Button -->
-  <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">
-    📸 Submit Fish
-  </a>
-  
 <p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier FFF</strong></p>
-  
-  <p>Feedback: 
-    <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
-  </p>
 
-  <!-- Google AdSense Ad - Bottom Left -->
-  <div style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
-      crossorigin="anonymous"></script>
-    <ins class="adsbygoogle"
-      style="display:inline-block;width:300px;height:100px"
-      data-ad-client="ca-pub-9237571676231200"
-      data-ad-slot="4524170531"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
+<p>Feedback: 
+  <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
+</p>
+
+<!-- Google AdSense Ad - Bottom Left -->
+<div style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
+    crossorigin="anonymous"></script>
+  <ins class="adsbygoogle"
+    style="display:inline-block;width:300px;height:100px"
+    data-ad-client="ca-pub-9237571676231200"
+    data-ad-slot="4524170531"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
 
 <!-- Donate Button (Left) + Discord Widget (Right) -->
 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2rem; flex-wrap: wrap;">
@@ -135,21 +150,38 @@
       sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
     </iframe>
   </div>
+</div>
 
-  <script>
-    function toggleDiscordSize() {
-      const discordContainer = document.getElementById("discord-widget");
+<script>
+  function toggleDiscordSize() {
+    const discordContainer = document.getElementById("discord-widget");
 
-      // Toggle between the small and large classes
-      if (discordContainer.classList.contains("discord-small")) {
-        discordContainer.classList.remove("discord-small");
-        discordContainer.classList.add("discord-large");
-      } else {
-        discordContainer.classList.remove("discord-large");
-        discordContainer.classList.add("discord-small");
-      }
+    // Toggle between the small and large classes
+    if (discordContainer.classList.contains("discord-small")) {
+      discordContainer.classList.remove("discord-small");
+      discordContainer.classList.add("discord-large");
+    } else {
+      discordContainer.classList.remove("discord-large");
+      discordContainer.classList.add("discord-small");
     }
-  </script>
+  }
+
+  // Fetch and display online Discord member count
+  fetch('https://discord.com/api/guilds/1365154001762385992/widget.json')
+    .then(response => response.json())
+    .then(data => {
+      const onlineMembers = data.members.filter(member => member.status === "online").length;
+      const discordInfoDiv = document.createElement('div');
+      discordInfoDiv.innerHTML = `
+        <p>Online members: ${onlineMembers}</p>
+        <p>Discord Server: <a href="${data.instant_invite}" target="_blank">Join us!</a></p>
+      `;
+      document.body.appendChild(discordInfoDiv);
+    })
+    .catch(error => {
+      console.error('Error fetching Discord data:', error);
+    });
+</script>
 
 </body>
 </html>
