@@ -66,7 +66,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #1877F2; /* Facebook blue */
+      background-color: #1a237e;
       color: white;
       padding: 10px 16px;
       font-size: 16px;
@@ -76,13 +76,13 @@
 
     .subtitle {
       font-size: 1rem;
-      margin: 1rem auto 0.25rem auto; /* Moved up the subtitle */
+      margin: 6rem auto 0.25rem auto;
       max-width: 500px;
     }
 
     .submit-button {
       display: inline-block;
-      background-color: #007bff; /* Changed to blue */
+      background-color: #28a745;
       color: white;
       padding: 12px 24px;
       font-size: 18px;
@@ -91,13 +91,6 @@
       cursor: pointer;
       text-align: center;
       margin-top: 0.25rem;
-    }
-
-    .buttons-container {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 0.5rem; /* Adjusted spacing for buttons */
     }
 
     .footer-buttons {
@@ -139,12 +132,29 @@
     .feedback-link a {
       color: #00ffff;
     }
+
+    /* PayPal button style */
+    .pp-MQGR2KDA2VZP4 {
+      text-align: center;
+      border: none;
+      border-radius: 0.25rem;
+      min-width: 11.625rem;
+      padding: 0 2rem;
+      height: 2.625rem;
+      font-weight: bold;
+      background-color: #FFD140;
+      color: #000000;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.25rem;
+      cursor: pointer;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="top-bar">
-
     <!-- Social Buttons -->
     <div class="social-buttons">
       <!-- Facebook Button -->
@@ -165,11 +175,15 @@
 
     <!-- Welcome and Rules -->
     <p class="subtitle">All kayak anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
-
-    <!-- Buttons Container with Rules and Compete -->
-    <div class="buttons-container">
+    <div style="display: flex; justify-content: center; gap: 1rem;">
       <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
-      <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SVUXZFTVAJEPY" target="_blank" class="submit-button" style="background-color:#007bff;">Compete for $10</a>
+
+      <!-- PayPal Integration Button: Compete for $10 -->
+      <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+        <input class="pp-MQGR2KDA2VZP4" type="submit" value="Compete for $10" />
+        <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
+        <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/></section>
+      </form>
     </div>
   </div>
 
@@ -179,10 +193,10 @@
   <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
   <p style="margin-top: 0.2rem; margin-bottom: 1.5rem;"><strong>May Identifier: FFF</strong></p>
 
-  <!-- PayPal Ticket Button -->
+  <!-- Donate Button -->
   <div class="footer-buttons">
     <div id="donate-button"></div>
-    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+    <script src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" charset="UTF-8"></script>
     <script>
       PayPal.Donation.Button({
         env: 'production',
