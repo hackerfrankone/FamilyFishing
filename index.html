@@ -40,34 +40,11 @@
 
     .top-bar {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 0;
       position: relative;
-      margin-top: 0;
-    }
-
-    .top-left {
-      text-align: center;
-      flex-grow: 1;
-      margin-top: 0.25rem;
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      margin: 0 0 0.25rem 0;
-    }
-
-    .submit-button {
-      display: inline-block;
-      background-color: #28a745;
-      color: white;
-      padding: 12px 24px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
-      margin-top: 0;
     }
 
     .discord-button {
@@ -80,6 +57,26 @@
       font-size: 16px;
       border-radius: 6px;
       text-decoration: none;
+      margin: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      margin: 3rem auto 0.25rem auto;
+      max-width: 500px;
+    }
+
+    .submit-button {
+      display: inline-block;
+      background-color: #28a745;
+      color: white;
+      padding: 12px 24px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 0.25rem;
     }
 
     .footer-buttons {
@@ -90,6 +87,12 @@
       .discord-button {
         font-size: 14px;
         padding: 8px 16px;
+        position: static;
+        margin-bottom: 1rem;
+      }
+
+      .top-bar {
+        align-items: stretch;
       }
     }
 
@@ -110,14 +113,12 @@
 <body>
 
   <div class="top-bar">
-    <!-- Centered Welcome and Rules -->
-    <div class="top-left">
-      <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
-      <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
-    </div>
-
     <!-- Discord Button -->
     <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button">💬 Join us with Discord</a>
+
+    <!-- Welcome and Rules -->
+    <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
+    <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
   </div>
 
   <p>Chickamauga <a href="Leaderboard.pdf" target="_blank">Leader Board</a></p>
