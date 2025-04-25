@@ -156,91 +156,70 @@
       margin-top: 20px;
     }
   </style>
-
-  <!-- JavaScript for Mobile/Touch Device Detection -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Detect if the device is mobile or touch
-      if ('ontouchstart' in window || navigator.maxTouchPoints) {
-        // Apply mobile styles or make adjustments for mobile devices
-        document.body.style.padding = "1rem";
-        document.querySelectorAll(".social-buttons").forEach(function(buttons) {
-          buttons.style.flexDirection = "column";
-          buttons.style.alignItems = "flex-start";
-        });
-
-        // Adjust button size on mobile
-        document.querySelectorAll(".submit-button").forEach(function(button) {
-          button.style.padding = "8px 16px";
-          button.style.fontSize = "16px";
-        });
-      }
-    });
-  </script>
 </head>
 
 <body>
 
 <!-- Social Buttons -->
 <div class="social-buttons">
-  <!-- Donate Button -->
-  <form action="https://www.paypal.com/donate" method="post" target="_top" style="margin-right: 0.5rem;">
-    <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
-    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="Donate with PayPal" alt="Donate with PayPal button" />
-    <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-  </form>
+<!-- Donate Button -->
+<form action="https://www.paypal.com/donate" method="post" target="_top" style="margin-right: 0.5rem;">
+  <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
+  <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="Donate with PayPal" alt="Donate with PayPal button" />
+  <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+</form>
 
-  <!-- Facebook Button -->
-  <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" class="facebook-button" aria-label="Facebook">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
-  </a>
+<!-- Facebook Button -->
+<a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" class="facebook-button" aria-label="Facebook">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+</a>
 
   <!-- YouTube Text Button -->
   <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" class="facebook-button" aria-label="YouTube" style="background-color:#c4302b; color: white; font-size: 16px; padding: 10px 16px; border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
     YouTube
   </a>
 
-  <!-- Discord Button -->
-  <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button" aria-label="Discord" style="background-color: #1877F2; color: white;">
-    Join us on Discord
-  </a>
+<!-- Discord Button -->
+<a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button" aria-label="Discord" style="background-color: #1877F2; color: white;">
+  Join us on Discord
+</a>
 </div>
+  <!-- Welcome and Rules -->
+    <p class="subtitle">All kayak anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+      <!-- Rules Button -->
+<a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#28a745; padding: 10px 10px;">📄 Rules</a>
 
-<!-- Welcome and Rules -->
-<p class="subtitle">All kayak anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
-<div style="display: flex; justify-content: center; gap: 1rem;">
-  <!-- Rules Button -->
-  <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#28a745; padding: 10px 10px;">📄 Rules</a>
+      <!-- Updated PayPal Button -->
+      <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+        <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $20" />
+        <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
+        <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;" /></section>
+      </form>
+    </div>
+  </div>
 
-  <!-- Updated PayPal Button -->
-  <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
-    <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $20" />
-    <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
-    <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;" /></section>
-  </form>
-</div>
+  <p>Chickamauga <a href="Leaderboard.pdf" target="_blank">Leader Board</a></p>
+  <p>Watts Bar <a href="#">Coming soon</a></p>
 
-<p>Chickamauga <a href="Leaderboard.pdf" target="_blank">Leader Board</a></p>
-<p>Watts Bar <a href="#">Coming soon</a></p>
+  <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
+  <p style="margin-top: 0.2rem; margin-bottom: 1.5rem;"><strong>May Identifier: FFF</strong></p>
 
-<a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
-<p style="margin-top: 0.2rem; margin-bottom: 1.5rem;"><strong>May Identifier: FFF</strong></p>
+  <!-- Google AdSense Ad - Bottom Center -->
+  <div style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000;">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
+      crossorigin="anonymous"></script>
+    <ins class="adsbygoogle"
+      style="display:inline-block;width:300px;height:100px"
+      data-ad-client="ca-pub-9237571676231200"
+      data-ad-slot="4524170531"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
 
-<!-- Google AdSense Ad - Bottom Center -->
-<div style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000;">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
-    crossorigin="anonymous"></script>
-  <ins class="adsbygoogle"
-    style="display:inline-block;width:300px;height:100px"
-    data-ad-client="ca-pub-9237571676231200"
-    data-ad-slot="4524170531"></ins>
-  <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
-</div>
-
-<!-- Feedback Link -->
-<p class="feedback-link">Feedback or Questions: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a></p>
+  <!-- Feedback Link -->
+  <p class="feedback-link">Feedback or Questions: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a></p>
 
 </body>
 </html>
