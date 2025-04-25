@@ -39,14 +39,15 @@
     }
 
     .header-container {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 1rem;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      z-index: 1000;
     }
 
     .top-message {
       text-align: center;
-      margin-top: 1rem;
+      margin-top: 3rem;
     }
 
     .submit-button {
@@ -63,6 +64,9 @@
 
     .discord-button {
       background-color: #1a237e;
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 6px;
     }
 
     .footer-buttons {
@@ -92,17 +96,17 @@
 </head>
 <body>
 
+  <!-- Discord Button - Top Right -->
+  <div class="header-container">
+    <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
+      💬 Discord
+    </a>
+  </div>
+
   <!-- Top Center Message and Rules -->
   <div class="top-message">
     <p><strong>All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</strong></p>
     <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
-  </div>
-
-  <!-- Discord Button Top Right -->
-  <div class="header-container">
-    <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
-      💬 Join Us on Discord
-    </a>
   </div>
 
   <!-- Main Content -->
