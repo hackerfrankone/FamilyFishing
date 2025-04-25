@@ -192,26 +192,7 @@
 
   <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
   <p style="margin-top: 0.2rem; margin-bottom: 1.5rem;"><strong>May Identifier: FFF</strong></p>
-
-  <!-- Footer with Donate Button -->
-  <footer>
-    <div class="footer-buttons">
-      <div id="donate-button"></div>
-      <script src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" charset="UTF-8"></script>
-      <script>
-        PayPal.Donation.Button({
-          env: 'production',
-          hosted_button_id: 'SFKH9BBQVKYDU',
-          image: {
-            src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',
-            alt: 'Donate with PayPal button',
-            title: 'PayPal - The safer, easier way to pay online!',
-          }
-        }).render('#donate-button');
-      </script>
-    </div>
-  </footer>
-
+  
   <!-- Google AdSense Ad - Bottom Center -->
   <div style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000;">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
@@ -224,7 +205,22 @@
       (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
   </div>
-
+<!-- Donate Button -->
+<div class="footer-buttons">
+  <div id="donate-button"></div>
+  <script src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" charset="UTF-8"></script>
+  <script>
+    PayPal.Donation.Button({
+      env: 'production',
+      hosted_button_id: 'SFKH9BBQVKYDU',
+      image: {
+        src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',
+        alt: 'Donate with PayPal button',
+        title: 'PayPal - The safer, easier way to pay online!',
+      }
+    }).render('#donate-button');
+  </script>
+</div>
   <!-- Feedback Link -->
   <p class="feedback-link">Feedback or Questions: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a></p>
 
