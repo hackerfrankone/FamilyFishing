@@ -47,17 +47,31 @@
       position: relative;
     }
 
-    .discord-button {
+    .social-buttons {
       position: absolute;
       top: 0;
       right: 0;
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem;
+    }
+
+    .facebook-button,
+    .discord-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background-color: #1a237e;
       color: white;
-      padding: 10px 20px;
+      padding: 10px 16px;
       font-size: 16px;
       border-radius: 6px;
       text-decoration: none;
-      margin: 1rem;
+    }
+
+    .facebook-button img {
+      width: 20px;
+      height: 20px;
     }
 
     .subtitle {
@@ -84,11 +98,17 @@
     }
 
     @media (max-width: 768px) {
+      .social-buttons {
+        position: static;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .facebook-button,
       .discord-button {
         font-size: 14px;
         padding: 8px 16px;
-        position: static;
-        margin-bottom: 1rem;
       }
 
       .top-bar {
@@ -113,8 +133,17 @@
 <body>
 
   <div class="top-bar">
-    <!-- Discord Button -->
-    <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button">💬 Join us with Discord</a>
+
+    <!-- Social Buttons -->
+    <div class="social-buttons">
+      <!-- Facebook Button -->
+      <a href="https://facebook.com/YourPageHere" target="_blank" class="facebook-button" aria-label="Facebook">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+      </a>
+
+      <!-- Discord Button -->
+      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button">💬 Join us with Discord</a>
+    </div>
 
     <!-- Welcome and Rules -->
     <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
