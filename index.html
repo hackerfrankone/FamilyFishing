@@ -42,6 +42,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      height: 25vh;
       text-align: center;
       margin-top: -2rem; /* Moves it up */
     }
@@ -63,38 +64,21 @@
       text-decoration: none;
       margin: 1rem 0;
     }
-
-    /* Flex container for the left content */
-    .left-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      margin-top: 0; /* Remove the extra margin */
-    }
-
-    .discord-widget {
-      max-width: 350px;
-      margin-top: 1rem; /* Ensure it has space below the buttons */
-    }
-
-    /* Positioning the ad in the bottom-left corner */
-    .google-ads {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      z-index: 1000;
-    }
   </style>
 </head>
 <body>
-
 <div class="center-title">
   <h1>🎣 Welcome to Family Fishing Fun!</h1>
   <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
+  
+  <!-- Rules Button -->
+  <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">
+    📄 Rules
+  </a>
 </div>
 
-<!-- Everything on the left side moved up to the top -->
-<div class="left-content">
+  
+
   <p>Chickamauga <a href="Leader Board.pdf" target="_blank">Leader Board</a></p>
   <p>Watts Bar <a href=" " target="_blank">Coming soon</a></p>
 
@@ -102,8 +86,30 @@
   <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">
     📸 Submit Fish
   </a>
+  
+<p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier FFF</strong></p>
+  
+  <p>Feedback: 
+    <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
+  </p>
 
-  <!-- Donate Button (Left) -->
+  <!-- Google AdSense Ad - Bottom Left -->
+  <div style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
+      crossorigin="anonymous"></script>
+    <ins class="adsbygoogle"
+      style="display:inline-block;width:300px;height:100px"
+      data-ad-client="ca-pub-9237571676231200"
+      data-ad-slot="4524170531"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
+<!-- Donate Button (Left) + Discord Widget (Right) -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2rem; flex-wrap: wrap;">
+  
+  <!-- Donate Button on the Left -->
   <div id="donate-button-container">
     <div id="donate-button"></div>
     <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
@@ -120,8 +126,8 @@
     </script>
   </div>
 
-  <!-- Discord Widget (Right) -->
-  <div class="discord-widget">
+  <!-- Discord Widget on the Right -->
+  <div style="max-width: 350px;">
     <iframe 
       src="https://discord.com/widget?id=1365135965617914006&theme=dark"
       width="350"
@@ -131,26 +137,5 @@
       sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
     </iframe>
   </div>
+
 </div>
-
-<p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier FFF</strong></p>
-
-<p>Feedback: 
-  <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
-</p>
-
-<!-- Google AdSense Ad - Bottom Left -->
-<div class="google-ads">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
-    crossorigin="anonymous"></script>
-  <ins class="adsbygoogle"
-    style="display:inline-block;width:300px;height:100px"
-    data-ad-client="ca-pub-9237571676231200"
-    data-ad-slot="4524170531"></ins>
-  <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
-</div>
-
-</body>
-</html>
