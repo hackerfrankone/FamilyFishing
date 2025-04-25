@@ -126,16 +126,30 @@
     </script>
   </div>
 
-  <!-- Discord Widget on the Right -->
-  <div style="max-width: 350px;">
+  <!-- Discord Widget Container -->
+  <div id="discord-widget" class="discord-container discord-small" onclick="toggleDiscordSize()">
     <iframe 
       src="https://discord.com/widget?id=1365135965617914006&theme=dark"
-      width="350"
-      height="500"
+      frameborder="0" 
       allowtransparency="true"
-      frameborder="0"
       sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
     </iframe>
   </div>
 
-</div>
+  <script>
+    function toggleDiscordSize() {
+      const discordContainer = document.getElementById("discord-widget");
+
+      // Toggle between the small and large classes
+      if (discordContainer.classList.contains("discord-small")) {
+        discordContainer.classList.remove("discord-small");
+        discordContainer.classList.add("discord-large");
+      } else {
+        discordContainer.classList.remove("discord-large");
+        discordContainer.classList.add("discord-small");
+      }
+    }
+  </script>
+
+</body>
+</html>
