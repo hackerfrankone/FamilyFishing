@@ -3,11 +3,11 @@
 <head>
   <title>Family Fishing Fun</title>
 
-  <!-- Google tag (gtag.js) -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
+    function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-6EBHYE2X44');
   </script>
@@ -22,10 +22,10 @@
   <!-- Favicon -->
   <link rel="icon" href="favicon.png" type="image/png">
 
-  <!-- Style -->
+  <!-- Styles -->
   <style>
     body {
-      background: url('background.jpg') no-repeat center top 0px fixed;
+      background: url('background.jpg') no-repeat center top 0 fixed;
       background-size: cover;
       color: #fff;
       font-family: Arial, sans-serif;
@@ -35,16 +35,15 @@
 
     a {
       color: #00ffff;
+      text-decoration: none;
     }
 
     .center-title {
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
-      height: 25vh;
+      align-items: center;
       text-align: center;
-      margin-top: -2rem; /* Moves it up */
+      margin-top: -2rem;
     }
 
     .subtitle {
@@ -61,41 +60,55 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      text-decoration: none;
       margin: 1rem 0;
     }
 
     .discord-button {
-      background-color: #7289DA;
+      background-color: #1a237e; /* Darker blue */
+    }
+
+    .discord-container iframe {
+      width: 350px;
+      height: 500px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .discord-container iframe {
+        width: 100%;
+        height: 400px;
+      }
+    }
+
+    .footer-buttons {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .footer-column {
+      flex: 1 1 300px;
+      margin: 1rem;
     }
   </style>
 </head>
 <body>
-<div class="center-title">
-  <h1>🎣 Welcome to Family Fishing Fun!</h1>
-  <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
-  
-  <!-- Rules Button -->
-  <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">
-    📄 Rules
-  </a>
-</div>
 
-  
+  <div class="center-title">
+    <h1>🎣 Welcome to Family Fishing Fun!</h1>
+    <p class="subtitle">All anglers are welcome to compete each month for the longest bass and a $100 Bass Pro Shops gift card!</p>
+
+    <a href="Rules.pdf" target="_blank" class="submit-button" style="background-color:#007bff;">📄 Rules</a>
+  </div>
 
   <p>Chickamauga <a href="Leader Board.pdf" target="_blank">Leader Board</a></p>
-  <p>Watts Bar <a href=" " target="_blank">Coming soon</a></p>
+  <p>Watts Bar <a href="#">Coming soon</a></p>
 
-  <!-- Submit Fish Button -->
-  <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">
-    📸 Submit Fish
-  </a>
-  
-<p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier FFF</strong></p>
-  
-  <p>Feedback: 
-    <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
-  </p>
+  <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
+  <p style="margin-top: -0.5rem; margin-bottom: 1.5rem;"><strong>Identifier: FFF</strong></p>
+
+  <p>Feedback: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a></p>
 
   <!-- Google AdSense Ad - Bottom Left -->
   <div style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
@@ -110,55 +123,40 @@
     </script>
   </div>
 
-<!-- Donate Button (Left) + Discord Widget (Right) -->
-<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2rem; flex-wrap: wrap;">
-  
-  <!-- Donate Button on the Left -->
-  <div id="donate-button-container">
-    <div id="donate-button"></div>
-    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
-    <script>
-      PayPal.Donation.Button({
-        env: 'production',
-        hosted_button_id: 'SFKH9BBQVKYDU',
-        image: {
-          src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',
-          alt: 'Donate with PayPal button',
-          title: 'PayPal - The safer, easier way to pay online!',
-        }
-      }).render('#donate-button');
-    </script>
+  <!-- Donate & Discord Section -->
+  <div class="footer-buttons">
+    <!-- Donate Column -->
+    <div class="footer-column">
+      <div id="donate-button"></div>
+      <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+      <script>
+        PayPal.Donation.Button({
+          env: 'production',
+          hosted_button_id: 'SFKH9BBQVKYDU',
+          image: {
+            src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',
+            alt: 'Donate with PayPal button',
+            title: 'PayPal - The safer, easier way to pay online!',
+          }
+        }).render('#donate-button');
+      </script>
+
+      <!-- Join Us on Discord Button -->
+      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
+        💬 Join Us on Discord
+      </a>
+    </div>
+
+    <!-- Discord Widget Column -->
+    <div class="footer-column discord-container">
+      <iframe 
+        src="https://discord.com/widget?id=1365154001762385992&theme=dark"
+        allowtransparency="true"
+        frameborder="0"
+        sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
+      </iframe>
+    </div>
   </div>
-
-  <!-- Discord Widget Container -->
-  <div id="discord-widget" class="discord-container discord-small" onclick="toggleDiscordSize()">
-    <iframe 
-      src="https://discord.com/widget?id=1365154001762385992&theme=dark"
-      frameborder="0" 
-      allowtransparency="true"
-      sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
-    </iframe>
-  </div>
-
-  <!-- Join Us Button -->
-  <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="submit-button discord-button">
-    Join Us on Discord
-  </a>
-
-  <script>
-    function toggleDiscordSize() {
-      const discordContainer = document.getElementById("discord-widget");
-
-      // Toggle between the small and large classes
-      if (discordContainer.classList.contains("discord-small")) {
-        discordContainer.classList.remove("discord-small");
-        discordContainer.classList.add("discord-large");
-      } else {
-        discordContainer.classList.remove("discord-large");
-        discordContainer.classList.add("discord-small");
-      }
-    }
-  </script>
 
 </body>
 </html>
