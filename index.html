@@ -16,7 +16,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
+    function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-6EBHYE2X44');
   </script>
@@ -81,8 +81,14 @@
     .subtitle {
       font-size: 1rem;
       max-width: 600px;
-      margin: 2rem auto 1rem;
+      margin: 1rem auto 0;
       text-align: center;
+    }
+
+    .feedback {
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 1rem;
     }
 
     .button-group {
@@ -152,7 +158,6 @@
       }
     }
 
-    /* Orange Text for Submit Fish and May Identifier */
     .submit-fish-button {
       background-color: #FFA500;
     }
@@ -163,7 +168,6 @@
       font-family: 'Arial', sans-serif;
     }
 
-    /* Yellow color for Chickamauga, Watts Bar titles and angler's name */
     .chickamauga-title, .watts-bar-title, .angler-name {
       color: yellow;
       font-weight: bold;
@@ -171,7 +175,6 @@
     }
   </style>
 </head>
-
 <body>
 
   <!-- Top Section -->
@@ -199,13 +202,14 @@
       </a>
     </div>
 
+    <!-- Tournament Subtitle Moved Up -->
     <p class="subtitle">
       Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
     </p>
 
-    <!-- Feedback under subtitle -->
-    <p style="text-align: center; font-size: 0.9rem; margin-top: -1rem;">
-      Feedback or questions: <a href="mailto:usa@familyfishing.fun" style="color: #00ffff;">usa@familyfishing.fun</a>
+    <!-- Feedback Section -->
+    <p class="feedback">
+      Feedback or questions: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
     </p>
   </div>
 
@@ -218,8 +222,7 @@
       <input type="submit" value="Join Tournament $20" class="paypal-button" />
       <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
       <section style="font-size: 0.75rem;">
-        Powered by 
-        <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem; vertical-align:middle;" />
+        Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem; vertical-align:middle;" />
       </section>
     </form>
   </div>
@@ -227,21 +230,21 @@
   <!-- Leaderboards Side by Side -->
   <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
     <!-- Chickamauga -->
-    <div style="flex: 1; min-width: 250px; text-align: left; margin-left: 0;">
-      <div style="margin-bottom: 0.5rem;" class="chickamauga-title"><strong>Chickamauga's Biggest Bass</strong></div>
+    <div style="flex: 1; min-width: 250px; text-align: left;">
+      <div class="chickamauga-title"><strong>Chickamauga's Biggest Bass</strong></div>
       <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
       <p class="angler-name"><em>Angler's name</em></p>
     </div>
 
     <!-- Watts Bar -->
-    <div style="flex: 1; min-width: 250px; text-align: right; margin-right: 0;">
-      <div style="margin-bottom: 0.5rem;" class="watts-bar-title"><strong>Watts Bar's Biggest Bass</strong></div>
+    <div style="flex: 1; min-width: 250px; text-align: right;">
+      <div class="watts-bar-title"><strong>Watts Bar's Biggest Bass</strong></div>
       <img src="testing.jpg" alt="Watts Bar Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
       <p class="angler-name"><em>Angler's name</em></p>
     </div>
   </div>
 
-  <!-- Submit Fish and May Identifier - Bottom Center -->
+  <!-- Submit Fish and May Identifier -->
   <div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
     <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
     <p class="may-identifier" style="margin-top: 1rem; margin-bottom: 2rem;">May Identifier: FFF</p>
@@ -249,7 +252,8 @@
 
   <!-- AdSense Ad -->
   <div class="ads">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
+      crossorigin="anonymous"></script>
     <ins class="adsbygoogle"
       style="display:inline-block;width:300px;height:100px"
       data-ad-client="ca-pub-9237571676231200"
