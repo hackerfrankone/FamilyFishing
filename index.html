@@ -87,9 +87,31 @@
       position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
       z-index: 1000;
     }
+    .last-month-winner {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      text-align: left;
+      max-width: 200px;
+      z-index: 1000;
+    }
+    .last-month-winner img {
+      max-width: 150px;
+      height: auto;
+      border-radius: 8px;
+    }
     @media (max-width: 768px) {
       .button-group { flex-direction: column; align-items: center; }
       .countdown { font-size: 0.9rem; }
+      .last-month-winner {
+        position: static;
+        margin: 1rem auto;
+        text-align: center;
+        max-width: 100%;
+      }
+      .last-month-winner img {
+        max-width: 200px;
+      }
     }
     .submit-fish-button { background-color: #FFA500; }
     .leaderboard-title, .angler-name {
@@ -116,6 +138,13 @@
   </style>
 </head>
 <body>
+
+  <!-- Last Month's Winner -->
+  <div class="last-month-winner">
+    <div class="leaderboard-title"><strong>Last Month's Winner</strong></div>
+    <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 150px; height: auto; border-radius: 8px;">
+    <p class="angler-name"><em>Previous Angler's name</em></p>
+  </div>
 
   <!-- Top Section -->
   <div class="top-bar">
@@ -177,13 +206,6 @@
     <div class="leaderboard-title"><strong>Biggest Bass</strong></div>
     <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 300px; height: auto; border-radius: 8px;">
     <p class="angler-name"><em>Angler's name</em></p>
-  </div>
-
-  <!-- Last Month's Winner -->
-  <div style="text-align: center; margin-top: 2rem;">
-    <div class="leaderboard-title"><strong>Last Month's Winner</strong></div>
-    <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 300px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>Previous Angler's name</em></p>
   </div>
 
   <!-- Submit Fish and Monthly Identifier -->
