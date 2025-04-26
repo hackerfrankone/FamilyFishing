@@ -34,147 +34,59 @@
       margin: 0;
       padding: 1rem;
     }
-
-    a {
-      color: #00ffff;
-      text-decoration: none;
-    }
-
-    .top-bar {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
+    a { color: #00ffff; text-decoration: none; }
+    .top-bar { text-align: center; margin-bottom: 2rem; }
     .social-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
+      display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
     }
-
-    .facebook-button img,
-    .youtube-button img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
+    .facebook-button img, .youtube-button img {
+      width: 50px; height: 50px; border-radius: 50%;
     }
-
     .discord-button {
-      padding: 10px 16px;
-      font-size: 16px;
-      border-radius: 6px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      background-color: #1877F2;
+      padding: 10px 16px; font-size: 16px; border-radius: 6px; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: white; background-color: #1877F2;
     }
-
-    .subtitle {
-      font-size: 1rem;
-      max-width: 600px;
-      margin: 1rem auto 0;
-      text-align: center;
-    }
-
-    .feedback {
-      font-size: 0.9rem;
-      text-align: center;
-      margin-top: 1rem;
-    }
-
+    .subtitle { font-size: 1rem; max-width: 600px; margin: 1rem auto 0; text-align: center; }
+    .feedback { font-size: 0.9rem; text-align: center; margin-top: 1rem; }
     .button-group {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
+      display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;
     }
-
     .submit-button {
-      background-color: #28a745;
-      color: white;
-      padding: 8px 16px;
-      font-size: 14px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
-      display: inline-block;
-      width: auto;
-      max-width: 90vw;
-      text-decoration: none;
+      background-color: #28a745; color: white; padding: 8px 16px;
+      font-size: 14px; border: none; border-radius: 8px; cursor: pointer;
+      text-align: center; display: inline-block; width: auto; max-width: 90vw; text-decoration: none;
     }
-
-    .paypal-form {
-      display: grid;
-      justify-items: center;
-      gap: 0.5rem;
-    }
-
+    .paypal-form { display: grid; justify-items: center; gap: 0.5rem; }
     .paypal-button {
-      background-color: #FFD140;
-      color: #000;
-      font-weight: bold;
-      font-size: 1rem;
-      border: none;
-      border-radius: 6px;
-      padding: 10px 2rem;
-      cursor: pointer;
+      background-color: #FFD140; color: #000; font-weight: bold; font-size: 1rem;
+      border: none; border-radius: 6px; padding: 10px 2rem; cursor: pointer;
     }
-
-    .leaderboard {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .leaderboard img {
-      max-width: 200px;
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-
+    .leaderboard { text-align: center; margin-bottom: 1rem; }
+    .leaderboard img { max-width: 200px; width: 100%; height: auto; border-radius: 8px; }
     .ads {
-      position: fixed;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
       z-index: 1000;
     }
-
     @media (max-width: 768px) {
-      .button-group {
-        flex-direction: column;
-        align-items: center;
-      }
+      .button-group { flex-direction: column; align-items: center; }
     }
-
-    .submit-fish-button {
-      background-color: #FFA500;
-    }
-
+    .submit-fish-button { background-color: #FFA500; }
     .may-identifier {
       color: #FFA500;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
     }
-
     .chickamauga-title, .watts-bar-title, .angler-name {
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
     }
-
     .small-button {
       padding: 8px 16px;
       font-size: 14px;
       border-radius: 6px;
     }
-
-    /* NEW: Red Rules Button */
     .rules-button {
       background-color: #cc0000;
       color: white;
@@ -185,10 +97,7 @@
       border-radius: 8px;
       transition: background-color 0.3s ease;
     }
-
-    .rules-button:hover {
-      background-color: #ff0000;
-    }
+    .rules-button:hover { background-color: #ff0000; }
   </style>
 </head>
 <body>
@@ -260,10 +169,10 @@
     </div>
   </div>
 
-  <!-- Submit Fish and May Identifier -->
+  <!-- Submit Fish and Monthly Identifier -->
   <div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
     <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
-    <p class="may-identifier" style="margin-top: 1rem; margin-bottom: 2rem;">May Identifier: FFF</p>
+    <p id="monthly-identifier" class="may-identifier" style="margin-top: 1rem; margin-bottom: 2rem;">May Identifier: FFF</p>
   </div>
 
   <!-- AdSense Ad -->
@@ -278,6 +187,31 @@
       (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
   </div>
+
+  <!-- New Script for Monthly Random Identifier -->
+  <script>
+    function generateRandomIdentifier() {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let result = '';
+      for (let i = 0; i < 3; i++) {
+        result += letters.charAt(Math.floor(Math.random() * letters.length));
+      }
+      return result;
+    }
+
+    function updateIdentifier() {
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      const now = new Date();
+      const month = monthNames[now.getMonth()];
+      const identifier = generateRandomIdentifier();
+      document.getElementById('monthly-identifier').innerText = `${month} Identifier: ${identifier}`;
+    }
+
+    updateIdentifier();
+  </script>
 
 </body>
 </html>
