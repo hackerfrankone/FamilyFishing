@@ -174,8 +174,9 @@
       font-family: 'Arial', sans-serif;
     }
 
+    /* The specific size change for the "Rules" button */
     .small-button {
-      padding: 10px 20px;  /* Same padding as YouTube button */
+      padding: 10px 16px;  /* Same padding as YouTube button */
       font-size: 16px;  /* Same font size as YouTube button */
       border-radius: 6px;
       text-align: center;
@@ -239,14 +240,36 @@
     <!-- Chickamauga -->
     <div style="flex: 1; min-width: 250px; text-align: left;">
       <div class="chickamauga-title"><strong>Chickamauga's Biggest Bass</strong></div>
-      <img src="testing.jpg" alt="Chickamauga Leaderboard" />
+      <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+      <p class="angler-name"><em>Angler's name</em></p>
     </div>
 
     <!-- Watts Bar -->
-    <div style="flex: 1; min-width: 250px; text-align: left;">
+    <div style="flex: 1; min-width: 250px; text-align: right;">
       <div class="watts-bar-title"><strong>Watts Bar's Biggest Bass</strong></div>
-      <img src="testing2.jpg" alt="Watts Bar Leaderboard" />
+      <img src="testing.jpg" alt="Watts Bar Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+      <p class="angler-name"><em>Angler's name</em></p>
     </div>
   </div>
+
+  <!-- Submit Fish and May Identifier -->
+  <div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
+    <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
+    <p class="may-identifier" style="margin-top: 1rem; margin-bottom: 2rem;">May Identifier: FFF</p>
+  </div>
+
+  <!-- AdSense Ad -->
+  <div class="ads">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
+      crossorigin="anonymous"></script>
+    <ins class="adsbygoogle"
+      style="display:inline-block;width:300px;height:100px"
+      data-ad-client="ca-pub-9237571676231200"
+      data-ad-slot="4524170531"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
 </body>
 </html>
