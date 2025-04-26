@@ -16,7 +16,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-6EBHYE2X44');
   </script>
@@ -29,7 +29,7 @@
     body {
       background: url('background.jpg') no-repeat center top fixed;
       background-size: cover;
-      color: #fff; /* White text */
+      color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 1rem;
@@ -137,16 +137,6 @@
       border-radius: 8px;
     }
 
-.feedback-link {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  font-size: 0.9rem;
-  z-index: 1000;
-  text-align: left;
-}
-    }
-
     .ads {
       position: fixed;
       bottom: 50px;
@@ -164,30 +154,25 @@
 
     /* Orange Text for Submit Fish and May Identifier */
     .submit-fish-button {
-      background-color: #FFA500; /* Orange background */
+      background-color: #FFA500;
     }
 
     .may-identifier {
-      color: #FFA500; /* Orange text */
-      font-weight: bold; /* Bold text */
-      font-family: 'Arial', sans-serif; /* Font change */
+      color: #FFA500;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
     }
 
-    /* Orange color for Chickamauga and Watts Bar titles and angler's name */
+    /* Yellow color for Chickamauga, Watts Bar titles and angler's name */
     .chickamauga-title, .watts-bar-title, .angler-name {
-      color: yellow; /* Orange text */
-      font-weight: bold; /* Bold text */
-      font-family: 'Arial', sans-serif; /* Font change */
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
     }
   </style>
 </head>
-<body>
 
-  <!-- Feedback Link -->
-  <p class="feedback-link">
-    Feedback or questions:<br>
-    <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
-  </p>
+<body>
 
   <!-- Top Section -->
   <div class="top-bar">
@@ -217,6 +202,11 @@
     <p class="subtitle">
       Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
     </p>
+
+    <!-- Feedback under subtitle -->
+    <p style="text-align: center; font-size: 0.9rem; margin-top: -1rem;">
+      Feedback or questions: <a href="mailto:usa@familyfishing.fun" style="color: #00ffff;">usa@familyfishing.fun</a>
+    </p>
   </div>
 
   <!-- Buttons -->
@@ -228,7 +218,8 @@
       <input type="submit" value="Join Tournament $20" class="paypal-button" />
       <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
       <section style="font-size: 0.75rem;">
-        Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem; vertical-align:middle;" />
+        Powered by 
+        <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem; vertical-align:middle;" />
       </section>
     </form>
   </div>
@@ -258,8 +249,7 @@
 
   <!-- AdSense Ad -->
   <div class="ads">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
-      crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
     <ins class="adsbygoogle"
       style="display:inline-block;width:300px;height:100px"
       data-ad-client="ca-pub-9237571676231200"
