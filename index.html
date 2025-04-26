@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'nonce-{{nonce}}' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com;
+    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
     connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com;
@@ -24,8 +24,8 @@
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
 
   <!-- Google Analytics -->
-  <script nonce="{{nonce}}" async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44" integrity="sha384-placeholder-hash" crossorigin="anonymous"></script>
-  <script nonce="{{nonce}}">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44" integrity="sha384-placeholder-hash" crossorigin="anonymous"></script>
+  <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
@@ -198,7 +198,8 @@
   </div>
 
   <!-- Dynamic Month and Countdown Script -->
-  <script nonce="{{nonce}}">
+  <script>
+    console.log('Script loaded');
     // Months
     const monthCodes = ["January", "February", "March", "April", "May", "June",
                         "July", "August", "September", "October", "November", "December"];
@@ -214,80 +215,102 @@
 
     async function fetchCurrentTime() {
       try {
+        console.log('Fetching time from worldtimeapi.org');
         const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
         const data = await response.json();
+        console.log('Time fetched:', data.utc_datetime);
         return new Date(data.utc_datetime);
       } catch (error) {
         console.error('Error fetching time:', error);
-        return new Date(); // Fallback to client time if API fails
+        return new Date(); // Fallback to client time
       }
     }
 
     async function updateMonth() {
-      const today = await fetchCurrentTime();
-      const monthNumber = today.getMonth();
-      const year = today.getFullYear();
-      const monthCode = monthCodes[monthNumber];
-      const currentMonthYear = `${year}-${monthNumber}`;
+      try {
+        console.log('Updating month and identifier');
+        const today = await fetchCurrentTime();
+        const monthNumber = today.getMonth();
+        const year = today.getFullYear();
+        const monthCode = monthCodes[monthNumber];
+        const currentMonthYear = `${year}-${monthNumber}`;
 
-      // Check localStorage for existing code
-      const storedMonthYear = localStorage.getItem('monthYear');
-      let randomCode = localStorage.getItem('randomCode');
+        // Check localStorage for existing code
+        const storedMonthYear = localStorage.getItem('monthYear');
+        let randomCode = localStorage.getItem('randomCode');
 
-      // If the stored month/year doesn't match or no code exists, generate a new code
-      if (storedMonthYear !== currentMonthYear || !randomCode) {
-        randomCode = generateRandomCode();
-        localStorage.setItem('monthYear', currentMonthYear);
-        localStorage.setItem('randomCode', randomCode);
+        // Generate new code if month/year changed or no code exists
+        if (storedMonthYear !== currentMonthYear || !randomCode) {
+          randomCode = generateRandomCode();
+          localStorage.setItem('monthYear', currentMonthYear);
+          localStorage.setItem('randomCode', randomCode);
+        }
+
+        // Update DOM
+        const monthElement = document.getElementById("month");
+        const codeElement = document.getElementById("month-code");
+        if (monthElement && codeElement) {
+          monthElement.textContent = monthCode;
+          codeElement.textContent = randomCode;
+          console.log('Month and code updated:', monthCode, randomCode);
+        } else {
+          console.error('DOM elements not found: month or month-code');
+        }
+      } catch (error) {
+        console.error('Error in updateMonth:', error);
       }
-
-      // Update the DOM
-      document.getElementById("month").textContent = monthCode;
-      document.getElementById("month-code").textContent = randomCode;
     }
 
     async function updateCountdown() {
-      const now = await fetchCurrentTime();
-      const year = now.getFullYear();
-      const month = now.getMonth();
-      // Set target to the first day of the next month at 00:00:00 UTC
-      const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
-      
-      const timeDiff = target - now;
-      if (timeDiff <= 0) {
-        // Month has ended, update month and reset countdown
-        updateMonth();
-        document.getElementById("countdown-timer").textContent = "Tournament ended!";
-        return;
+      try {
+        console.log('Updating countdown');
+        const now = await fetchCurrentTime();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        // Target: first day of next month at 00:00:00 UTC
+        const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
+        
+        const timeDiff = target - now;
+        const timerElement = document.getElementById("countdown-timer");
+        if (!timerElement) {
+          console.error('DOM element not found: countdown-timer');
+          return;
+        }
+
+        if (timeDiff <= 0) {
+          console.log('Tournament ended, updating month');
+          updateMonth();
+          timerElement.textContent = "Tournament ended!";
+          return;
+        }
+
+        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+        timerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        console.log('Countdown updated:', timerElement.textContent);
+      } catch (error) {
+        console.error('Error in updateCountdown:', error);
       }
-
-      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-
-      document.getElementById("countdown-timer").textContent = 
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
-    // Update month immediately when page loads
+    // Initialize
+    console.log('Initializing script');
     updateMonth();
-
-    // Update countdown immediately and every second
     updateCountdown();
     setInterval(updateCountdown, 1000);
-
-    // Check for month change every 24 hours
     setInterval(updateMonth, 24 * 60 * 60 * 1000);
   </script>
 
   <!-- AdSense Ad -->
   <div class="ads">
-    <script nonce="{{nonce}}" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous" integrity="sha384-placeholder-hash"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous" integrity="sha384-placeholder-hash"></script>
     <ins class="adsbygoogle" style="display:inline-block;width:300px;height:100px"
       data-ad-client="ca-pub-9237571676231200"
       data-ad-slot="7591272404"></ins>
-    <script nonce="{{nonce}}">(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 
 </body>
