@@ -93,15 +93,20 @@
       margin-bottom: 2rem;
     }
 
-    .submit-button {
-      background-color: #28a745;
-      color: white;
-      padding: 12px 24px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
+.submit-button {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  display: inline-block;
+  width: auto;
+  max-width: 90vw;
+  text-decoration: none;
+}
     }
 
     .paypal-form {
@@ -224,10 +229,9 @@
 </div>
 
 <!-- Submit Fish and May Identifier - Bottom Center -->
-<div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); text-align: center;">
+<div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
   <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
-  <!-- Adding margin-top to move May Identifier down -->
-  <p style="margin-top: 1rem; margin-bottom: 1.5rem;"><strong>May Identifier: FFF</strong></p>
+  <p style="margin-top: 1rem; margin-bottom: 2rem; font-weight: bold;">May Identifier: FFF</p>
 </div>
 
   <!-- AdSense Ad -->
