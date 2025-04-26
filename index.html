@@ -72,11 +72,6 @@
       .button-group { flex-direction: column; align-items: center; }
     }
     .submit-fish-button { background-color: #FFA500; }
-    .may-identifier {
-      color: #FFA500;
-      font-weight: bold;
-      font-family: 'Arial', sans-serif;
-    }
     .chickamauga-title, .watts-bar-title, .angler-name {
       color: yellow;
       font-weight: bold;
@@ -169,17 +164,36 @@
     </div>
   </div>
 
+  <!-- Submit Fish and Monthly Identifier -->
+  <div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
+    <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
+    <p id="monthly-identifier" class="month-identifier" style="margin-top: 1rem; margin-bottom: 2rem;">
+      <span id="month"></span> Identifier: <span id="month-code"></span>
+    </p>
+  </div>
+
 <!-- Dynamic Month Script -->
 <script>
   // Months
   const monthCodes = ["January", "February", "March", "April", "May", "June",
                       "July", "August", "September", "October", "November", "December"];
 
+  function generateRandomCode() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let code = '';
+    for (let i = 0; i < 3; i++) {
+      code += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    return code;
+  }
+
   function updateMonth() {
     const today = new Date();
     const monthNumber = today.getMonth();
     const monthCode = monthCodes[monthNumber];
+    const randomCode = generateRandomCode();
     document.getElementById("month").textContent = monthCode;
+    document.getElementById("month-code").textContent = randomCode;
   }
 
   // Update immediately when page loads
@@ -197,25 +211,6 @@
   }, millisUntilMidnight);
 </script>
 
-<!-- June Reward Script -->
-<script>
-  function unlockJuneReward() {
-    console.log("🎣 June reward unlocked!");
-    // You can expand this function to do more like show a badge, alert, etc.
-  }
-
-  fetch('https://worldtimeapi.org/api/timezone/Etc/UTC')
-    .then(response => response.json())
-    .then(data => {
-      let serverDate = new Date(data.utc_datetime);
-      let serverMonth = serverDate.getUTCMonth(); // 0 = January
-      if (serverMonth === 5) { // June
-        unlockJuneReward();
-      }
-    })
-    .catch(error => console.error('Error fetching server time:', error));
-</script>
-
   <!-- AdSense Ad -->
   <div class="ads">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
@@ -226,4 +221,3 @@
   </div>
 
 </body>
-</html>
