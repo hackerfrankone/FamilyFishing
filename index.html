@@ -38,32 +38,15 @@
   <!-- Styles -->
   <style>
     body {
-      background: url('background.jpg') no-repeat center center fixed;
+      background: url('background.jpg') no-repeat center top fixed;
       background-size: cover;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 1rem;
-      position: relative;
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.3); /* Subtle dark overlay for contrast */
-      z-index: -1;
     }
     a { color: #00ffff; text-decoration: none; }
-    .top-bar { 
-      text-align: center; 
-      margin-bottom: 2rem; 
-      background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
-      padding: 1rem;
-      border-radius: 8px;
-    }
+    .top-bar { text-align: center; margin-bottom: 2rem; }
     .social-buttons {
       display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
     }
@@ -111,9 +94,6 @@
       text-align: left;
       max-width: 200px;
       z-index: 1000;
-      background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-      padding: 0.5rem;
-      border-radius: 8px;
     }
     .last-month-winner img {
       max-width: 175px;
@@ -222,7 +202,7 @@
   </div>
 
   <!-- Current Month Leaderboard -->
-  <div style="text-align: center; margin-top: 2rem; background: rgba(0, 0, 0, 0.5); padding: 1rem; border-radius: 8px;">
+  <div style="text-align: center; margin-top: 2rem;">
     <div class="leaderboard-title"><strong id="biggest-bass-title">Biggest Bass</strong></div>
     <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 300px; height: auto; border-radius: 8px;">
     <p class="angler-name"><em>Angler's name</em></p>
@@ -243,11 +223,23 @@
     const monthCodes = ["January", "February", "March", "April", "May", "June",
                         "July", "August", "September", "October", "November", "December"];
 
-    function generateRandomCode() {
+    // Seeded random number generator (Mulberry32)
+    function mulberry32(seed) {
+      return function() {
+        let t = seed += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    // Generate a 3-letter code using a seed
+    function generateSeededCode(seed) {
+      const random = mulberry32(seed);
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       let code = '';
       for (let i = 0; i < 3; i++) {
-        code += letters.charAt(Math.floor(Math.random() * letters.length));
+        code += letters.charAt(Math.floor(random() * letters.length));
       }
       return code;
     }
@@ -274,16 +266,15 @@
         const monthCode = monthCodes[monthNumber];
         const currentMonthYear = `${year}-${monthNumber}`;
 
-        // Check localStorage for existing code
+        // Check if the month/year has changed
         const storedMonthYear = localStorage.getItem('monthYear');
-        let randomCode = localStorage.getItem('randomCode');
-
-        // Generate new code if month/year changed or no code exists
-        if (storedMonthYear !== currentMonthYear || !randomCode) {
-          randomCode = generateRandomCode();
+        if (storedMonthYear !== currentMonthYear) {
           localStorage.setItem('monthYear', currentMonthYear);
-          localStorage.setItem('randomCode', randomCode);
         }
+
+        // Generate the identifier using the month and year as the seed
+        const seed = parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`); // e.g., 202504 for April 2025
+        const randomCode = generateSeededCode(seed);
 
         // Update DOM
         const monthElement = document.getElementById("month");
