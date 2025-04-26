@@ -174,15 +174,23 @@
       font-family: 'Arial', sans-serif;
     }
 
-    /* Adjusted size for the "Rules" button */
     .small-button {
-      padding: 10px 16px;  /* Same as the YouTube button */
-      font-size: 16px;  /* Same font size as the YouTube button */
+      padding: 8px 16px;
+      font-size: 14px;
       border-radius: 6px;
-      text-align: center;
-      background-color: #007bff;  /* You can adjust the background color */
+    }
+
+    /* Adjusted the rules button size to match the YouTube button */
+    .rules-button {
+      padding: 10px 16px;
+      font-size: 16px;
+      border-radius: 6px;
+      background-color: #c4302b; /* Original color */
       color: white;
-      text-decoration: none;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
   </style>
 </head>
@@ -226,7 +234,7 @@
 
   <!-- Buttons -->
   <div class="button-group">
-    <a href="Rules.pdf" target="_blank" class="submit-button small-button">📄 Rules</a>
+    <a href="Rules.pdf" target="_blank" class="rules-button">📄 Rules</a>
 
     <!-- Join Tournament PayPal -->
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" class="paypal-form">
