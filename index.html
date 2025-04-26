@@ -51,7 +51,7 @@
       display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
     }
     .facebook-button img, .youtube-button img {
-      width: 60px; height: 60px; border-radius: 50%;
+      width: 50px; height: 50px; border-radius: 50%;
     }
     .discord-button {
       padding: 10px 16px; font-size: 16px; border-radius: 6px; text-decoration: none;
@@ -117,47 +117,40 @@
 </head>
 <body>
 
-<!-- Top Section -->
-<div class="top-bar">
-<!-- Social Buttons -->
-<div class="social-buttons">
-  <!-- Donate -->
-  <form action="https://www.paypal.com/donate" method="post" target="_blank" rel="noopener">
-    <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
-    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate to Family Fishing Fun" />
-  </form>
+  <!-- Top Section -->
+  <div class="top-bar">
+    <div class="social-buttons">
+      <!-- Donate -->
+      <form action="https://www.paypal.com/donate" method="post" target="_blank" rel="noopener">
+        <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
+        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate to Family Fishing Fun" />
+      </form>
 
-  <!-- Facebook -->
-  <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo">
-  </a>
+      <!-- Facebook -->
+      <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo">
+      </a>
 
-  <!-- YouTube -->
-  <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button" aria-label="Visit our YouTube channel">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/40/YouTube_icon_play_button.svg" alt="YouTube play button logo">
-  </a>
+      <!-- YouTube -->
+      <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button" aria-label="Visit our YouTube channel">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube logo">
+      </a>
 
-  <!-- Discord -->
-  <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button" aria-label="Join our Discord server">
-    Join us on Discord
-  </a>
-</div>
+      <!-- Discord -->
+      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button" aria-label="Join our Discord server">
+        Join us on Discord
+      </a>
+    </div>
 
-  <!-- Tournament Subtitle -->
-  <p class="subtitle">
-    Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
-  </p>
+    <!-- Tournament Subtitle -->
+    <p class="subtitle">
+      Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
+    </p>
 
-  <!-- Feedback Section -->
-  <p class="feedback">
-    Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a>
-  </p>
-
-  <!-- Countdown Timer -->
-  <p class="countdown" id="countdown">
-    Tournament ends in: <span id="countdown-timer">Calculating...</span>
-  </p>
-</div>
+    <!-- Countdown Timer -->
+    <p class="countdown" id="countdown">
+      Tournament ends in: <span id="countdown-timer">Calculating...</span>
+    </p>
 
     <!-- Feedback Section -->
     <p class="feedback">
