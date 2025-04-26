@@ -48,6 +48,14 @@
       color: white; background-color: #1877F2;
     }
     .subtitle { font-size: 1rem; max-width: 600px; margin: 1rem auto 0; text-align: center; }
+    .countdown {
+      font-size: 1rem;
+      font-weight: bold;
+      max-width: 600px;
+      margin: 0.5rem auto 0;
+      text-align: center;
+      color: #FFD140; /* Matches PayPal button for visual consistency */
+    }
     .feedback { font-size: 0.9rem; text-align: center; margin-top: 1rem; }
     .button-group {
       display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;
@@ -70,6 +78,7 @@
     }
     @media (max-width: 768px) {
       .button-group { flex-direction: column; align-items: center; }
+      .countdown { font-size: 0.9rem; }
     }
     .submit-fish-button { background-color: #FFA500; }
     .chickamauga-title, .watts-bar-title, .angler-name {
@@ -127,6 +136,11 @@
       Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
     </p>
 
+    <!-- Countdown Timer -->
+    <p class="countdown" id="countdown">
+      Tournament ends in: <span id="countdown-timer">Calculating...</span>
+    </p>
+
     <!-- Feedback Section -->
     <p class="feedback">
       Feedback or questions: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
@@ -172,7 +186,7 @@
     </p>
   </div>
 
-  <!-- Dynamic Month Script -->
+  <!-- Dynamic Month and Countdown Script -->
   <script>
     // Months
     const monthCodes = ["January", "February", "March", "April", "May", "June",
@@ -221,8 +235,36 @@
       document.getElementById("month-code").textContent = randomCode;
     }
 
-    // Update immediately when page loads
+    async function updateCountdown() {
+      const now = await fetchCurrentTime();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      // Set target to the first day of the next month at 00:00:00 UTC
+      const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
+      
+      const timeDiff = target - now;
+      if (timeDiff <= 0) {
+        // Month has ended, update month and reset countdown
+        updateMonth();
+        document.getElementById("countdown-timer").textContent = "Tournament ended!";
+        return;
+      }
+
+      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown-timer").textContent = 
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    // Update month immediately when page loads
     updateMonth();
+
+    // Update countdown immediately and every second
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 
     // Check for month change every 24 hours
     setInterval(updateMonth, 24 * 60 * 60 * 1000);
