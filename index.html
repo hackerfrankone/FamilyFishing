@@ -29,7 +29,7 @@
     body {
       background: url('background.jpg') no-repeat center top fixed;
       background-size: cover;
-      color: #fff;
+      color: #fff; /* White text */
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 1rem;
@@ -93,20 +93,19 @@
       margin-bottom: 2rem;
     }
 
-.submit-button {
-  background-color: #28a745;
-  color: white;
-  padding: 12px 24px;
-  font-size: 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  display: inline-block;
-  width: auto;
-  max-width: 90vw;
-  text-decoration: none;
-}
+    .submit-button {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 24px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      display: inline-block;
+      width: auto;
+      max-width: 90vw;
+      text-decoration: none;
     }
 
     .paypal-form {
@@ -159,6 +158,15 @@
         flex-direction: column;
         align-items: center;
       }
+    }
+
+    /* Orange Text for Submit Fish and May Identifier */
+    .submit-fish-button {
+      background-color: #FFA500; /* Orange background */
+    }
+
+    .may-identifier {
+      color: #FFA500; /* Orange text */
     }
   </style>
 </head>
@@ -213,28 +221,28 @@
     </form>
   </div>
 
-<!-- Leaderboards Side by Side -->
-<div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
-  <!-- Chickamauga -->
-  <div style="flex: 1; min-width: 250px; text-align: left; margin-left: 0;">
-    <div style="margin-bottom: 0.5rem;"><strong>Chickamauga's Biggest Bass</strong></div>
-    <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
-    <p><em>Angler's name</em></p>
+  <!-- Leaderboards Side by Side -->
+  <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+    <!-- Chickamauga -->
+    <div style="flex: 1; min-width: 250px; text-align: left; margin-left: 0;">
+      <div style="margin-bottom: 0.5rem;"><strong>Chickamauga's Biggest Bass</strong></div>
+      <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+      <p><em>Angler's name</em></p>
+    </div>
+
+    <!-- Watts Bar -->
+    <div style="flex: 1; min-width: 250px; text-align: right; margin-right: 0;">
+      <div style="margin-bottom: 0.5rem;"><strong>Watts Bar's Biggest Bass</strong></div>
+      <img src="testing.jpg" alt="Watts Bar Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+      <p><em>Angler's name</em></p>
+    </div>
   </div>
 
-  <!-- Watts Bar -->
-  <div style="flex: 1; min-width: 250px; text-align: right; margin-right: 0;">
-    <div style="margin-bottom: 0.5rem;"><strong>Watts Bar's Biggest Bass</strong></div>
-    <img src="testing.jpg" alt="Watts Bar Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
-    <p><em>Angler's name</em></p>
+  <!-- Submit Fish and May Identifier - Bottom Center -->
+  <div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
+    <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
+    <p class="may-identifier" style="margin-top: 1rem; margin-bottom: 2rem; font-weight: bold;">May Identifier: FFF</p>
   </div>
-</div>
-
-<!-- Submit Fish and May Identifier - Bottom Center -->
-<div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
-  <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button">📸 Submit Fish</a>
-  <p style="margin-top: 1rem; margin-bottom: 2rem; font-weight: bold;">May Identifier: FFF</p>
-</div>
 
   <!-- AdSense Ad -->
   <div class="ads">
