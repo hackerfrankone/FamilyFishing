@@ -168,6 +168,14 @@
     .may-identifier {
       color: #FFA500; /* Orange text */
     }
+
+    /* Align Chickamauga text, image, and angler's name to top left */
+    .chickamauga-leaderboard {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
@@ -207,6 +215,13 @@
     </p>
   </div>
 
+  <!-- Chickamauga Leaderboard (Positioned to Top Left) -->
+  <div class="chickamauga-leaderboard">
+    <div><strong>Chickamauga's Biggest Bass</strong></div>
+    <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+    <p><em>Angler's name</em></p>
+  </div>
+
   <!-- Buttons -->
   <div class="button-group">
     <a href="Rules.pdf" target="_blank" class="submit-button">📄 Rules</a>
@@ -223,13 +238,6 @@
 
   <!-- Leaderboards Side by Side -->
   <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
-    <!-- Chickamauga -->
-    <div style="flex: 1; min-width: 250px; text-align: left; margin-left: 0;">
-      <div style="margin-bottom: 0.5rem;"><strong>Chickamauga's Biggest Bass</strong></div>
-      <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
-      <p><em>Angler's name</em></p>
-    </div>
-
     <!-- Watts Bar -->
     <div style="flex: 1; min-width: 250px; text-align: right; margin-right: 0;">
       <div style="margin-bottom: 0.5rem;"><strong>Watts Bar's Biggest Bass</strong></div>
