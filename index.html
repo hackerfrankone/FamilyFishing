@@ -169,41 +169,52 @@
     </div>
   </div>
 
-  <!-- Submit Fish and Monthly Identifier -->
-  <div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
-    <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
-    <p id="monthly-identifier" class="may-identifier" style="margin-top: 1rem; margin-bottom: 2rem;">
-      <span id="month"></span> Identifier: FFF
-    </p>
-  </div>
+<!-- Dynamic Month Script -->
+<script>
+  // Months
+  const monthCodes = ["January", "February", "March", "April", "May", "June",
+                      "July", "August", "September", "October", "November", "December"];
 
-  <!-- Dynamic Month Script -->
-  <script>
-    // Months
-    const monthCodes = ["January", "February", "March", "April", "May", "June",
-                        "July", "August", "September", "October", "November", "December"];
+  function updateMonth() {
+    const today = new Date();
+    const monthNumber = today.getMonth();
+    const monthCode = monthCodes[monthNumber];
+    document.getElementById("month").textContent = monthCode;
+  }
 
-    function updateMonth() {
-      const today = new Date();
-      const monthNumber = today.getMonth();
-      const monthCode = monthCodes[monthNumber];
-      document.getElementById("month").textContent = monthCode;
-    }
+  // Update immediately when page loads
+  updateMonth();
 
-    // Update immediately when page loads
+  // Set a timer to update at midnight
+  const now = new Date();
+  const millisUntilMidnight = (
+    new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now
+  );
+
+  setTimeout(function() {
     updateMonth();
+    setInterval(updateMonth, 24 * 60 * 60 * 1000);
+  }, millisUntilMidnight);
+</script>
 
-    // Set a timer to update at midnight
-    const now = new Date();
-    const millisUntilMidnight = (
-      new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now
-    );
+<!-- June Reward Script -->
+<script>
+  function unlockJuneReward() {
+    console.log("🎣 June reward unlocked!");
+    // You can expand this function to do more like show a badge, alert, etc.
+  }
 
-    setTimeout(function() {
-      updateMonth();
-      setInterval(updateMonth, 24 * 60 * 60 * 1000);
-    }, millisUntilMidnight);
-  </script>
+  fetch('https://worldtimeapi.org/api/timezone/Etc/UTC')
+    .then(response => response.json())
+    .then(data => {
+      let serverDate = new Date(data.utc_datetime);
+      let serverMonth = serverDate.getUTCMonth(); // 0 = January
+      if (serverMonth === 5) { // June
+        unlockJuneReward();
+      }
+    })
+    .catch(error => console.error('Error fetching server time:', error));
+</script>
 
   <!-- AdSense Ad -->
   <div class="ads">
