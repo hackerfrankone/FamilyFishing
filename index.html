@@ -99,15 +99,20 @@
       margin-bottom: 2rem;
     }
 
-.submit-fish-button {
-  position: fixed;
-  bottom: -50px; /* Adjust this value to lower the button */
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  z-index: 9999;
-  width: 100%;
-}
+    .submit-button {
+      background-color: #28a745;
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      display: inline-block;
+      width: auto;
+      max-width: 90vw;
+      text-decoration: none;
+    }
 
     .paypal-form {
       display: grid;
@@ -175,17 +180,9 @@
       border-radius: 6px;
     }
 
-    /* Adjusted the rules button size to match the YouTube button */
+    /* NEW: Red Rules Button */
     .rules-button {
-      padding: 10px 16px;
-      font-size: 16px;
-      border-radius: 6px;
-      background-color: #c4302b; /* Original color */
-      color: white;
-      text-align: center;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      background-color: red;
     }
   </style>
 </head>
@@ -229,7 +226,7 @@
 
   <!-- Buttons -->
   <div class="button-group">
-    <a href="Rules.pdf" target="_blank" class="rules-button">📄 Rules</a>
+    <a href="Rules.pdf" target="_blank" class="submit-button small-button rules-button">📄 Rules</a>
 
     <!-- Join Tournament PayPal -->
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" class="paypal-form">
@@ -258,15 +255,11 @@
     </div>
   </div>
 
-<!-- Submit Fish Button -->
-<div style="position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999;">
-  <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
-</div>
-
-<!-- May Identifier -->
-<div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999;">
-  <p class="may-identifier">May Identifier: FFF</p>
-</div>
+  <!-- Submit Fish and May Identifier -->
+  <div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
+    <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
+    <p class="may-identifier" style="margin-top: 1rem; margin-bottom: 2rem;">May Identifier: FFF</p>
+  </div>
 
   <!-- AdSense Ad -->
   <div class="ads">
