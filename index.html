@@ -168,6 +168,11 @@
     .may-identifier {
       color: #FFA500; /* Orange text */
     }
+
+    /* Orange color for Chickamauga and Watts Bar titles and angler's name */
+    .chickamauga-title, .watts-bar-title, .angler-name {
+      color: #FFA500; /* Orange text */
+    }
   </style>
 </head>
 <body>
@@ -225,16 +230,16 @@
   <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
     <!-- Chickamauga -->
     <div style="flex: 1; min-width: 250px; text-align: left; margin-left: 0;">
-      <div style="margin-bottom: 0.5rem;"><strong>Chickamauga's Biggest Bass</strong></div>
+      <div style="margin-bottom: 0.5rem;" class="chickamauga-title"><strong>Chickamauga's Biggest Bass</strong></div>
       <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
-      <p><em>Angler's name</em></p>
+      <p class="angler-name"><em>Angler's name</em></p>
     </div>
 
     <!-- Watts Bar -->
     <div style="flex: 1; min-width: 250px; text-align: right; margin-right: 0;">
-      <div style="margin-bottom: 0.5rem;"><strong>Watts Bar's Biggest Bass</strong></div>
+      <div style="margin-bottom: 0.5rem;" class="watts-bar-title"><strong>Watts Bar's Biggest Bass</strong></div>
       <img src="testing.jpg" alt="Watts Bar Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
-      <p><em>Angler's name</em></p>
+      <p class="angler-name"><em>Angler's name</em></p>
     </div>
   </div>
 
