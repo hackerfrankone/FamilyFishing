@@ -2,20 +2,187 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fishing Contest</title>
+  <title>Family Fishing Fun</title>
+
+  <!-- Meta & Security Headers -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-6EBHYE2X44');
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.png" type="image/png">
+
+  <!-- Styles -->
   <style>
     body {
+      background: url('background.jpg') no-repeat center top fixed;
+      background-size: cover;
+      color: #fff;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+    }
+
+    a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+
+    .top-bar {
       text-align: center;
-      padding: 50px;
-      background-color: #f0f8ff;
+      margin-bottom: 2rem;
     }
-    h1 {
-      color: #2e8b57;
+
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
     }
+
+    .facebook-button img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .discord-button, .youtube-button {
+      padding: 10px 16px;
+      font-size: 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .discord-button {
+      background-color: #1877F2;
+    }
+
+    .youtube-button {
+      background-color: #c4302b;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 1rem auto 0;
+      text-align: center;
+    }
+
+    .feedback {
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .submit-button {
+      background-color: #28a745;
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      display: inline-block;
+      width: auto;
+      max-width: 90vw;
+      text-decoration: none;
+    }
+
+    .paypal-form {
+      display: grid;
+      justify-items: center;
+      gap: 0.5rem;
+    }
+
+    .paypal-button {
+      background-color: #FFD140;
+      color: #000;
+      font-weight: bold;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 2rem;
+      cursor: pointer;
+    }
+
+    .leaderboard {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .leaderboard img {
+      max-width: 200px;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .ads {
+      position: fixed;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
+
+    @media (max-width: 768px) {
+      .button-group {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    .submit-fish-button {
+      background-color: #FFA500;
+    }
+
+    .may-identifier {
+      color: #FFA500;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .chickamauga-title, .watts-bar-title, .angler-name {
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .small-button {
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+
+    /* NEW: Red Rules Button */
     .rules-button {
-      background-color: #cc0000; /* Darker red */
+      background-color: #cc0000; /* Dark red */
       color: white;
       border: none;
       padding: 15px 30px;
@@ -23,8 +190,8 @@
       cursor: pointer;
       border-radius: 8px;
       transition: background-color 0.3s ease;
-      margin-top: 20px;
     }
+
     .rules-button:hover {
       background-color: #ff0000; /* Bright red on hover */
     }
@@ -32,10 +199,91 @@
 </head>
 <body>
 
-  <h1>Welcome to the Fishing Contest!</h1>
-  <p>Think you caught the biggest fish? Submit your entry and check out the rules!</p>
+  <!-- Top Section -->
+  <div class="top-bar">
+    <div class="social-buttons">
+      <!-- Donate -->
+      <form action="https://www.paypal.com/donate" method="post" target="_top">
+        <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
+        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate" />
+      </form>
 
-  <button class="rules-button">Contest Rules</button>
+      <!-- Facebook -->
+      <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" class="facebook-button" aria-label="Facebook">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+      </a>
+
+      <!-- YouTube -->
+      <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" class="youtube-button" aria-label="YouTube">
+        YouTube
+      </a>
+
+      <!-- Discord -->
+      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" class="discord-button" aria-label="Discord">
+        Join us on Discord
+      </a>
+    </div>
+
+    <!-- Tournament Subtitle Moved Up -->
+    <p class="subtitle">
+      Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
+    </p>
+
+    <!-- Feedback Section -->
+    <p class="feedback">
+      Feedback or questions: <a href="mailto:usa@familyfishing.fun">usa@familyfishing.fun</a>
+    </p>
+  </div>
+
+  <!-- Buttons -->
+  <div class="button-group">
+    <a href="Rules.pdf" target="_blank" class="submit-button small-button rules-button">📄 Rules</a>
+
+    <!-- Join Tournament PayPal -->
+    <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" class="paypal-form">
+      <input type="submit" value="Join Tournament $20" class="paypal-button" />
+      <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
+      <section style="font-size: 0.75rem;">
+        Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem; vertical-align:middle;" />
+      </section>
+    </form>
+  </div>
+
+  <!-- Leaderboards Side by Side -->
+  <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+    <!-- Chickamauga -->
+    <div style="flex: 1; min-width: 250px; text-align: left;">
+      <div class="chickamauga-title"><strong>Chickamauga's Biggest Bass</strong></div>
+      <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+      <p class="angler-name"><em>Angler's name</em></p>
+    </div>
+
+    <!-- Watts Bar -->
+    <div style="flex: 1; min-width: 250px; text-align: right;">
+      <div class="watts-bar-title"><strong>Watts Bar's Biggest Bass</strong></div>
+      <img src="testing.jpg" alt="Watts Bar Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+      <p class="angler-name"><em>Angler's name</em></p>
+    </div>
+  </div>
+
+  <!-- Submit Fish and May Identifier -->
+  <div style="position: fixed; bottom: -20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 9999; width: 100%;">
+    <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" class="submit-button submit-fish-button">📸 Submit Fish</a>
+    <p class="may-identifier" style="margin-top: 1rem; margin-bottom: 2rem;">May Identifier: FFF</p>
+  </div>
+
+  <!-- AdSense Ad -->
+  <div class="ads">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200"
+      crossorigin="anonymous"></script>
+    <ins class="adsbygoogle"
+      style="display:inline-block;width:300px;height:100px"
+      data-ad-client="ca-pub-9237571676231200"
+      data-ad-slot="4524170531"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
 
 </body>
 </html>
