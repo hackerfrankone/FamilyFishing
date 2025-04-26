@@ -29,7 +29,7 @@
     body {
       background: url('background.jpg') no-repeat center top fixed;
       background-size: cover;
-      color: #fff; /* White text */
+      color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 1rem;
@@ -162,11 +162,32 @@
 
     /* Orange Text for Submit Fish and May Identifier */
     .submit-fish-button {
-      background-color: #FFA500; /* Orange background */
+      background-color: #FFA500;
     }
 
     .may-identifier {
-      color: #FFA500; /* Orange text */
+      color: #FFA500;
+    }
+
+    /* New Styling for Leaderboard Sections */
+    .leaderboard-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      color: #FFA500; /* Make it orange */
+    }
+
+    .leaderboard p {
+      font-size: 1.1rem;
+      color: #fff;
+      font-style: italic;
+    }
+
+    .leaderboard img {
+      max-width: 100%;
+      width: auto;
+      height: auto;
+      border-radius: 8px;
     }
   </style>
 </head>
@@ -207,33 +228,19 @@
     </p>
   </div>
 
-  <!-- Buttons -->
-  <div class="button-group">
-    <a href="Rules.pdf" target="_blank" class="submit-button">📄 Rules</a>
-
-    <!-- Join Tournament PayPal -->
-    <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" class="paypal-form">
-      <input type="submit" value="Join Tournament $20" class="paypal-button" />
-      <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
-      <section style="font-size: 0.75rem;">
-        Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem; vertical-align:middle;" />
-      </section>
-    </form>
-  </div>
-
   <!-- Leaderboards Side by Side -->
   <div style="display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
     <!-- Chickamauga -->
     <div style="flex: 1; min-width: 250px; text-align: left; margin-left: 0;">
-      <div style="margin-bottom: 0.5rem;"><strong>Chickamauga's Biggest Bass</strong></div>
-      <img src="testing.jpg" alt="Chickamauga Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+      <div class="leaderboard-title">Chickamauga's Biggest Bass</div>
+      <img src="testing.jpg" alt="Chickamauga Leader Board" class="leaderboard-img">
       <p><em>Angler's name</em></p>
     </div>
 
     <!-- Watts Bar -->
     <div style="flex: 1; min-width: 250px; text-align: right; margin-right: 0;">
-      <div style="margin-bottom: 0.5rem;"><strong>Watts Bar's Biggest Bass</strong></div>
-      <img src="testing.jpg" alt="Watts Bar Leader Board" style="max-width: 300px; height: auto; border-radius: 8px;">
+      <div class="leaderboard-title">Watts Bar's Biggest Bass</div>
+      <img src="testing.jpg" alt="Watts Bar Leader Board" class="leaderboard-img">
       <p><em>Angler's name</em></p>
     </div>
   </div>
