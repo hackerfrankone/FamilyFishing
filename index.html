@@ -190,8 +190,22 @@
   function updateMonth() {
     const today = new Date();
     const monthNumber = today.getMonth();
+    const year = today.getFullYear();
     const monthCode = monthCodes[monthNumber];
-    const randomCode = generateRandomCode();
+    const currentMonthYear = `${year}-${monthNumber}`;
+
+    // Check localStorage for existing code
+    const storedMonthYear = localStorage.getItem('monthYear');
+    let randomCode = localStorage.getItem('randomCode');
+
+    // If the stored month/year doesn't match or no code exists, generate a new code
+    if (storedMonthYear !== currentMonthYear || !randomCode) {
+      randomCode = generateRandomCode();
+      localStorage.setItem('monthYear', currentMonthYear);
+      localStorage.setItem('randomCode', randomCode);
+    }
+
+    // Update the DOM
     document.getElementById("month").textContent = monthCode;
     document.getElementById("month-code").textContent = randomCode;
   }
@@ -199,7 +213,7 @@
   // Update immediately when page loads
   updateMonth();
 
-  // Set a timer to update at midnight
+  // Set a timer to check for month change at midnight
   const now = new Date();
   const millisUntilMidnight = (
     new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now
@@ -207,7 +221,7 @@
 
   setTimeout(function() {
     updateMonth();
-    setInterval(updateMonth, 24 * 60 * 60 * 1000);
+    setInterval(updateMonth, 24 * 60 * 60 * 1000); // Check daily
   }, millisUntilMidnight);
 </script>
 
@@ -221,3 +235,4 @@
   </div>
 
 </body>
+</html>
