@@ -174,10 +174,19 @@
       font-family: 'Arial', sans-serif;
     }
 
+    /* New size for the Rules button on larger screens */
     .small-button {
       padding: 8px 16px;
       font-size: 14px;
       border-radius: 6px;
+    }
+
+    /* Adjust the size for the Rules button on larger screens */
+    @media (min-width: 769px) {
+      .submit-button.small-button {
+        padding: 12px 24px;
+        font-size: 18px;
+      }
     }
   </style>
 </head>
