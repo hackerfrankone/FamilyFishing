@@ -65,7 +65,12 @@
       max-width: 600px;
       margin: 0.5rem auto 0;
       text-align: center;
-      color: red;
+      color: #FFD140;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Added text shadow for yellow text */
+    }
+    .countdown-red {
+      color: red !important;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Added text shadow for red text */
     }
     .feedback { font-size: 0.9rem; text-align: center; margin-top: 1rem; }
     .button-group {
@@ -118,13 +123,13 @@
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Added text shadow */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .angler-name {
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Added text shadow */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .small-button {
       padding: 8px 16px;
@@ -311,8 +316,9 @@
         
         const timeDiff = target - now;
         const timerElement = document.getElementById("countdown-timer");
-        if (!timerElement) {
-          console.error('DOM element not found: countdown-timer');
+        const countdownElement = document.getElementById("countdown");
+        if (!timerElement || !countdownElement) {
+          console.error('DOM element not found: countdown-timer or countdown');
           return;
         }
 
@@ -320,6 +326,7 @@
           console.log('Tournament ended, updating month');
           updateMonth();
           timerElement.textContent = "Tournament ended!";
+          countdownElement.classList.remove('countdown-red');
           return;
         }
 
@@ -330,6 +337,13 @@
 
         timerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
         console.log('Countdown updated:', timerElement.textContent);
+
+        // Change color based on remaining days
+        if (days <= 3) {
+          countdownElement.classList.add('countdown-red');
+        } else {
+          countdownElement.classList.remove('countdown-red');
+        }
       } catch (error) {
         console.error('Error in updateCountdown:', error);
       }
