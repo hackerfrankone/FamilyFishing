@@ -11,7 +11,7 @@
     script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com https://cdnjs.cloudflare.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
-    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://*.github.io;
+    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://*.github.io https://raw.githubusercontent.com;
     frame-ancestors 'none';
     form-action 'self' https://www.paypal.com;
     object-src 'none';
@@ -433,11 +433,12 @@
     }
 
     function loadAnglerList() {
+      console.log('Attempting to load CSV: 2025-MAY.csv');
       Papa.parse("2025-MAY.csv", {
         download: true,
         header: true,
         complete: function(results) {
-          console.log("Parsed CSV:", results.data);
+          console.log("CSV parsed successfully:", results.data);
           const data = results.data;
           const anglerList = document.getElementById("angler-list");
           if (!anglerList) {
@@ -445,6 +446,7 @@
             return;
           }
           if (data.length === 0 || !data[0]["Angler's Name"]) {
+            console.warn("No valid angler data found in CSV");
             anglerList.innerHTML = "<li>No anglers found.</li>";
             return;
           }
@@ -454,8 +456,9 @@
             .join("");
         },
         error: function(error) {
-          console.error("Error parsing CSV:", error);
-          document.getElementById("angler-list").innerHTML = "<li>Error loading anglers.</li>";
+          console.error("Error loading or parsing CSV:", error);
+          console.error("Error details:", error.message, error.type, error.file);
+          document.getElementById("angler-list").innerHTML = "<li>Error loading anglers. Check console for details.</li>";
         }
       });
     }
