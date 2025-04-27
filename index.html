@@ -90,7 +90,6 @@
       text-align: center;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
-</style>
     .countdown {
       font-size: 1rem;
       font-weight: bold;
@@ -436,7 +435,7 @@
     function loadAnglerList() {
       Papa.parse("2025-MAY.csv", {
         download: true,
-        header: true,
+        header: false,
         complete: function(results) {
           console.log("Parsed CSV:", results.data);
           const data = results.data;
@@ -445,13 +444,13 @@
             console.error("DOM element not found: angler-list");
             return;
           }
-          if (data.length === 0 || !data[0]["Angler's Name"]) {
+          if (data.length === 0) {
             anglerList.innerHTML = "<li>No anglers found.</li>";
             return;
           }
           anglerList.innerHTML = data
-            .filter(row => row["Angler's Name"])
-            .map(row => `<li>${row["Angler's Name"]}</li>`)
+            .filter(row => row[0])
+            .map(row => `<li>${row[0]}</li>`)
             .join("");
         },
         error: function(error) {
