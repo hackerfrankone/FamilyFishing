@@ -337,7 +337,7 @@
     return function() {
       let t = seed += 0x6D2B79F5;
       t = Math.imul(t ^ t >>> 15, t | 1);
-      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+ Roslyn: t ^= t + Math.imul(t ^ t >>> 7, t | 61);
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
@@ -452,29 +452,49 @@
   }
 
   function loadAnglerList() {
-    Papa.parse("2025-MAY.csv", {
+    console.log('Attempting to load angler list from 2025-MAY.csv');
+    const csvFilePath = './2025-MAY.csv'; // Explicitly use relative path
+    Papa.parse(csvFilePath, {
       download: true,
       header: false,
       complete: function(results) {
-        console.log("Parsed CSV:", results.data);
+        console.log('CSV parsed successfully:', results.data);
         const data = results.data;
         const anglerList = document.getElementById("angler-list");
         if (!anglerList) {
-          console.error("DOM element not found: angler-list");
+          console.error('DOM element not found: angler-list');
           return;
         }
-        if (data.length === 0) {
-          anglerList.innerHTML = "<li>No anglers found.</li>";
+        if (data.length === 0 || (data.length === 1 && data[0].length === 0)) {
+          console.warn('CSV is empty or contains no valid data');
+          anglerList.innerHTML = '<li>No anglers found.</li>';
           return;
         }
-        anglerList.innerHTML = data
-          .filter(row => row[0])
+        // Filter out empty rows and map to list items
+        const anglerNames = data
+          .filter(row => row[0] && row[0].trim() !== '')
           .map(row => `<li>${row[0]}</li>`)
-          .join("");
+          .join('');
+        anglerList.innerHTML = anglerNames || '<li>No anglers found.</li>';
+        console.log('Angler list updated with:', anglerNames);
       },
       error: function(error) {
-        console.error("Error parsing CSV:", error);
-        document.getElementById("angler-list").innerHTML = "<li>Error loading anglers.</li>";
+        console.error('Error parsing CSV:', error);
+        const anglerList = document.getElementById("angler-list");
+        if (anglerList) {
+          anglerList.innerHTML = '<li>Error loading anglers. Check console for details.</li>';
+        }
+        // Attempt fallback fetch to diagnose
+        fetch(csvFilePath)
+          .then(response => {
+            if (!response.ok) {
+              console.error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+              throw new Error('CSV file not accessible');
+            }
+            return response.text();
+          })
+          .then(text => console.log('CSV content:', text))
+          .catch(err => console.error('Fallback fetch failed:', err));
       }
     });
   }
