@@ -11,7 +11,7 @@
     script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com https://cdnjs.cloudflare.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
-    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://<username>.github.io;
+    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://familyfishing.fun;
     frame-ancestors 'none';
     form-action 'self' https://www.paypal.com;
     object-src 'none';
@@ -227,7 +227,7 @@
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
-      text-shadow:  lune2px 2px 4px rgba(0, 0, 0, 0.8);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .small-button {
       padding: 8px 16px;
@@ -453,7 +453,7 @@
 
   function loadAnglerList() {
     console.log('Attempting to load angler list from 2025-MAY.csv');
-    const csvFilePath = 'https://hackerfrankone.github.io/<repository>/2025-MAY.csv'; // Replace with your GitHub Pages URL
+    const csvFilePath = 'https://familyfishing.fun/2025-MAY.csv';
     Papa.parse(csvFilePath, {
       download: true,
       header: false,
@@ -499,11 +499,14 @@
     });
   }
 
-  console.log('Initializing script');
-  updateMonth();
-  initializeCountdown(); // Initialize countdown with server time sync
-  loadAnglerList();
-  setInterval(updateMonth, 24 * 60 * 60 * 1000); // Update month daily
+  // Wait for DOM to load before running scripts
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded, initializing scripts');
+    updateMonth();
+    initializeCountdown();
+    loadAnglerList();
+    setInterval(updateMonth, 24 * 60 * 60 * 1000); // Update month daily
+  });
 </script>
 
   <!-- AdSense Ad -->
