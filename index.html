@@ -184,8 +184,8 @@
       list-style: none;
       padding: 0;
       margin: 0;
-      max-height: 300px; /* Limit the height of the list */
-      overflow-y: auto; /* Enable vertical scrolling */
+      max-height: 300px;
+      overflow-y: auto;
     }
     .angler-sidebar ul::-webkit-scrollbar {
       width: 8px;
@@ -495,17 +495,19 @@
     fetch(csvFilePath)
       .then(response => {
         if (!response.ok) {
-          throw new Error('CSV file not accessible');
+          throw new Error(`CSV file not accessible: ${response.status} ${response.statusText}`);
         }
         return response.text();
       })
       .then(text => {
+        console.log('CSV content:', text);
         const anglerList = document.getElementById("angler-list");
         if (!anglerList) {
           console.error('DOM element not found: angler-list');
           return;
         }
         const lines = text.split('\n').filter(line => line.trim() !== '');
+        console.log('Number of lines in CSV:', lines.length);
         if (lines.length === 0) {
           anglerList.innerHTML = '<li>No anglers found.</li>';
           return;
@@ -517,6 +519,7 @@
           })
           .filter(item => item !== null)
           .join('');
+        console.log('Processed angler names:', anglerNames);
         anglerList.innerHTML = anglerNames || '<li>No anglers found.</li>';
       })
       .catch(error => {
