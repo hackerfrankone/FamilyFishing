@@ -6,18 +6,8 @@
 
   <!-- Meta & Security Headers -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Temporarily removed CSP to test angler list loading
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com https://cdnjs.cloudflare.com;
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
-    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://familyfishing.fun https://raw.githubusercontent.com;
-    frame-ancestors 'none';
-    form-action 'self' https://www.paypal.com;
-    object-src 'none';
-    base-uri 'self';
-  ">
+  <!-- CSP removed for debugging
+  <meta http-equiv="Content-Security-Policy" content="...">
   -->
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -460,43 +450,64 @@
     Papa.parse(csvFilePath, {
       download: true,
       header: false,
+      skipEmptyLines: true,
       complete: function(results) {
-        console.log('CSV parsed successfully:', results.data);
+        console.log('Papa Parse results:', results);
+        console.log('Raw data:', results.data);
+        console.log('Errors (if any):', results.errors);
+        console.log('Meta information:', results.meta);
+
         const data = results.data;
         const anglerList = document.getElementById("angler-list");
         if (!anglerList) {
           console.error('DOM element not found: angler-list');
           return;
         }
-        if (data.length === 0 || (data.length === 1 && data[0].length === 0)) {
-          console.warn('CSV is empty or contains no valid data');
+
+        console.log('Processing data:', data);
+
+        if (!data || data.length === 0) {
+          console.warn('No data found in CSV');
           anglerList.innerHTML = '<li>No anglers found.</li>';
           return;
         }
-        // Filter out empty rows and map to list items
+
         const anglerNames = data
-          .filter(row => row[0] && row[0].trim() !== '')
-          .map(row => `<li>${row[0]}</li>`)
+          .map(row => {
+            if (!Array.isArray(row) || row.length === 0) {
+              console.warn('Skipping invalid row:', row);
+              return null;
+            }
+            const name = row[0]?.trim();
+            return name ? `<li>${name}</li>` : null;
+          })
+          .filter(item => item !== null)
           .join('');
-        anglerList.innerHTML = anglerNames || '<li>No anglers found.</li>';
+
+        if (anglerNames.length === 0) {
+          console.warn('No valid angler names found after processing');
+          anglerList.innerHTML = '<li>No anglers found.</li>';
+          return;
+        }
+
+        anglerList.innerHTML = anglerNames;
         console.log('Angler list updated with:', anglerNames);
       },
       error: function(error) {
-        console.error('Error parsing CSV:', error);
+        console.error('Papa Parse error:', error);
         const anglerList = document.getElementById("angler-list");
         if (anglerList) {
-          anglerList.innerHTML = '<li>Failed to load anglers. Please try again later.</li>';
+          anglerList.innerHTML = '<li>Failed to load anglers. Check console for details.</li>';
         }
-        // Attempt fallback fetch to diagnose
         fetch(csvFilePath)
           .then(response => {
             if (!response.ok) {
-              console.error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+              console.error(`Failed to fetch CSV: ${arovidesponse.status} ${response.statusText}`);
               throw new Error('CSV file not accessible');
             }
             return response.text();
           })
-          .then(text => console.log('CSV content:', text))
+          .then(text => console.log('Raw CSV content:', text))
           .catch(err => console.error('Fallback fetch failed:', err));
       }
     });
