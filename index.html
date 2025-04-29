@@ -247,11 +247,20 @@
       background: rgba(0, 0, 0, 0.7);
       padding: 0.3rem 0.6rem;
       border-radius: 4px;
-      display: inline-block;
+      display: block; /* Ensure the title takes full width and centers */
+      text-align: center;
+      margin: 0 auto;
     }
     .leaderboard-container {
       text-align: center;
       margin-top: 2rem;
+    }
+    .leaderboard-container img {
+      display: block; /* Force image to start on a new line */
+      margin: 0 auto; /* Center the image */
+      max-width: 350px;
+      height: auto;
+      border-radius: 8px;
     }
     .angler-name {
       color: yellow;
