@@ -82,26 +82,37 @@
       filter: brightness(150%);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
     }
-    .subtitle {
-      font-size: 1.2rem;
-      max-width: 600px;
-      margin: 1rem auto 0;
-      text-align: center;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    .tournament-info {
+      display: inline-block; /* Background wraps around content */
       background: rgba(0, 0, 0, 0.7);
       padding: 0.5rem 1rem;
       border-radius: 6px;
-      white-space: nowrap; /* Prevent text wrapping */
+      margin: 1rem auto 0;
     }
-    .location {
-      font-size: 1rem;
-      max-width: 600px;
-      margin: 0.5rem auto 0;
-      text-align: center;
+    .tournament-info p {
+      margin: 0; /* Remove default margin between paragraphs */
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      background: rgba(0, 0, 0, 0.7);
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
+      text-align: center;
+    }
+    .tournament-info .main-text {
+      font-size: 1.2rem;
+      white-space: nowrap;
+    }
+    .tournament-info .sub-text {
+      font-size: 1rem;
+      margin-top: 0.3rem; /* Small gap between lines */
+    }
+    @media (max-width: 768px) {
+      .tournament-info {
+        padding: 0.4rem 0.8rem;
+      }
+      .tournament-info .main-text {
+        font-size: 1rem;
+      }
+      .tournament-info .sub-text {
+        font-size: 0.9rem;
+        margin-top: 0.2rem;
+      }
     }
     .countdown {
       font-size: 1rem;
@@ -259,14 +270,6 @@
         bottom: 0.5rem;
         left: 0.5rem;
       }
-      .subtitle {
-        font-size: 1rem; /* Reduce font size on smaller screens */
-        padding: 0.4rem 0.8rem; /* Adjust padding */
-      }
-      .location {
-        font-size: 0.9rem;
-        padding: 0.3rem 0.6rem;
-      }
     }
     .submit-fish-button {
       background-color: #FFA500;
@@ -362,12 +365,14 @@
         Join us on Discord
       </a>
     </div>
-    <p class="subtitle">
-      Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
-    </p>
-    <p class="location">
-      Tennessee Lakes Only
-    </p>
+    <div class="tournament-info">
+      <p class="main-text">
+        Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
+      </p>
+      <p class="sub-text">
+        Tennessee Lakes Only
+      </p>
+    </div>
     <p class="feedback">
       Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a>
     </p>
