@@ -50,11 +50,11 @@
       display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
     }
     .facebook-button img, .youtube-button img {
-      width: 60px; /* Increased from 50px */
-      height: 60px; /* Increased from 50px */
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       transition: filter 0.3s ease;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5); /* Add shaded glow */
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     }
     .facebook-button:hover img, .youtube-button:hover img {
       filter: brightness(150%);
@@ -67,30 +67,41 @@
     }
     .discord-button {
       padding: 10px 16px;
-      font-size: 18px; /* Increased from 16px */
+      font-size: 18px;
       border-radius: 6px;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       color: white;
-      background: linear-gradient(145deg, #1877F2, #145CBB); /* Add gradient for depth */
+      background: linear-gradient(145deg, #1877F2, #145CBB);
       transition: filter 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); /* Add shaded shadow */
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
     .discord-button:hover {
       filter: brightness(150%);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); /* Enhance shadow on hover */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
     }
     .subtitle {
-      font-size: 1.2rem; /* Increased from 1rem */
+      font-size: 1.2rem;
       max-width: 600px;
       margin: 1rem auto 0;
       text-align: center;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      background: rgba(0, 0, 0, 0.7); /* Add shaded background */
-      padding: 0.5rem 1rem; /* Add padding for better spacing */
-      border-radius: 6px; /* Rounded corners */
+      background: rgba(0, 0, 0, 0.7);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      white-space: nowrap; /* Prevent text wrapping */
+    }
+    .location {
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0.5rem auto 0;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
     }
     .countdown {
       font-size: 1rem;
@@ -248,6 +259,14 @@
         bottom: 0.5rem;
         left: 0.5rem;
       }
+      .subtitle {
+        font-size: 1rem; /* Reduce font size on smaller screens */
+        padding: 0.4rem 0.8rem; /* Adjust padding */
+      }
+      .location {
+        font-size: 0.9rem;
+        padding: 0.3rem 0.6rem;
+      }
     }
     .submit-fish-button {
       background-color: #FFA500;
@@ -345,6 +364,9 @@
     </div>
     <p class="subtitle">
       Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
+    </p>
+    <p class="location">
+      Tennessee Lakes Only
     </p>
     <p class="feedback">
       Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a>
