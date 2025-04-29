@@ -96,7 +96,7 @@
       cursor: pointer;
     }
     .discord-button:hover, .donate-button:hover {
-      filter: brightness(150%);
+      filter: brightness(75%);
     }
     .tournament-info {
       display: inline-block;
@@ -383,8 +383,12 @@
       <p class="main-text">
         The longest bass wins $100 Bass Pro Shop gift card!
       </p>
-    </p>Month long kayak tournament
-    </p>More anglers | More payout
+      <p class="main-text">
+        Month long kayak tournament
+      </p>
+      <p class="main-text">
+        More anglers | More payout
+      </p>
       <p class="sub-text">
         Tennessee Lakes Only
       </p>
@@ -475,7 +479,7 @@
       }
       const seed = parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`);
       const randomCode = generateSeededCode(seed, true);
-      const monthElement = document.getId("month");
+      const monthElement = document.getElementById("month");
       const codeElement = document.getElementById("month-code");
       const biggestBassTitle = document.getElementById("biggest-bass-title");
       if (monthElement && codeElement && biggestBassTitle) {
