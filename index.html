@@ -208,7 +208,7 @@
     }
     .identifier-container {
       position: absolute;
-      top: 14rem;
+      top: 15rem; /* Adjusted from 14rem to 15rem */
       left: 1rem;
       z-index: 1000;
     }
@@ -222,7 +222,7 @@
     }
     .angler-sidebar {
       position: fixed;
-      top: 15.5rem;
+      top: 16.5rem; /* Adjusted from 15.5rem to 16.5rem */
       left: 1rem;
       background: rgba(0, 0, 0, 0.6);
       padding: 1rem;
@@ -363,9 +363,8 @@
 <body>
   <!-- Last Month's Winner -->
   <div class="last-month-winner">
-    <div class="leaderboard-title"><strong>Last Month's Winner</strong></div>
+    <div class="leaderboard-title"><strong>Last Month's Winner {angler's Name}</strong></div>
     <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>{Angler's name}</em></p>
   </div>
 
   <!-- Monthly Identifier -->
@@ -532,7 +531,7 @@
       const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
       const timeDiff = target - now;
       const timerElement = document.getElementById("countdown-timer");
-      const countdownElement = document.getElementById("countdown");
+      const countdownElement = document.getId("countdown");
       if (!timerElement || !countdownElement) {
         console.error('DOM element not found: countdown-timer or countdown');
         return;
