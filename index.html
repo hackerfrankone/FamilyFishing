@@ -238,12 +238,28 @@
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
-      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); /* Stronger shadow for better contrast */
-      font-size: 1.3rem; /* Slightly larger font for visibility */
-      background: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background */
-      display: inline-block; /* Background only behind text */
-      padding: 0.3rem 0.6rem; /* Padding for background box */
-      border-radius: 4px; /* Rounded corners for background */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Reverted to original */
+    }
+    .current-leaderboard-title {
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); /* Stronger shadow */
+      font-size: 1.3rem; /* Larger font */
+      background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+      padding: 0.3rem 0.6rem; /* Padding for background */
+      border-radius: 4px; /* Rounded corners */
+      position: absolute; /* Position over image */
+      top: 50%; /* Center vertically */
+      left: 50%; /* Center horizontally */
+      transform: translate(-50%, -50%); /* Adjust for true centering */
+      z-index: 10; /* Ensure text is above image */
+    }
+    .leaderboard-container {
+      position: relative; /* Context for absolute positioning */
+      display: inline-block; /* Fit container to content */
+      text-align: center; /* Center image */
+      margin-top: 2rem;
     }
     .angler-name {
       color: yellow;
@@ -331,8 +347,8 @@
   </div>
 
   <!-- Current Month Leaderboard -->
-  <div style="text-align: center; margin-top: 2rem;">
-    <div class="leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
+  <div class="leaderboard-container">
+    <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 300px; height: auto; border-radius: 8px;">
     <p class="angler-name"><em>Angler's name</em></p>
   </div>
@@ -509,7 +525,7 @@
     <ins class="adsbygoogle" style="display:inline-block;width:300px;height:100px"
       data-ad-client="ca-pub-9237571676231200"
       data-ad-slot="7591272404"></ins>
-    <script>(adsbygoogle = window.adsbygoogle Married to the Mob (adsbygoogle = window.adsbygoogle || []).push({});
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 </body>
 </html>
