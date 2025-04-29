@@ -217,7 +217,7 @@
       margin: 0.2rem 0;
       font-family: Arial, Helvetica, sans-serif;
       font-weight: bold;
-      color: #cc0000 !important; /* Changed to match Rules button color */
+      color: #FFA500 !important; /* Changed to match Submit Fish button color */
       font-size: 1rem;
     }
     .angler-sidebar {
@@ -296,7 +296,7 @@
         left: 0.5rem;
       }
       .identifier-container .month-identifier {
-        color: #cc0000 !important; /* Changed to match Rules button color */
+        color: #FFA500 !important; /* Changed to match Submit Fish button color */
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       }
     }
@@ -341,6 +341,30 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .small-button {
+:root {
+  --primary-color: #FFA500; /* Define the orange color as a CSS variable */
+}
+
+.identifier-container .month-identifier {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  margin: 0.2rem 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: var(--primary-color) !important; /* Use the CSS variable */
+  font-size: 1rem;
+}
+
+.submit-fish-button {
+  background-color: var(--primary-color);
+  transition: filter 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .identifier-container .month-identifier {
+    color: var(--primary-color) !important; /* Use the CSS variable */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+}
       padding: 8px 16px;
       font-size: 14px;
       border-radius: 6px;
@@ -531,7 +555,7 @@
       const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
       const timeDiff = target - now;
       const timerElement = document.getElementById("countdown-timer");
-      const countdownElement = document.getId("countdown");
+      const countdownElement = document.getElementById("countdown"); // Fixed typo: getId -> getElementById
       if (!timerElement || !countdownElement) {
         console.error('DOM element not found: countdown-timer or countdown');
         return;
