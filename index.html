@@ -184,6 +184,22 @@
       list-style: none;
       padding: 0;
       margin: 0;
+      max-height: 300px; /* Limit the height of the list */
+      overflow-y: auto; /* Enable vertical scrolling */
+    }
+    .angler-sidebar ul::-webkit-scrollbar {
+      width: 8px;
+    }
+    .angler-sidebar ul::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+    .angler-sidebar ul::-webkit-scrollbar-thumb {
+      background: yellow;
+      border-radius: 4px;
+    }
+    .angler-sidebar ul::-webkit-scrollbar-thumb:hover {
+      background: #FFD140;
     }
     .angler-sidebar li {
       color: yellow;
@@ -205,7 +221,7 @@
     .month-identifier {
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif; /* Add fallback fonts */
+      font-family: Arial, Helvetica, sans-serif;
     }
     @media (max-width: 768px) {
       .button-group { flex-direction: column; align-items: center; }
@@ -243,7 +259,7 @@
     .current-leaderboard-title {
       color: yellow;
       font-weight: bold;
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       background: rgba(0, 0, 0, 0.7);
       padding: 0.3rem 0.6rem;
@@ -298,8 +314,9 @@
 
   <!-- Last Month's Winner -->
   <div class="last-month-winner">
-    <div class="leaderboard-title"><strong>Last Month's Winner {Angler's Name}</strong></div>
-    <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 200px; height: auto; border-radius: 8px;">
+    <div class="leaderboard-title"><strong>Last Month's Winner</strong></div>
+    <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;">
+    <p class="angler-name"><em>Angler's name</em></p>
   </div>
 
   <!-- Top Section -->
@@ -349,7 +366,7 @@
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>{Angler's name}</em></p>
+    <p class="angler-name"><em>Angler's name</em></p>
   </div>
 
   <!-- Submit Fish and Monthly Identifier -->
@@ -381,7 +398,7 @@
     for (let i = 0; i < 3; i++) {
       code += letters.charAt(Math.floor(random() * letters.length));
     }
-    console.log(`Generated Identifier Code: ${code}`); // Debug output
+    console.log(`Generated Identifier Code: ${code}`);
     return code;
   }
 
@@ -408,7 +425,7 @@
         localStorage.setItem('monthYear', currentMonthYear);
       }
       const seed = parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`);
-      const randomCode = generateSeededCode(seed, true); // Use seeded random for consistency
+      const randomCode = generateSeededCode(seed, true);
       const monthElement = document.getElementById("month");
       const codeElement = document.getElementById("month-code");
       const biggestBassTitle = document.getElementById("biggest-bass-title");
