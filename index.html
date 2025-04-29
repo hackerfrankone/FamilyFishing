@@ -8,10 +8,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com https://cdnjs.cloudflare.com;
+    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
-    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://familyfishing.fun https://*.github.com https://raw.githubusercontent.com;
+    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://*.github.com https://raw.githubusercontent.com;
     frame-ancestors 'none';
     form-action 'self' https://www.paypal.com;
     object-src 'none';
@@ -31,13 +31,6 @@
     gtag('js', new Date());
     gtag('config', 'G-6EBHYE2X44', { 'anonymize_ip': true });
   </script>
-
-  <!-- Papa Parse -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" 
-          integrity="sha512-J2xH0BEsW2n2tSBKwzM4aW35gyDNGz4b3p3rNVWDBb3FoCXmFGMU7hG8cY2bO4mGWmtZ4T2S8oYowHI15T7A==" 
-          crossorigin="anonymous" 
-          referrerpolicy="no-referrer"
-          onerror="console.error('Failed to load Papa Parse script');"></script>
 
   <!-- Favicon -->
   <link rel="icon" href="favicon.jpg" type="image/jpg">
@@ -334,7 +327,6 @@
 
   <!-- Scripts -->
   <script>
-  console.log('Script loaded');
   const monthCodes = ["January", "February", "March", "April", "May", "June",
                       "July", "August", "September", "October", "November", "December"];
 
@@ -359,10 +351,8 @@
 
   async function fetchCurrentTime() {
     try {
-      console.log('Fetching time from worldtimeapi.org');
       const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
       const data = await response.json();
-      console.log('Time fetched:', data.utc_datetime);
       return new Date(data.utc_datetime);
     } catch (error) {
       console.error('Error fetching time, using local time:', error);
@@ -372,7 +362,6 @@
 
   async function updateMonth() {
     try {
-      console.log('Updating month and identifier');
       const today = await fetchCurrentTime();
       const monthNumber = today.getMonth();
       const year = today.getFullYear();
@@ -391,7 +380,6 @@
         monthElement.textContent = monthCode;
         codeElement.textContent = randomCode;
         biggestBassTitle.textContent = `${monthCode}'s Biggest Bass`;
-        console.log('Month, code, and biggest bass title updated:', monthCode, randomCode, `${monthCode}'s Biggest Bass`);
       } else {
         console.error('DOM elements not found: month, month-code, or biggest-bass-title');
       }
@@ -400,24 +388,21 @@
     }
   }
 
-  let serverTimeOffset = 0; // Store offset between server and local time
+  let serverTimeOffset = 0;
 
   async function initializeCountdown() {
     try {
       const serverTime = await fetchCurrentTime();
       serverTimeOffset = serverTime.getTime() - Date.now();
-      console.log('Server time offset initialized:', serverTimeOffset);
       updateCountdown();
     } catch (error) {
       console.error('Error initializing countdown:', error);
-      updateCountdown(); // Proceed with local time
+      updateCountdown();
     }
   }
 
   function updateCountdown() {
     try {
-      console.log('Updating countdown');
-      // Use local time adjusted by server offset
       const now = new Date(Date.now() + serverTimeOffset);
       const year = now.getFullYear();
       const month = now.getMonth();
@@ -430,7 +415,6 @@
         return;
       }
       if (timeDiff <= 0) {
-        console.log('Tournament ended, updating month');
         updateMonth();
         timerElement.textContent = "Tournament ended!";
         countdownElement.classList.remove('countdown-red');
@@ -441,152 +425,61 @@
       const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
       timerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-      console.log('Countdown updated:', timerElement.textContent);
       if (days <= 3) {
         countdownElement.classList.add('countdown-red');
       } else {
         countdownElement.classList.remove('countdown-red');
       }
-      // Schedule next update
       requestAnimationFrame(updateCountdown);
     } catch (error) {
       console.error('Error in updateCountdown:', error);
-      // Schedule next update even on error
       requestAnimationFrame(updateCountdown);
     }
   }
 
   function loadAnglerList() {
-    console.log('Attempting to load angler list from 2025-MAY.csv');
     const csvFilePath = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/2025-MAY.csv';
-    
-    if (typeof Papa !== 'undefined') {
-      console.log('Papa Parse is available, using it to load CSV');
-      Papa.parse(csvFilePath, {
-        download: true,
-        header: false,
-        skipEmptyLines: true,
-        complete: function(results) {
-          console.log('Papa Parse results:', results);
-          console.log('Raw data:', results.data);
-          console.log('Errors (if any):', results.errors);
-          console.log('Meta information:', results.meta);
-
-          const data = results.data;
-          const anglerList = document.getElementById("angler-list");
-          if (!anglerList) {
-            console.error('DOM element not found: angler-list');
-            return;
-          }
-
-          console.log('Processing data:', data);
-
-          if (!data || data.length === 0) {
-            console.warn('No data found in CSV');
-            anglerList.innerHTML = '<li>No anglers found.</li>';
-            return;
-          }
-
-          const anglerNames = data
-            .map(row => {
-              if (!Array.isArray(row) || row.length === 0) {
-                console.warn('Skipping invalid row:', row);
-                return null;
-              }
-              const name = row[0]?.trim();
-              return name ? `<li>${name}</li>` : null;
-            })
-            .filter(item => item !== null)
-            .join('');
-
-          if (anglerNames.length === 0) {
-            console.warn('No valid angler names found after processing');
-            anglerList.innerHTML = '<li>No anglers found.</li>';
-            return;
-          }
-
-          anglerList.innerHTML = anglerNames;
-          console.log('Angler list updated with:', anglerNames);
-        },
-        error: function(error) {
-          console.error('Papa Parse error:', error);
-          const anglerList = document.getElementById("angler-list");
-          if (anglerList) {
-            anglerList.innerHTML = '<li>Failed to load anglers. Check console for details.</li>';
-          }
-          fetch(csvFilePath)
-            .then(response => {
-              if (!response.ok) {
-                console.error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
-                throw new Error('CSV file not accessible');
-              }
-              return response.text();
-            })
-            .then(text => console.log('Fallback - Raw CSV content:', text))
-            .catch(err => console.error('Fallback fetch failed:', err));
+    fetch(csvFilePath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('CSV file not accessible');
+        }
+        return response.text();
+      })
+      .then(text => {
+        const anglerList = document.getElementById("angler-list");
+        if (!anglerList) {
+          console.error('DOM element not found: angler-list');
+          return;
+        }
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        if (lines.length === 0) {
+          anglerList.innerHTML = '<li>No anglers found.</li>';
+          return;
+        }
+        const anglerNames = lines
+          .map(line => {
+            const name = line.split(',')[0]?.trim();
+            return name ? `<li>${name}</li>` : null;
+          })
+          .filter(item => item !== null)
+          .join('');
+        anglerList.innerHTML = anglerNames || '<li>No anglers found.</li>';
+      })
+      .catch(error => {
+        console.error('Error loading angler list:', error);
+        const anglerList = document.getElementById("angler-list");
+        if (anglerList) {
+          anglerList.innerHTML = '<li>Failed to load anglers.</li>';
         }
       });
-    } else {
-      console.warn('Papa Parse not available, falling back to fetch method');
-      fetch(csvFilePath)
-        .then(response => {
-          if (!response.ok) {
-            console.error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
-            throw new Error('CSV file not accessible');
-          }
-          return response.text();
-        })
-        .then(text => {
-          console.log('Raw CSV content:', text);
-          const anglerList = document.getElementById("angler-list");
-          if (!anglerList) {
-            console.error('DOM element not found: angler-list');
-            return;
-          }
-
-          const lines = text.split('\n').filter(line => line.trim() !== '');
-          console.log('CSV lines:', lines);
-
-          if (lines.length === 0) {
-            console.warn('No data found in CSV');
-            anglerList.innerHTML = '<li>No anglers found.</li>';
-            return;
-          }
-
-          const anglerNames = lines
-            .map(line => {
-              const name = line.split(',')[0]?.trim();
-              return name ? `<li>${name}</li>` : null;
-            })
-            .filter(item => item !== null)
-            .join('');
-
-          if (anglerNames.length === 0) {
-            console.warn('No valid angler names found after processing');
-            anglerList.innerHTML = '<li>No anglers found.</li>';
-            return;
-          }
-
-          anglerList.innerHTML = anglerNames;
-          console.log('Angler list updated with:', anglerNames);
-        })
-        .catch(error => {
-          console.error('Error loading CSV with fetch:', error);
-          const anglerList = document.getElementById("angler-list");
-          if (anglerList) {
-            anglerList.innerHTML = '<li>Failed to load anglers. Check console for details.</li>';
-          }
-        });
-    }
   }
 
-  // Wait for DOM to load before running scripts
   document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM fully loaded, initializing scripts');
     updateMonth();
     initializeCountdown();
     loadAnglerList();
-    setInterval(updateMonth, 24 * 60 * 60 * 1000); // Update month daily
+    setInterval(updateMonth, 24 * 60 * 60 * 1000);
   });
 </script>
 
