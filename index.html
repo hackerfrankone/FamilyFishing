@@ -25,7 +25,11 @@
   </script>
 
   <!-- Papa Parse -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" integrity="sha512-rGQS2UcWHr8LhwFr4xW3a1rYkn1Qe3cN9m4f6W6r2hT/I8mG1+pwM6+5nXNRrP6aP5uJjdQ7E2u9yHgwmdz7Xvw==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" 
+          integrity="sha512-J2xH0BEsW2n2tSBKwzM4aW35gyDNGz4b3p3rNVWDBb3FoCXmFGMU7hG8cY2bO4mGWmtZ4T2S8oYowHI15T7A==" 
+          crossorigin="anonymous" 
+          referrerpolicy="no-referrer"
+          onerror="console.error('Failed to load Papa Parse script');"></script>
 
   <!-- Favicon -->
   <link rel="icon" href="favicon.jpg" type="image/jpg">
@@ -447,70 +451,124 @@
     console.log('Attempting to load angler list from 2025-MAY.csv');
     const csvFilePath = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/2025-MAY.csv';
     
-    Papa.parse(csvFilePath, {
-      download: true,
-      header: false,
-      skipEmptyLines: true,
-      complete: function(results) {
-        console.log('Papa Parse results:', results);
-        console.log('Raw data:', results.data);
-        console.log('Errors (if any):', results.errors);
-        console.log('Meta information:', results.meta);
+    if (typeof Papa !== 'undefined') {
+      console.log('Papa Parse is available, using it to load CSV');
+      Papa.parse(csvFilePath, {
+        download: true,
+        header: false,
+        skipEmptyLines: true,
+        complete: function(results) {
+          console.log('Papa Parse results:', results);
+          console.log('Raw data:', results.data);
+          console.log('Errors (if any):', results.errors);
+          console.log('Meta information:', results.meta);
 
-        const data = results.data;
-        const anglerList = document.getElementById("angler-list");
-        if (!anglerList) {
-          console.error('DOM element not found: angler-list');
-          return;
+          const data = results.data;
+          const anglerList = document.getElementById("angler-list");
+          if (!anglerList) {
+            console.error('DOM element not found: angler-list');
+            return;
+          }
+
+          console.log('Processing data:', data);
+
+          if (!data || data.length === 0) {
+            console.warn('No data found in CSV');
+            anglerList.innerHTML = '<li>No anglers found.</li>';
+            return;
+          }
+
+          const anglerNames = data
+            .map(row => {
+              if (!Array.isArray(row) || row.length === 0) {
+                console.warn('Skipping invalid row:', row);
+                return null;
+              }
+              const name = row[0]?.trim();
+              return name ? `<li>${name}</li>` : null;
+            })
+            .filter(item => item !== null)
+            .join('');
+
+          if (anglerNames.length === 0) {
+            console.warn('No valid angler names found after processing');
+            anglerList.innerHTML = '<li>No anglers found.</li>';
+            return;
+          }
+
+          anglerList.innerHTML = anglerNames;
+          console.log('Angler list updated with:', anglerNames);
+        },
+        error: function(error) {
+          console.error('Papa Parse error:', error);
+          const anglerList = document.getElementById("angler-list");
+          if (anglerList) {
+            anglerList.innerHTML = '<li>Failed to load anglers. Check console for details.</li>';
+          }
+          fetch(csvFilePath)
+            .then(response => {
+              if (!response.ok) {
+                console.error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+                throw new Error('CSV file not accessible');
+              }
+              return response.text();
+            })
+            .then(text => console.log('Raw CSV content:', text))
+            .catch(err => console.error('Fallback fetch failed:', err));
         }
+      });
+    } else {
+      console.warn('Papa Parse not available, falling back to fetch method');
+      fetch(csvFilePath)
+        .then(response => {
+          if (!response.ok) {
+            console.error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+            throw new Error('CSV file not accessible');
+          }
+          return response.text();
+        })
+        .then(text => {
+          console.log('Raw CSV content:', text);
+          const anglerList = document.getElementById("angler-list");
+          if (!anglerList) {
+            console.error('DOM element not found: angler-list');
+            return;
+          }
 
-        console.log('Processing data:', data);
+          const lines = text.split('\n').filter(line => line.trim() !== '');
+          console.log('CSV lines:', lines);
 
-        if (!data || data.length === 0) {
-          console.warn('No data found in CSV');
-          anglerList.innerHTML = '<li>No anglers found.</li>';
-          return;
-        }
+          if (lines.length === 0) {
+            console.warn('No data found in CSV');
+            anglerList.innerHTML = '<li>No anglers found.</li>';
+            return;
+          }
 
-        const anglerNames = data
-          .map(row => {
-            if (!Array.isArray(row) || row.length === 0) {
-              console.warn('Skipping invalid row:', row);
-              return null;
-            }
-            const name = row[0]?.trim();
-            return name ? `<li>${name}</li>` : null;
-          })
-          .filter(item => item !== null)
-          .join('');
+          const anglerNames = lines
+            .map(line => {
+              const name = line.split(',')[0]?.trim();
+              return name ? `<li>${name}</li>` : null;
+            })
+            .filter(item => item !== null)
+            .join('');
 
-        if (anglerNames.length === 0) {
-          console.warn('No valid angler names found after processing');
-          anglerList.innerHTML = '<li>No anglers found.</li>';
-          return;
-        }
+          if (anglerNames.length === 0) {
+            console.warn('No valid angler names found after processing');
+            anglerList.innerHTML = '<li>No anglers found.</li>';
+            return;
+          }
 
-        anglerList.innerHTML = anglerNames;
-        console.log('Angler list updated with:', anglerNames);
-      },
-      error: function(error) {
-        console.error('Papa Parse error:', error);
-        const anglerList = document.getElementById("angler-list");
-        if (anglerList) {
-          anglerList.innerHTML = '<li>Failed to load anglers. Check console for details.</li>';
-        }
-        fetch(csvFilePath)
-          .then(response => {
-            if (!response.ok) {
-              console.error(`Failed to fetch CSV: ${arovidesponse.status} ${response.statusText}`);
-              throw new Error('CSV file not accessible');
-            }
-            return response.text();
-          })
-          .then(text => console.log('Raw CSV content:', text))
-          .catch(err => console.error('Fallback fetch failed:', err));
-      }
-    });
+          anglerList.innerHTML = anglerNames;
+          console.log('Angler list updated with:', anglerNames);
+        })
+        .catch(error => {
+          console.error('Error loading CSV with fetch:', error);
+          const anglerList = document.getElementById("angler-list");
+          if (anglerList) {
+            anglerList.innerHTML = '<li>Failed to load anglers. Check console for details.</li>';
+          }
+        });
+    }
   }
 
   // Wait for DOM to load before running scripts
