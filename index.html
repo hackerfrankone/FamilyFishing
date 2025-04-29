@@ -205,6 +205,7 @@
     .month-identifier {
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       margin: 0;
+      font-family: Arial, Helvetica, sans-serif; /* Add fallback fonts */
     }
     @media (max-width: 768px) {
       .button-group { flex-direction: column; align-items: center; }
@@ -247,15 +248,15 @@
       background: rgba(0, 0, 0, 0.7);
       padding: 0.3rem 0.6rem;
       border-radius: 4px;
-      display: inline-block; /* Shrink background to fit the text */
+      display: inline-block;
     }
     .leaderboard-container {
       text-align: center;
       margin-top: 2rem;
     }
     .leaderboard-container img {
-      display: block; /* Force image to start on a new line */
-      margin: 0 auto; /* Center the image */
+      display: block;
+      margin: 0 auto;
       max-width: 350px;
       height: auto;
       border-radius: 8px;
@@ -374,13 +375,14 @@
     };
   }
 
-  function generateSeededCode(seed) {
-    const random = mulberry32(seed);
+  function generateSeededCode(seed, useSeed = true) {
+    const random = useSeed ? mulberry32(seed) : Math.random;
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let code = '';
     for (let i = 0; i < 3; i++) {
       code += letters.charAt(Math.floor(random() * letters.length));
     }
+    console.log(`Generated Identifier Code: ${code}`); // Debug output
     return code;
   }
 
@@ -407,8 +409,8 @@
         localStorage.setItem('monthYear', currentMonthYear);
       }
       const seed = parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`);
-      const randomCode = generateSeededCode(seed);
-      const monthElement = document.getElementWithId("month");
+      const randomCode = generateSeededCode(seed, true); // Use seeded random for consistency
+      const monthElement = document.getElementById("month");
       const codeElement = document.getElementById("month-code");
       const biggestBassTitle = document.getElementById("biggest-bass-title");
       if (monthElement && codeElement && biggestBassTitle) {
@@ -516,7 +518,7 @@
     loadAnglerList();
     setInterval(updateMonth, 24 * 60 * 60 * 1000);
   });
-</script>
+  </script>
 
   <!-- AdSense Ad -->
   <div class="ads">
