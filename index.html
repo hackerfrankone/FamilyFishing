@@ -206,9 +206,23 @@
       height: auto;
       border-radius: 8px;
     }
+    .identifier-container {
+      position: absolute;
+      top: 10rem;
+      left: 1rem;
+      z-index: 1000;
+    }
+    .month-identifier {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin: 0.5rem 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      color: #FFD140;
+      font-size: 1rem;
+    }
     .angler-sidebar {
       position: fixed;
-      top: 15rem;
+      top: 12rem;
       left: 1rem;
       background: rgba(0, 0, 0, 0.6);
       padding: 1rem;
@@ -262,15 +276,10 @@
       gap: 1rem;
       z-index: 9999;
     }
-    .month-identifier {
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-    }
     @media (max-width: 768px) {
       .button-group { flex-direction: column; align-items: center; }
       .countdown { font-size: 0.9rem; }
-      .last-month-winner, .angler-sidebar {
+      .last-month-winner, .angler-sidebar, .identifier-container {
         position: static;
         margin: 1rem auto;
         max-width: 100%;
@@ -348,19 +357,26 @@
   </style>
 </head>
 <body>
+  <!-- Last Month's Winner -->
+  <div class="last-month-winner">
+    <div class="leaderboard-title"><strong>Last Month's Winner</strong></div>
+    <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;">
+    <p class="angler-name"><em>{Angler's name}</em></p>
+  </div>
+
+  <!-- Monthly Identifier -->
+  <div class="identifier-container">
+    <p id="monthly-identifier" class="month-identifier">
+      <span id="month"></span> Identifier: <span id="month-code"></span>
+    </p>
+  </div>
+
   <!-- Angler Sidebar -->
   <div class="angler-sidebar">
     <h3>ANGLERS</h3>
     <ul id="angler-list">
       <li>Loading...</li>
     </ul>
-  </div>
-
-  <!-- Last Month's Winner -->
-  <div class="last-month-winner">
-    <div class="leaderboard-title"><strong>Last Month's Winner</strong></div>
-    <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>{Angler's name}</em></p>
   </div>
 
   <!-- Top Section -->
@@ -422,12 +438,9 @@
     <p class="angler-name"><em>{Angler's name}</em></p>
   </div>
 
-  <!-- Submit Fish and Monthly Identifier -->
+  <!-- Submit Fish -->
   <div class="submit-footer">
     <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-button submit-fish-button">📸 Submit Fish</a>
-    <p id="monthly-identifier" class="month-identifier">
-      <span id="month"></span> Identifier: <span id="month-code"></span>
-    </p>
   </div>
 
   <!-- Scripts -->
@@ -544,8 +557,9 @@
   }
 
   function loadAnglerList() {
-    const csvFilePath = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/angler_list.csv';
-    fetch(csvFilePath)
+    const timestamp = new Date().getTime();
+    const csvFilePath = `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/angler_list.csv?cachebust=${timestamp}`;
+    fetch(csvFilePath, { cache: 'no-store' })
       .then(response => {
         if (!response.ok) {
           throw new Error(`CSV file not accessible: ${response.status} ${response.statusText}`);
