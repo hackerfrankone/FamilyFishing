@@ -50,10 +50,11 @@
       display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
     }
     .facebook-button img, .youtube-button img {
-      width: 50px;
-      height: 50px;
+      width: 60px; /* Increased from 50px */
+      height: 60px; /* Increased from 50px */
       border-radius: 50%;
       transition: filter 0.3s ease;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5); /* Add shaded glow */
     }
     .facebook-button:hover img, .youtube-button:hover img {
       filter: brightness(150%);
@@ -66,25 +67,30 @@
     }
     .discord-button {
       padding: 10px 16px;
-      font-size: 16px;
+      font-size: 18px; /* Increased from 16px */
       border-radius: 6px;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       color: white;
-      background-color: #1877F2;
-      transition: filter 0.3s ease;
+      background: linear-gradient(145deg, #1877F2, #145CBB); /* Add gradient for depth */
+      transition: filter 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); /* Add shaded shadow */
     }
     .discord-button:hover {
       filter: brightness(150%);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); /* Enhance shadow on hover */
     }
     .subtitle {
-      font-size: 1rem;
+      font-size: 1.2rem; /* Increased from 1rem */
       max-width: 600px;
       margin: 1rem auto 0;
       text-align: center;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.7); /* Add shaded background */
+      padding: 0.5rem 1rem; /* Add padding for better spacing */
+      border-radius: 6px; /* Rounded corners */
     }
     .countdown {
       font-size: 1rem;
@@ -316,7 +322,7 @@
   <div class="last-month-winner">
     <div class="leaderboard-title"><strong>Last Month's Winner</strong></div>
     <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>{Angler's name}</em></p>
+    <p class="angler-name"><em>Angler's name</em></p>
   </div>
 
   <!-- Top Section -->
@@ -366,7 +372,7 @@
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>{Angler's name}</em></p>
+    <p class="angler-name"><em>Angler's name</em></p>
   </div>
 
   <!-- Submit Fish and Monthly Identifier -->
