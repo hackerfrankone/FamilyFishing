@@ -11,7 +11,7 @@
     script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com https://cdnjs.cloudflare.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
-    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://familyfishing.fun https://*.github.com;
+    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://familyfishing.fun https://*.github.com https://raw.githubusercontent.com;
     frame-ancestors 'none';
     form-action 'self' https://www.paypal.com;
     object-src 'none';
@@ -278,6 +278,7 @@
   <div class="top-bar">
     <div class="social-buttons">
       <form action="https://www.paypal.com/donate" method="post" target="_blank" rel="noopener">
+        <input type="hidden" name="marketplace" value="US" />
         <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
         <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Donate to Family Fishing Fun" />
       </form>
