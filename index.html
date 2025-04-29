@@ -11,7 +11,7 @@
     script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com https://cdnjs.cloudflare.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
-    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://familyfishing.fun;
+    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://familyfishing.fun https://raw.githubusercontent.com;
     frame-ancestors 'none';
     form-action 'self' https://www.paypal.com;
     object-src 'none';
@@ -453,7 +453,8 @@
 
   function loadAnglerList() {
     console.log('Attempting to load angler list from 2025-MAY.csv');
-    const csvFilePath = 'https://familyfishing.fun/2025-MAY.csv';
+    const csvFilePath = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/2025-MAY.csv';
+    
     Papa.parse(csvFilePath, {
       download: true,
       header: false,
@@ -482,7 +483,7 @@
         console.error('Error parsing CSV:', error);
         const anglerList = document.getElementById("angler-list");
         if (anglerList) {
-          anglerList.innerHTML = '<li>Error loading anglers. Check console for details.</li>';
+          anglerList.innerHTML = '<li>Failed to load anglers. Please try again later.</li>';
         }
         // Attempt fallback fetch to diagnose
         fetch(csvFilePath)
