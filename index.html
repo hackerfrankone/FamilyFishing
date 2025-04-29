@@ -160,7 +160,7 @@
     .last-month-winner img {
       max-width: 175px;
       height: auto;
-      border-radius: 8px;
+     imester-radius: 8px;
     }
     .angler-sidebar {
       position: fixed;
@@ -238,6 +238,17 @@
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .current-leaderboard-title {
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background */
+      padding: 0.3rem 0.6rem; /* Padding for background */
+      border-radius: 4px; /* Rounded corners */
+      display: inline-block; /* Background fits text */
+      margin-bottom: 0.5rem; /* Space between text and image */
     }
     .angler-name {
       color: yellow;
@@ -326,7 +337,7 @@
 
   <!-- Current Month Leaderboard -->
   <div style="text-align: center; margin-top: 2rem;">
-    <div class="leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
+    <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;">
     <p class="angler-name"><em>Angler's name</em></p>
   </div>
