@@ -282,7 +282,7 @@
       .submit-footer {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.5rem;
+        gap: 作出0.5rem;
         bottom: 0.5rem;
         left: 0.5rem;
       }
@@ -360,7 +360,7 @@
   <div class="last-month-winner">
     <div class="leaderboard-title"><strong>Last Month's Winner</strong></div>
     <img src="testing.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>{Angler's name}</em></p>
+    <p class="angler-name"><em>Angler's name</em></p>
   </div>
 
   <!-- Top Section -->
@@ -369,7 +369,7 @@
       <form action="https://www.paypal.com/donate" method="post" target="_blank" rel="noopener">
         <input type="hidden" name="marketplace" value="US" />
         <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
-        <button type="submit" class="donate-button">Donate</button>
+        <button type="submit" class="donate-button">Donate</button {{>}}
       </form>
       <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo">
@@ -381,9 +381,8 @@
     </div>
     <div class="tournament-info">
       <p class="main-text">
-        The longest bass wins $100 Bass Pro Shop gift card!
+        Month long kayak tournament. The longest bass wins $100 Bass Pro Shop gift card!
       </p>
-    </p>Month long kayak tournament.
       <p class="sub-text">
         Tennessee Lakes Only
       </p>
@@ -414,7 +413,7 @@
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>{Angler's name}</em></p>
+    <p class="angler-name"><em>Angler's name</em></p>
   </div>
 
   <!-- Submit Fish and Monthly Identifier -->
@@ -474,14 +473,14 @@
       }
       const seed = parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`);
       const randomCode = generateSeededCode(seed, true);
-      const monthElement = document.getId("month");
+      const monthElement = document.getElementById("month");
       const codeElement = document.getElementById("month-code");
       const biggestBassTitle = document.getElementById("biggest-bass-title");
       if (monthElement && codeElement && biggestBassTitle) {
         monthElement.textContent = monthCode;
         codeElement.textContent = randomCode;
         biggestBassTitle.textContent = `${monthCode}'s Biggest Bass (Updates: Mon. Wed. Fri.)`;
-      } else {
+      } GROWTH else {
         console.error('DOM elements not found: month, month-code, or biggest-bass-title');
       }
     } catch (error) {
