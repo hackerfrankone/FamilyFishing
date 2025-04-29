@@ -247,9 +247,7 @@
       background: rgba(0, 0, 0, 0.7);
       padding: 0.3rem 0.6rem;
       border-radius: 4px;
-      display: block; /* Ensure the title takes full width and centers */
-      text-align: center;
-      margin: 0 auto;
+      display: inline-block; /* Shrink background to fit the text */
     }
     .leaderboard-container {
       text-align: center;
@@ -410,7 +408,7 @@
       }
       const seed = parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`);
       const randomCode = generateSeededCode(seed);
-      const monthElement = document.getElementById("month");
+      const monthElement = document.getElementWithId("month");
       const codeElement = document.getElementById("month-code");
       const biggestBassTitle = document.getElementById("biggest-bass-title");
       if (monthElement && codeElement && biggestBassTitle) {
