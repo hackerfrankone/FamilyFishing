@@ -1,1 +1,131 @@
 
+// functions/paypal-ipn.js
+const fetch = require('node-fetch');
+const querystring = require('querystring');
+
+exports.handler = async (event) => {
+  try {
+    // Only allow POST requests
+    if (event.httpMethod !== 'POST') {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: 'Method Not Allowed' }),
+      };
+    }
+
+    // Parse the IPN message
+    const ipnData = querystring.parse(event.body);
+    console.log('Received IPN:', ipnData);
+
+    // Verify the IPN with PayPal
+    const verificationUrl = 'https://www.paypal.com/cgi-bin/webscr';
+    const verificationBody = `cmd=_notify-validate&${event.body}`;
+    const response = await fetch(verificationUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: verificationBody,
+    });
+    const verificationResult = await response.text();
+
+    if (verificationResult !== 'VERIFIED') {
+      console.error('IPN verification failed:', verificationResult);
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid IPN' }),
+      };
+    }
+
+    // Check if payment is completed
+    if (ipnData.payment_status !== 'Completed') {
+      console.log('Payment not completed:', ipnData.payment_status);
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ message: 'Payment not completed' }),
+      };
+    }
+
+    // Extract buyer's name
+    const buyerName = `${ipnData.payer_first_name} ${ipnData.payer_last_name}`.trim();
+    if (!buyerName) {
+      console.error('No buyer name found in IPN data');
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'No buyer name provided' }),
+      };
+    }
+
+    // Update GitHub angler list
+    const updateResult = await updateGitHubAnglerList(buyerName);
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Angler added successfully', result: updateResult }),
+    };
+  } catch (error) {
+    console.error('Error processing IPN:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Internal Server Error' }),
+    };
+  }
+};
+
+async function updateGitHubAnglerList(buyerName) {
+  const githubToken = process.env.GITHUB_TOKEN; // Loaded from Netlify environment variables
+  const repoOwner = 'hackerfrankone';
+  const repoName = 'FamilyFishing';
+  const filePath = 'angler_list.csv';
+  const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+  try {
+    // Get the current file content
+    const getResponse = await fetch(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
+    const fileData = await getResponse.json();
+
+    if (!getResponse.ok) {
+      throw new Error(`Failed to fetch file: ${fileData.message}`);
+    }
+
+    // Decode the current content (base64)
+    const currentContent = Buffer.from(fileData.content, 'base64').toString('utf-8');
+    console.log('Current CSV content:', currentContent);
+
+    // Append the new name (avoid duplicates)
+    const lines = currentContent.split('\n').filter(line => line.trim());
+    if (lines.includes(buyerName)) {
+      return { success: false, message: 'Angler already exists' };
+    }
+    const newContent = `${currentContent.trim()}\n${buyerName}`;
+    const newContentBase64 = Buffer.from(newContent).toString('base64');
+
+    // Update the file
+    const updateResponse = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: `Add angler ${buyerName} to angler_list.csv`,
+        content: newContentBase64,
+        sha: fileData.sha, // Required for updates
+        branch: 'main',
+      }),
+    });
+    const updateResult = await updateResponse.json();
+
+    if (!updateResponse.ok) {
+      throw new Error(`Failed to update file: ${updateResult.message}`);
+    }
+
+    return { success: true, message: 'Angler added successfully' };
+  } catch (error) {
+    console.error('Error updating GitHub file:', error);
+    throw error;
+  }
+}
