@@ -56,7 +56,7 @@
       border-radius: 50%;
       transition: filter 0.3s ease;
     }
-    .facebook-button:hover img, .youtube-button:hover img {
+    .facebook-button:hover img, .youtube-button img {
       filter: brightness(150%);
     }
     .social-buttons form input[type="image"] {
@@ -238,7 +238,7 @@
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Reverted to original */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Original styling */
     }
     .current-leaderboard-title {
       color: yellow;
@@ -249,16 +249,11 @@
       background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
       padding: 0.3rem 0.6rem; /* Padding for background */
       border-radius: 4px; /* Rounded corners */
-      position: absolute; /* Position over image */
-      top: 50%; /* Center vertically */
-      left: 50%; /* Center horizontally */
-      transform: translate(-50%, -50%); /* Adjust for true centering */
-      z-index: 10; /* Ensure text is above image */
+      display: inline-block; /* Background fits text */
+      margin-bottom: 0.5rem; /* Space between text and image */
     }
     .leaderboard-container {
-      position: relative; /* Context for absolute positioning */
-      display: inline-block; /* Fit container to content */
-      text-align: center; /* Center image */
+      text-align: center; /* Center content */
       margin-top: 2rem;
     }
     .angler-name {
@@ -496,7 +491,7 @@
         const anglerNames = lines
           .map(line => {
             const name = line.split(',')[0]?.trim();
-            return name ? `<li>${name}</li>` : null;
+            return nameinstrument_name ? `<li>${name}</li>` : null;
           })
           .filter(item => item !== null)
           .join('');
