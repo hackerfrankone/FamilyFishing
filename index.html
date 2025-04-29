@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
-
   <!-- Meta & Security Headers -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
@@ -56,7 +55,7 @@
       border-radius: 50%;
       transition: filter 0.3s ease;
     }
-    .facebook-button:hover img, .youtube-button img {
+    .facebook-button:hover img, .youtube-button:hover img {
       filter: brightness(150%);
     }
     .social-buttons form input[type="image"] {
@@ -238,23 +237,7 @@
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Original styling */
-    }
-    .current-leaderboard-title {
-      color: yellow;
-      font-weight: bold;
-      font-family: 'Arial', sans-serif;
-      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); /* Stronger shadow */
-      font-size: 1.3rem; /* Larger font */
-      background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-      padding: 0.3rem 0.6rem; /* Padding for background */
-      border-radius: 4px; /* Rounded corners */
-      display: inline-block; /* Background fits text */
-      margin-bottom: 0.5rem; /* Space between text and image */
-    }
-    .leaderboard-container {
-      text-align: center; /* Center content */
-      margin-top: 2rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .angler-name {
       color: yellow;
@@ -342,9 +325,9 @@
   </div>
 
   <!-- Current Month Leaderboard -->
-  <div class="leaderboard-container">
-    <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
-    <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 300px; height: auto; border-radius: 8px;">
+  <div style="text-align: center; margin-top: 2rem;">
+    <div class="leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
+    <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;">
     <p class="angler-name"><em>Angler's name</em></p>
   </div>
 
@@ -491,7 +474,7 @@
         const anglerNames = lines
           .map(line => {
             const name = line.split(',')[0]?.trim();
-            return nameinstrument_name ? `<li>${name}</li>` : null;
+            return name ? `<li>${name}</li>` : null;
           })
           .filter(item => item !== null)
           .join('');
