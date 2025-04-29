@@ -244,10 +244,14 @@
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      background: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background */
-      padding: 0.3rem 0.6rem; /* Padding for background */
-      border-radius: 4px; /* Rounded corners */
-      display: inline-block; /* Background fits text */
+      background: rgba(0, 0, 0, 0.7);
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .leaderboard-container {
+      text-align: center;
+      margin-top: 2rem;
     }
     .angler-name {
       color: yellow;
@@ -335,7 +339,7 @@
   </div>
 
   <!-- Current Month Leaderboard -->
-  <div style="text-align: center; margin-top: 2rem;">
+  <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img src="testing.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;">
     <p class="angler-name"><em>Angler's name</em></p>
@@ -398,7 +402,7 @@
       const seed = parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`);
       const randomCode = generateSeededCode(seed);
       const monthElement = document.getElementById("month");
-      const codeElement = document.getId("month-code");
+      const codeElement = document.getElementById("month-code");
       const biggestBassTitle = document.getElementById("biggest-bass-title");
       if (monthElement && codeElement && biggestBassTitle) {
         monthElement.textContent = monthCode;
