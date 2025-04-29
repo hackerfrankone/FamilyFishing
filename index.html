@@ -208,21 +208,21 @@
     }
     .identifier-container {
       position: absolute;
-      top: 10rem;
+      top: 9.5rem;
       left: 1rem;
       z-index: 1000;
     }
-    .month-identifier {
+    .identifier-container .month-identifier {
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      margin: 0.5rem 0;
+      margin: 0.2rem 0;
       font-family: Arial, Helvetica, sans-serif;
       font-weight: bold;
-      color: #FFD140;
+      color: #FFD140 !important;
       font-size: 1rem;
     }
     .angler-sidebar {
       position: fixed;
-      top: 12rem;
+      top: 11rem;
       left: 1rem;
       background: rgba(0, 0, 0, 0.6);
       padding: 1rem;
@@ -294,6 +294,10 @@
         gap: 0.5rem;
         bottom: 0.5rem;
         left: 0.5rem;
+      }
+      .identifier-container .month-identifier {
+        color: #FFD140 !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       }
     }
     .submit-fish-button {
