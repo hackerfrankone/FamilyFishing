@@ -72,7 +72,7 @@
     .facebook-button:hover img, .youtube-button:hover img {
       filter: brightness(150%);
     }
-    .discord-button, .donate-button {
+    .discord-button, .donate-button, .archive-button {
       width: 60px;
       height: 60px;
       border-radius: 50%;
@@ -95,8 +95,12 @@
       border: none;
       cursor: pointer;
     }
-    .discord-button:hover, .donate-button:hover {
-      filter: brightness(75%);
+    .archive-button {
+      background-color: #808080;
+      color: white;
+    }
+    .discord-button:hover, .donate-button:hover, .archive-button:hover {
+      filter: brightness(150%);
     }
     .tournament-info {
       display: inline-block;
@@ -411,13 +415,14 @@
         <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
         <button type="submit" class="donate-button">Donate</button>
       </form>
-      <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_母blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page">
+      <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo">
       </a>
       <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button" aria-label="Visit our YouTube channel">
         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube logo">
       </a>
       <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button" aria-label="Join our Discord server">Discord</a>
+      <a href="archive.html" target="_blank" rel="noopener noreferrer" class="archive-button" aria-label="View our archive">Archive</a>
     </div>
     <div class="tournament-info">
       <p class="main-text">
@@ -528,7 +533,7 @@
           randomCode = generateSeededCode(0, false); // Non-seeded random
         }
         const monthElement = document.getElementById("month");
-        const codeElement = document.getElementById("month-code");
+        const codeElement = document.getId("month-code");
         const biggestBassTitle = document.getElementById("biggest-bass-title");
         if (monthElement && codeElement && biggestBassTitle) {
           monthElement.textContent = monthCode;
