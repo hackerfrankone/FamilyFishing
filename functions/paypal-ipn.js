@@ -2,7 +2,6 @@ const fetch = require("node-fetch");
 const qs = require("querystring");
 const { Octokit } = require("@octokit/rest");
 
-// GitHub token for authentication (set this in Netlify environment variables)
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 exports.handler = async (event, context) => {
@@ -43,27 +42,42 @@ exports.handler = async (event, context) => {
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
     const owner = "hackerfrankone";
     const repo = "FamilyFishing";
-    const path = "angler_list.csv";
+    const path = "angler_list.csv"; // Double-check this path
 
-    // Get the current content of angler_list.csv
-    const { data: fileData } = await octokit.repos.getContent({
-      owner,
-      repo,
-      path,
-    });
+    let newContent;
+    let fileSha;
 
-    const currentContent = Buffer.from(fileData.content, "base64").toString("utf-8");
-    const newContent = currentContent.trim() + `\n${firstName}`;
+    try {
+      // Try to fetch the current content of angler_list.csv
+      const { data: fileData } = await octokit.repos.getContent({
+        owner,
+        repo,
+        path,
+      });
+
+      fileSha = fileData.sha;
+      const currentContent = Buffer.from(fileData.content, "base64").toString("utf-8");
+      newContent = currentContent.trim() + `\n${firstName}`;
+    } catch (error) {
+      if (error.status === 404) {
+        // If the file doesn't exist, create it with the first name
+        console.log("angler_list.csv not found, creating new file...");
+        newContent = firstName;
+      } else {
+        throw error; // Rethrow other errors
+      }
+    }
+
     const newContentBase64 = Buffer.from(newContent).toString("base64");
 
-    // Update the file
+    // Update or create the file
     await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
       path,
       message: `Add ${firstName} to angler_list.csv`,
       content: newContentBase64,
-      sha: fileData.sha,
+      sha: fileSha, // Will be undefined if the file is being created
     });
 
     console.log(`Successfully added ${firstName} to angler_list.csv`);
