@@ -1,1 +1,2 @@
-/netlify/functions/paypal-ipn.js
+[build]
+  functions = "netlify/functions"
