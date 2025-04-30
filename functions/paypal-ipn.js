@@ -5,7 +5,6 @@ const querystring = require('querystring');
 exports.handler = async (event) => {
   try {
     if (event.httpMethod !== 'POST') {
-      console.log('Invalid method:', event.httpMethod);
       return {
         statusCode: 405,
         body: JSON.stringify({ error: 'Method Not Allowed' }),
@@ -13,29 +12,27 @@ exports.handler = async (event) => {
     }
 
     const ipnData = querystring.parse(event.body);
-    console.log('Received IPN:', ipnData);
-
-    const verificationUrl = 'https://www.paypal.com/cgi-bin/webscr';
+    const verificationUrl = 'https://ipnpb.paypal.com/cgi-bin/webscr'; // More reliable IPN endpoint
     const verificationBody = `cmd=_notify-validate&${event.body}`;
-    const response = await fetch(verificationUrl, {
+
+    const verificationRes = await fetch(verificationUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: verificationBody,
     });
-    const verificationResult = await response.text();
-    console.log('Verification result:', verificationResult);
 
-    if (verificationResult !== 'VERIFIED') {
-      console.error('IPN verification failed:', verificationResult);
+    const verificationText = await verificationRes.text();
+
+    if (verificationText !== 'VERIFIED') {
+      console.error('PayPal IPN NOT verified:', verificationText);
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Invalid IPN' }),
       };
     }
 
-    console.log('Payment status:', ipnData.payment_status);
     if (ipnData.payment_status !== 'Completed') {
-      console.log('Payment not completed:', ipnData.payment_status);
+      console.log(`Payment status: ${ipnData.payment_status}`);
       return {
         statusCode: 200,
         body: JSON.stringify({ message: 'Payment not completed' }),
@@ -43,23 +40,21 @@ exports.handler = async (event) => {
     }
 
     const buyerName = `${ipnData.payer_first_name} ${ipnData.payer_last_name}`.trim();
-    console.log('Extracted buyer name:', buyerName);
     if (!buyerName) {
-      console.error('No buyer name found in IPN data');
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'No buyer name provided' }),
+        body: JSON.stringify({ error: 'Missing buyer name' }),
       };
     }
 
-    const updateResult = await updateGitHubAnglerList(buyerName);
-    console.log('GitHub update result:', updateResult);
+    const result = await updateGitHubAnglerList(buyerName);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Angler added successfully', result: updateResult }),
+      body: JSON.stringify(result),
     };
-  } catch (error) {
-    console.error('Error processing IPN:', error);
+
+  } catch (err) {
+    console.error('Unexpected error:', err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Internal Server Error' }),
@@ -69,60 +64,58 @@ exports.handler = async (event) => {
 
 async function updateGitHubAnglerList(buyerName) {
   const githubToken = process.env.GITHUB_TOKEN;
-  console.log('GitHub token present:', !!githubToken);
   const repoOwner = 'hackerfrankone';
   const repoName = 'FamilyFishing';
   const filePath = 'angler_list.csv';
   const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
 
+  const headers = {
+    Authorization: `Bearer ${githubToken}`,
+    Accept: 'application/vnd.github.v3+json',
+  };
+
   try {
-    const getResponse = await fetch(apiUrl, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        Accept: 'application/vnd.github.v3+json',
-      },
-    });
-    const fileData = await getResponse.json();
-    console.log('GitHub file data:', fileData);
-    if (!getResponse.ok) {
-      throw new Error(`Failed to fetch file: ${fileData.message}`);
+    const getRes = await fetch(apiUrl, { headers });
+    const fileData = await getRes.json();
+
+    if (!getRes.ok) {
+      throw new Error(`GitHub fetch error: ${fileData.message}`);
     }
 
     const currentContent = Buffer.from(fileData.content, 'base64').toString('utf-8');
-    console.log('Current CSV content:', currentContent);
+    const names = currentContent.split('\n').map(line => line.trim()).filter(Boolean);
 
-    const lines = currentContent.split('\n').filter(line => line.trim());
-    console.log('Checking for duplicate:', lines.includes(buyerName));
-    if (lines.includes(buyerName)) {
+    if (names.includes(buyerName)) {
       return { success: false, message: 'Angler already exists' };
     }
-    const newContent = `${currentContent.trim()}\n${buyerName}`;
-    const newContentBase64 = Buffer.from(newContent).toString('base64');
-    console.log('New CSV content:', newContent);
 
-    const updateResponse = await fetch(apiUrl, {
+    const updatedContent = [...names, buyerName].join('\n');
+    const newBase64 = Buffer.from(updatedContent, 'utf-8').toString('base64');
+
+    const putRes = await fetch(apiUrl, {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${githubToken}`,
-        Accept: 'application/vnd.github.v3+json',
+        ...headers,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message: `Add angler ${buyerName} to angler_list.csv`,
-        content: newContentBase64,
+        message: `Add angler: ${buyerName}`,
+        content: newBase64,
         sha: fileData.sha,
         branch: 'main',
       }),
     });
-    const updateResult = await updateResponse.json();
-    console.log('GitHub update response:', updateResult);
-    if (!updateResponse.ok) {
-      throw new Error(`Failed to update file: ${updateResult.message}`);
+
+    const result = await putRes.json();
+
+    if (!putRes.ok) {
+      throw new Error(`GitHub update error: ${result.message}`);
     }
 
     return { success: true, message: 'Angler added successfully' };
-  } catch (error) {
-    console.error('Error updating GitHub file:', error);
-    throw error;
+
+  } catch (err) {
+    console.error('GitHub update failed:', err);
+    throw err;
   }
 }
