@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "node-fetch": "^2.6.12",
-    "@octokit/rest": "^20.1.1"
-  }
-}
