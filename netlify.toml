@@ -1,2 +1,1 @@
-[functions]
-directory = "netlify/functions"
+/netlify/functions/paypal-ipn.js
