@@ -217,7 +217,7 @@
       margin: 0.2rem 0;
       font-family: Arial, Helvetica, sans-serif;
       font-weight: bold;
-      color: #FFA500 !important; /* Changed to match Submit Fish button color */
+      color: #FFA500 !important;
       font-size: 1rem;
     }
     .angler-sidebar {
@@ -296,7 +296,7 @@
         left: 0.5rem;
       }
       .identifier-container .month-identifier {
-        color: #FFA500 !important; /* Changed to match Submit Fish button color */
+        color: #FFA500 !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       }
     }
@@ -346,14 +346,14 @@
       border-radius: 6px;
     }
     :root {
-      --primary-color: #FFA500; /* Define the orange color as a CSS variable */
+      --primary-color: #FFA500;
     }
     .identifier-container .month-identifier {
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       margin: 0.2rem 0;
       font-family: Arial, Helvetica, sans-serif;
       font-weight: bold;
-      color: var(--primary-color) !important; /* Use the CSS variable */
+      color: var(--primary-color) !important;
       font-size: 1rem;
     }
     .submit-fish-button {
@@ -362,7 +362,7 @@
     }
     @media (max-width: 768px) {
       .identifier-container .month-identifier {
-        color: var(--primary-color) !important; /* Use the CSS variable */
+        color: var(--primary-color) !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       }
     }
@@ -411,7 +411,7 @@
         <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
         <button type="submit" class="donate-button">Donate</button>
       </form>
-      <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page">
+      <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_母blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo">
       </a>
       <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button" aria-label="Visit our YouTube channel">
@@ -447,7 +447,6 @@
   <div class="button-group">
     <a href="Rules.pdf" target="_blank" rel="noopener" class="submit-button small-button rules-button">📄 Rules</a>
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
-      <input type="hidden" name="notify_url" value="https://zingy-genie-a693a9.netlify.app/.netlify/functions/paypal-ipn" />
       <input type="hidden" name="custom" value="tournament-join" />
       <input type="submit" value="Join Tournament $20" class="paypal-button" />
       <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" />
