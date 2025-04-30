@@ -1,4 +1,3 @@
 [build]
-  command = "npm install && echo 'No build command needed'"
   publish = "."
   functions = "functions"
