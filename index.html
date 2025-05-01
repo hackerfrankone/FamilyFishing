@@ -288,10 +288,30 @@
       gap: 1rem;
       z-index: 9999;
     }
+    .admin-section {
+      position: fixed;
+      bottom: 5rem;
+      left: 1rem;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1rem;
+      border-radius: 8px;
+      z-index: 9999;
+    }
+    .admin-section input, .admin-section button {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: none;
+    }
+    .admin-section button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
     @media (max-width: 768px) {
       .button-group { flex-direction: column; align-items: center; }
       .countdown { font-size: 0.9rem; }
-      .last-month-winner, .angler-sidebar, .identifier-container {
+      .last-month-winner, .angler-sidebar, .identifier-container, .admin-section {
         position: static;
         margin: 1rem auto;
         max-width: 100%;
@@ -415,6 +435,13 @@
     </ul>
   </div>
 
+  <!-- Admin Section for Setting Current Winner -->
+  <div class="admin-section">
+    <input type="text" id="current-winner" placeholder="Enter current winner (e.g., Frank)">
+    <button onclick="setCurrentWinner()">Set Winner</button>
+    <p id="admin-message"></p>
+  </div>
+
   <!-- Top Section -->
   <div class="top-bar">
     <div class="social-buttons">
@@ -474,7 +501,7 @@
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em>John Doe</em></p>
+    <p class="angler-name"><em id="current-winner-name">John Doe</em></p>
   </div>
 
   <!-- Submit Fish -->
@@ -518,6 +545,61 @@
       }
     }
 
+    // Function to set the current winner (for admin use)
+    function setCurrentWinner() {
+      const winnerInput = document.getElementById('current-winner').value.trim();
+      if (winnerInput) {
+        const today = new Date();
+        const monthNumber = today.getMonth();
+        const year = today.getFullYear();
+        const monthCode = monthCodes[monthNumber];
+        const currentMonthYear = `${monthCode} ${year}`;
+        localStorage.setItem('currentWinner', JSON.stringify({ month: currentMonthYear, angler: winnerInput }));
+        document.getElementById('current-winner-name').textContent = winnerInput;
+        document.getElementById('admin-message').textContent = `Set ${winnerInput} as winner for ${currentMonthYear}`;
+      } else {
+        document.getElementById('admin-message').textContent = 'Please enter a winner name.';
+      }
+    }
+
+    // Function to check if the previous month's winner needs to be archived
+    async function checkAndArchivePreviousWinner(today, monthNumber, year) {
+      const lastMonthDate = new Date(year, monthNumber - 1, 1);
+      const lastMonthCode = monthCodes[lastMonthDate.getMonth()];
+      const lastMonthYear = lastMonthDate.getFullYear();
+      const lastMonth = `${lastMonthCode} ${lastMonthYear}`;
+      const currentWinnerData = JSON.parse(localStorage.getItem('currentWinner') || '{}');
+      const storedMonthYear = localStorage.getItem('monthYear');
+
+      // Check if the month has changed
+      if (storedMonthYear !== `${year}-${monthNumber}` && currentWinnerData.month === lastMonth) {
+        const winner = currentWinnerData.angler;
+        // Fetch the current archive.json
+        let archiveData = [];
+        try {
+          const response = await fetch('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json', { cache: 'no-store' });
+          if (response.ok) {
+            archiveData = await response.json();
+          }
+        } catch (error) {
+          console.error('Error fetching archive.json for update:', error);
+        }
+
+        // Check if the last month is already in the archive
+        const lastMonthEntry = archiveData.find(item => item.month === lastMonth);
+        if (!lastMonthEntry) {
+          // Add the last month's winner to the archive
+          archiveData.push({ month: lastMonth, angler: winner });
+          // Generate a GitHub commit URL (you'll need to manually commit this for now)
+          const newArchiveContent = JSON.stringify(archiveData, null, 2);
+          const encodedContent = encodeURIComponent(newArchiveContent);
+          const commitMessage = encodeURIComponent(`Add ${lastMonth} winner to archive.json`);
+          const commitUrl = `https://github.com/hackerfrankone/FamilyFishing/edit/main/images/archive/archive.json?message=${commitMessage}&value=${encodedContent}`;
+          document.getElementById('admin-message').innerHTML = `Month changed! Please update archive.json with last month's winner (${winner} for ${lastMonth}). <a href="${commitUrl}" target="_blank">Click here to commit changes</a>`;
+        }
+      }
+    }
+
     async function updateMonth() {
       try {
         const today = await fetchCurrentTime();
@@ -528,6 +610,7 @@
         const storedMonthYear = localStorage.getItem('monthYear');
         if (storedMonthYear !== currentMonthYear) {
           localStorage.setItem('monthYear', currentMonthYear);
+          await checkAndArchivePreviousWinner(today, monthNumber, year);
         }
         let randomCode;
         if (year === 2025 && monthNumber === 3) {
@@ -566,6 +649,12 @@
           }
         } catch (error) {
           console.error('Error fetching archive.json:', error.message, 'URL:', 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
+        }
+
+        // Update current winner name from localStorage
+        const currentWinnerData = JSON.parse(localStorage.getItem('currentWinner') || '{}');
+        if (currentWinnerData.month === `${monthCode} ${year}`) {
+          document.getElementById('current-winner-name').textContent = currentWinnerData.angler;
         }
 
         if (monthElement && codeElement && biggestBassTitle && biggestBassImage && lastMonthImage && lastMonthTitle) {
