@@ -1,0 +1,26 @@
+name: Archive Biggest Bass Image
+on:
+  schedule:
+    - cron: '0 0 1 * *' # Runs at midnight UTC on the 1st of each month
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install dependencies
+        run: npm install fs-extra
+      - name: Run archive script
+        run: node archive-script.js
+      - name: Commit changes
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add images/archive/*
+          git commit -m "Archive biggest bass image for $(date +%B-%Y)" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
