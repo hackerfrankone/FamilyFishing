@@ -517,17 +517,13 @@
       }
     }
 
-    async function updateMonth() {
-      try {
-        const today = await fetchCurrentTime();
-        const monthNumber = today.getMonth();
-        const year = today.getFullYear();
-        const monthCode = monthCodes[monthNumber];
-        const currentMonthYear = `${year}-${monthNumber}`;
-        const storedMonthYear = localStorage.getItem('monthYear');
-        if (storedMonthYear !== currentMonthYear) {
-          localStorage.setItem('monthYear', currentMonthYear);
-        }
+const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+const lastMonthCode = monthCodes[lastMonth.getMonth()];
+const lastMonthYear = lastMonth.getFullYear();
+const lastMonthImage = document.querySelector('.last-month-winner img');
+if (lastMonthImage) {
+  lastMonthImage.src = `/images/archive/bass_${lastMonthCode.toLowerCase()}_${lastMonthYear}.jpg`;
+}
         let randomCode;
         if (year === 2025 && monthNumber === 3) {
           randomCode = 'IKY';
