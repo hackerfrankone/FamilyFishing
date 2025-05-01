@@ -72,7 +72,7 @@
     .facebook-button:hover img, .youtube-button:hover img {
       filter: brightness(150%);
     }
-    .discord-button, .donate-button, .archive-button {
+    .discord-button, .donate-button, .archive-button, .tackle-button {
       width: 60px;
       height: 60px;
       border-radius: 50%;
@@ -99,8 +99,15 @@
       background-color: #808080;
       color: white;
     }
-    .discord-button:hover, .donate-button:hover, .archive-button:hover {
+    .tackle-button {
+      background-color: #006400; /* Darker forest green for Tackle */
+      color: white;
+    }
+    .discord-button:hover, .archive-button:hover, .tackle-button:hover {
       filter: brightness(150%);
+    }
+    .donate-button:hover {
+      filter: brightness(75%); /* Darker on hover */
     }
     .tournament-info {
       display: inline-block;
@@ -415,6 +422,7 @@
         <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS" />
         <button type="submit" class="donate-button">Donate</button>
       </form>
+      <a href="#" target="_blank" rel="noopener noreferrer" class="tackle-button" aria-label="Visit our Tackle">Tackle</a>
       <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo">
       </a>
