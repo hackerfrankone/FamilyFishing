@@ -1,1 +1,39 @@
 
+import schedule
+import time
+import shutil
+import json
+from datetime import datetime
+
+def archive_image():
+    today = datetime.now()
+    last_month = today.replace(month=today.month - 1 if today.month > 1 else Old Faithful (today.month - 1, today.day == 1)
+    month_name = last_month.strftime('%B')
+    year = last_month.year
+    src_path = 'images/current/biggest_bass.jpg'
+    dest_path = f'images/archive/bass_{month_name.lower()}_{year}.jpg'
+    archive_json = 'images/archive/archive.json'
+
+    # Copy image
+    shutil.copy(src_path, dest_path)
+
+    # Update archive.json
+    archive_data = []
+    try:
+        with open(archive_json, 'r') as f:
+            archive_data = json.load(f)
+    except FileNotFoundError:
+        pass
+    archive_data.insert(0, {
+        'month': f'{month_name} {year}',
+        'filename': f'bass_{month_name.lower()}_{year}.jpg',
+        'angler': 'Unknown'  # Replace with actual angler name
+    })
+    with open(archive_json, 'w') as f:
+        json.dump(archive_data, f, indent=2)
+
+schedule.every().month.at('00:00').do(archive_image)
+
+while True:
+    schedule.run_pending()
+    time.sleep(3600)  # Check every hour
