@@ -1,14 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tackle - Family Fishing Fun</title>
-  <!-- Meta & Security Headers -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     style-src 'self' 'unsafe-inline';
+    script-src 'self' 'unsafe-inline';
+    img-src 'self' data:;
     frame-ancestors 'none';
     object-src 'none';
     base-uri 'self';
@@ -18,18 +18,40 @@
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.jpg" type="image/jpg">
-  <!-- Styles -->
+  <link rel="icon" href="/favicon.jpg" type="image/jpg">
   <style>
     body {
-      background: black; /* Solid black background */
+      background: black;
+      color: #fff;
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 1rem;
+    }
+    h1 {
+      text-align: center;
+      color: yellow;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    a { color: #00ffff; text-decoration: none; }
+    .back-button {
+      display: block;
+      text-align: center;
+      margin: 1rem auto;
+      background-color: #28a745;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      width: fit-content;
+      font-size: 14px;
+    }
+    .back-button:hover {
+      background-color: #218838;
     }
   </style>
 </head>
 <body>
-  <!-- Blank page -->
+  <h1>Fishing Tackle</h1>
+  <a href="/index.html" class="back-button">Back to Home</a>
+  <p>Information about fishing tackle coming soon!</p>
 </body>
 </html>
