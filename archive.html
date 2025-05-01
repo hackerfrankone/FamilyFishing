@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archive - Family Fishing Fun</title>
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    style-src 'self' 'unsafe-inline';
+    script-src 'self' 'unsafe-inline';
+    img-src 'self' data:;
+    frame-ancestors 'none';
+    object-src 'none';
+    base-uri 'self';
+  ">
+  <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  <link rel="icon" href="favicon.jpg" type="image/jpg">
+  <style>
+    body {
+      background: black;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+    }
+    .archive-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .archive-item {
+      text-align: center;
+      max-width: 200px;
+    }
+    .archive-item img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .archive-item p {
+      color: yellow;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin: 0.5rem 0 0;
+    }
+    h1 {
+      text-align: center;
+      color: yellow;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <h1>Biggest Bass Archive</h1>
+  <div class="archive-container" id="archive-container">
+    <p>Loading archive...</p>
+  </div>
+  <script>
+    async function loadArchive() {
+      try {
+        const response = await fetch('/images/archive/archive.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Failed to fetch archive data');
+        const archiveData = await response.json();
+        const container = document.getElementById('archive-container');
+        container.innerHTML = '';
+        if (archiveData.length === 0) {
+          container.innerHTML = '<p>No archived images yet.</p>';
+          return;
+        }
+        archiveData.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'archive-item';
+          div.innerHTML = `
+            <img src="/images/archive/${item.filename}" alt="${item.month} Biggest Bass">
+            <p>${item.month} - ${item.angler}</p>
+          `;
+          container.appendChild(div);
+        });
+      } catch (error) {
+        console.error('Error loading archive:', error);
+        document.getElementById('archive-container').innerHTML = '<p>Failed to load archive.</p>';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadArchive);
+  </script>
+</body>
+</html>
