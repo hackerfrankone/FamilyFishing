@@ -311,11 +311,12 @@
     .submit-fish-button:hover {
       filter: brightness(75%);
     }
-    .leaderboard-title {
+    .leaderboard-title, .current-winner-title {
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin-top: 0.5rem;
     }
     .current-leaderboard-title {
       color: yellow;
@@ -475,6 +476,7 @@
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg'; console.log('Current Month Leaderboard image failed to load: images/current/bass_may_2025.jpg');">
+    <div class="current-winner-title"><strong id="current-winner-name">Loading...</strong></div>
   </div>
   <div class="submit-footer">
     <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-button submit-fish-button">📸 Submit Fish</a>
@@ -545,6 +547,25 @@
           console.error(`Fetch attempt ${i + 1} failed for ${url}:`, error);
           if (i === maxRetries - 1) throw error;
         }
+      }
+    }
+
+    async function loadCurrentWinner() {
+      console.log('loadCurrentWinner started');
+      const winnerElement = document.getElementById("current-winner-name");
+      if (!winnerElement) {
+        console.error('DOM element not found: current-winner-name');
+        return;
+      }
+      try {
+        const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/current/current_winner');
+        const text = await response.text();
+        const winnerName = text.trim() || 'No winner yet';
+        console.log('Current winner:', winnerName);
+        winnerElement.textContent = `Current Winner: ${winnerName}`;
+      } catch (error) {
+        console.error('Error loading current winner:', error);
+        winnerElement.textContent = 'No winner yet';
       }
     }
 
@@ -750,6 +771,7 @@
       initializeCountdown();
       startCountdown();
       loadAnglerList();
+      loadCurrentWinner();
       setInterval(updateMonth, 48 * 60 * 60 * 1000); // Run every 48 hours
       console.log('Page initialization complete');
     });
