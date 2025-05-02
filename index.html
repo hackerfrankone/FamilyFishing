@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
+    <style>
+    body {
+      background-image: url(https://hackerfrankone.github.io/FamilyFishing/images/background.jpg);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+  </style>
   <!-- Meta & Security Headers -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
@@ -40,18 +49,14 @@
 
   <!-- Styles -->
   <style>
-    body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('https://hackerfrankone.github.io/FamilyFishing/images/background.jpg') no-repeat center center fixed;
-  background-size: cover;
-  z-index: -1;
-  opacity: 0; /* Fallback visibility */
-}
+    body {
+      background: url('images/background.jpg') no-repeat left top fixed;
+      background-size: cover;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+    }
     body::before {
       content: '';
       position: fixed;
