@@ -684,6 +684,18 @@
       }
     }
 
+    function handleSpacebar(event) {
+      if (event.key === ' ' || event.keyCode === 32) {
+        event.preventDefault();
+        const target = event.target;
+        if (target.tagName === 'A') {
+          window.open(target.href, '_blank', 'noopener noreferrer');
+        } else if (target.tagName === 'BUTTON') {
+          target.closest('form')?.submit();
+        }
+      }
+    }
+
     window.onload = function() {
       console.log('Page fully loaded (window.onload triggered)');
     };
@@ -696,6 +708,12 @@
       loadAnglerList();
       loadCurrentWinner();
       setInterval(updateMonth, 48 * 60 * 60 * 1000);
+
+      const socialButtons = document.querySelectorAll('.social-buttons a, .social-buttons button');
+      socialButtons.forEach(button => {
+        button.addEventListener('keydown', handleSpacebar);
+      });
+
       console.log('Page initialization complete');
     });
   </script>
