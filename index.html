@@ -6,11 +6,12 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <style>
     body {
-      background-image: url('images/background.jpg');
-      background-color: #000; /* Fallback color */
+      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1');
+      background-color: #000;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      background-attachment: fixed;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
@@ -345,12 +346,6 @@
       height: auto;
       border-radius: 8px;
     }
-    .angler-name {
-      color: yellow;
-      font-weight: bold;
-      font-family: 'Arial', sans-serif;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
     .small-button {
       padding: 8px 16px;
       font-size: 14px;
@@ -391,7 +386,6 @@
       background-color: #ff0000;
     }
   </style>
-  <!-- Meta & Security Headers -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
@@ -408,12 +402,10 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
-  <ma ethttp-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-
-  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -421,33 +413,24 @@
     gtag('js', new Date());
     gtag('config', 'G-6EBHYE2X44', { 'anonymize_ip': true });
   </script>
-
-  <!-- Favicon -->
   <link rel="icon" href="images/favicon.jpg" type="image/jpg">
 </head>
 <body>
-  <!-- Last Month's Winner -->
   <div class="last-month-winner">
     <div class="leaderboard-title"><strong>Last Month's Winner Jane Smith</strong></div>
-    <img src="images/archive/bass_april_2025.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;">
+    <img src="images/bass_april_2025.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg';">
   </div>
-
-  <!-- Monthly Identifier -->
   <div class="identifier-container">
     <p id="monthly-identifier" class="month-identifier">
       <span id="month"></span> Identifier: <span id="month-code"></span>
     </p>
   </div>
-
-  <!-- Angler Sidebar -->
   <div class="angler-sidebar">
     <h3>ANGLERS</h3>
     <ul id="angler-list">
       <li>Loading...</li>
     </ul>
   </div>
-
-  <!-- Top Section -->
   <div class="top-bar">
     <div class="social-buttons">
       <form action="https://www.paypal.com/donate" method="post" target="_blank" rel="noopener">
@@ -483,13 +466,9 @@
       Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a>
     </p>
   </div>
-
-  <!-- Countdown Timer -->
   <p class="countdown" id="countdown">
     Tournament ends in: <span id="countdown-timer">Calculating...</span>
   </p>
-
-  <!-- Buttons -->
   <div class="button-group">
     <a href="PDFs/rules.pdf" target="_blank" rel="noopener" class="submit-button small-button rules-button">📄 Rules</a>
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
@@ -501,21 +480,22 @@
       </section>
     </form>
   </div>
-
-  <!-- Current Month Leaderboard -->
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
-    <img src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;">
-    <p class="angler-name"><em id="current-winner-name">John Doe</em></p>
+    <img src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg';">
   </div>
-
-  <!-- Submit Fish -->
   <div class="submit-footer">
     <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-button submit-fish-button">📸 Submit Fish</a>
   </div>
-
-  <!-- Scripts -->
+  <div class="ads">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
+    <ins class="adsbygoogle" style="display:inline-block;width:300px;height:100px"
+      data-ad-client="ca-pub-9237571676231200"
+      data-ad-slot="7591272404"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
   <script>
+    console.log('JavaScript executed: Page load started');
     const monthCodes = ["January", "February", "March", "April", "May", "June",
                         "July", "August", "September", "October", "November", "December"];
 
@@ -583,6 +563,7 @@
     }
 
     async function updateMonth() {
+      console.log('updateMonth function started');
       try {
         const today = await fetchCurrentTime();
         const monthNumber = today.getMonth();
@@ -615,7 +596,7 @@
 
         let lastMonthAngler = "Jane Smith";
         try {
-          console.log('Attempting to fetch:', 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
+          console.log('Attempting to fetch archive.json');
           const response = await fetch('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json', { cache: 'no-store' });
           console.log('Fetch response status:', response.status);
           if (!response.ok) {
@@ -629,32 +610,33 @@
             console.log('Found angler:', lastMonthAngler);
           }
         } catch (error) {
-          console.error('Error fetching archive.json:', error.message, 'URL:', 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
-        }
-
-        const currentWinnerData = JSON.parse(localStorage.getItem('currentWinner') || '{}');
-        if (currentWinnerData.month === `${monthCode} ${year}`) {
-          document.getElementById('current-winner-name').textContent = currentWinnerData.angler;
+          console.error('Error fetching archive.json:', error.message);
         }
 
         if (monthElement && codeElement && biggestBassTitle && biggestBassImage && lastMonthImage && lastMonthTitle) {
           monthElement.textContent = monthCode;
           codeElement.textContent = randomCode;
           biggestBassTitle.textContent = `${monthCode}'s Biggest Bass (Updates: Mon. Wed. Fri.)`;
-          biggestBassImage.src = `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg`;
-          lastMonthImage.src = `images/archive/bass_${lastMonthCode.toLowerCase()}_${lastMonthYear}.jpg`;
+          const currentBassImageSrc = `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg?v=1`;
+          console.log(`Setting current bass image src: ${currentBassImageSrc}`);
+          biggestBassImage.src = currentBassImageSrc;
+          const lastMonthImageSrc = `images/bass_${lastMonthCode.toLowerCase()}_${lastMonthYear}.jpg?v=1`;
+          console.log(`Setting last month image src: ${lastMonthImageSrc}`);
+          lastMonthImage.src = lastMonthImageSrc;
           lastMonthTitle.textContent = `Last Month's Winner ${lastMonthAngler}`;
         } else {
-          console.error('DOM elements not found');
+          console.error('DOM elements not found for updateMonth');
         }
       } catch (error) {
         console.error('Error in updateMonth:', error);
       }
+      console.log('updateMonth function completed');
     }
 
     let serverTimeOffset = 0;
 
     async function initializeCountdown() {
+      console.log('initializeCountdown started');
       try {
         const serverTime = await fetchCurrentTime();
         serverTimeOffset = serverTime.getTime() - Date.now();
@@ -702,6 +684,7 @@
     }
 
     function loadAnglerList() {
+      console.log('loadAnglerList started');
       const timestamp = new Date().getTime();
       const csvFilePath = `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv?cachebust=${timestamp}`;
       fetch(csvFilePath, { cache: 'no-store' })
@@ -744,20 +727,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM fully loaded');
       updateMonth();
       initializeCountdown();
       loadAnglerList();
       setInterval(updateMonth, 24 * 60 * 60 * 1000);
     });
   </script>
-
-  <!-- AdSense Ad -->
-  <div class="ads">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
-    <ins class="adsbygoogle" style="display:inline-block;width:300px;height:100px"
-      data-ad-client="ca-pub-9237571676231200"
-      data-ad-slot="7591272404"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
 </body>
 </html>
