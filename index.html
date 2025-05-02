@@ -365,16 +365,6 @@
     .rules-button:hover {
       background-color: #ff0000;
     }
-    #loading-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 2000;
-      display: none;
-    }
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
@@ -706,92 +696,17 @@
       }
     }
 
-    let animationFrameId = null;
-    let fishX = -50;
-    let fishY = 200;
-    let jumpHeight = 0;
-    let jumpDirection = 1;
-    const jumpSpeed = 0.1;
-    const moveSpeed = 2;
-
-    function drawFish(ctx) {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-      // Fish body
-      ctx.fillStyle = '#00CED1';
-      ctx.beginPath();
-      ctx.arc(fishX, fishY - jumpHeight, 20, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Tail
-      ctx.fillStyle = '#FF4500';
-      ctx.beginPath();
-      ctx.moveTo(fishX - 20, fishY - jumpHeight);
-      ctx.lineTo(fishX - 40, fishY - jumpHeight - 10);
-      ctx.lineTo(fishX - 40, fishY - jumpHeight + 10);
-      ctx.fill();
-
-      // Fin
-      ctx.fillStyle = '#FF4500';
-      ctx.beginPath();
-      ctx.moveTo(fishX - 10, fishY - jumpHeight - 10);
-      ctx.lineTo(fishX - 20, fishY - jumpHeight - 20);
-      ctx.lineTo(fishX, fishY - jumpHeight - 10);
-      ctx.fill();
-
-      // Eye
-      ctx.fillStyle = 'black';
-      ctx.beginPath();
-      ctx.arc(fishX + 10, fishY - jumpHeight - 5, 2, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function animateFish() {
-      const canvas = document.getElementById('loading-canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      fishX += moveSpeed;
-      if (fishX > canvas.width + 50) fishX = -50;
-
-      jumpHeight += jumpDirection * jumpSpeed;
-      if (jumpHeight >= 30) jumpDirection = -1;
-      if (jumpHeight <= 0) jumpDirection = 1;
-
-      drawFish(ctx);
-      animationFrameId = requestAnimationFrame(animateFish);
-    }
-
-    function startLoadingAnimation() {
-      const canvas = document.getElementById('loading-canvas');
-      canvas.style.display = 'block';
-      animateFish();
-    }
-
-    function stopLoadingAnimation() {
-      const canvas = document.getElementById('loading-canvas');
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-      }
-      canvas.style.display = 'none';
-    }
-
     window.onload = function() {
       console.log('Page fully loaded (window.onload triggered)');
     };
 
     document.addEventListener('DOMContentLoaded', function() {
       console.log('DOM fully loaded');
-      startLoadingAnimation();
       updateMonth();
       initializeCountdown();
       startCountdown();
-      loadAnglerList().then(() => {
-        loadCurrentWinner().then(() => {
-          stopLoadingAnimation();
-        });
-      });
+      loadAnglerList();
+      loadCurrentWinner();
       setInterval(updateMonth, 48 * 60 * 60 * 1000);
 
       const socialButtons = document.querySelectorAll('.social-buttons a, .social-buttons button');
@@ -804,7 +719,6 @@
   </script>
 </head>
 <body>
-  <canvas id="loading-canvas"></canvas>
   <div class="identifier-container">
     <p id="monthly-identifier" class="month-identifier">
       <span id="month"></span> Identifier: <span id="month-code"></span>
