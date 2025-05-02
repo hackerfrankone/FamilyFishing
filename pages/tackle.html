@@ -2,56 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tackle - Family Fishing Fun</title>
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    style-src 'self' 'unsafe-inline';
-    script-src 'self' 'unsafe-inline';
-    img-src 'self' data:;
-    frame-ancestors 'none';
-    object-src 'none';
-    base-uri 'self';
-  ">
-  <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="X-Frame-Options" content="DENY">
-  <meta http-equiv="Referrer-Policy" content="no-referrer">
-  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-  <link rel="icon" href="/favicon.jpg" type="image/jpg">
+  <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <style>
     body {
-      background: black;
+      background-color: #000;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 1rem;
+      text-align: center;
+    }
+    .back-button {
+      background-color: #006400;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 1rem;
+      transition: filter 0.3s ease;
+    }
+    .back-button:hover {
+      filter: brightness(150%);
     }
     h1 {
-      text-align: center;
       color: yellow;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
-    a { color: #00ffff; text-decoration: none; }
-    .back-button {
-      display: block;
-      text-align: center;
-      margin: 1rem auto;
-      background-color: #28a745;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      width: fit-content;
-      font-size: 14px;
-    }
-    .back-button:hover {
-      background-color: #218838;
-    }
   </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' https://hackerfrankone.github.io data:;
+    frame-ancestors 'none';
+    form-action 'self';
+    object-src 'none';
+    base-uri 'self';
+  ">
 </head>
 <body>
-  <h1>Fishing Tackle</h1>
-  <a href="/index.html" class="back-button">Back to Home</a>
-  <p>Information about fishing tackle coming soon!</p>
+  <h1>Tackle</h1>
+  <p>Explore fishing tackle recommendations.</p>
+  <button class="back-button" onclick="window.close(); history.back();">Back</button>
+  <script>
+    console.log('Tackle page loaded');
+  </script>
 </body>
 </html>
