@@ -339,6 +339,16 @@
       height: auto;
       border-radius: 8px;
     }
+    .leaderboard-container .no-image-text {
+      display: block;
+      margin: 0 auto;
+      max-width: 350px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #FFD140;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      text-align: center;
+    }
     .small-button {
       padding: 8px 16px;
       font-size: 14px;
@@ -475,7 +485,7 @@
   </div>
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
-    <img src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg'; console.log('Current Month Leaderboard image failed to load: images/current/bass_may_2025.jpg');">
+    <img id="leaderboard-image" src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="handleImageError(this);">
     <div class="current-winner-title"><strong id="current-winner-name">Loading...</strong></div>
   </div>
   <div class="submit-footer">
@@ -645,14 +655,16 @@
         const monthElement = document.getElementById("month");
         const codeElement = document.getElementById("month-code");
         const biggestBassTitle = document.getElementById("biggest-bass-title");
-        const biggestBassImage = document.querySelector('.leaderboard-container img');
-        if (monthElement && codeElement && biggestBassTitle && biggestBassImage) {
+        const leaderboardImage = document.getElementById("leaderboard-image");
+        const currentWinnerElement = document.getElementById("current-winner-name");
+        if (monthElement && codeElement && biggestBassTitle && leaderboardImage && currentWinnerElement) {
           monthElement.textContent = monthCode;
           codeElement.textContent = randomCode;
           biggestBassTitle.textContent = `${monthCode}'s Biggest Bass (Updates: Mon. Wed. Fri.)`;
           const currentBassImageSrc = `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg?v=1`;
           console.log(`Setting current bass image src: ${currentBassImageSrc}`);
-          biggestBassImage.src = currentBassImageSrc;
+          leaderboardImage.src = currentBassImageSrc;
+          currentWinnerElement.textContent = `Current Winner: Loading...`; // Reset winner name
         } else {
           console.error('DOM elements not found for updateMonth');
         }
@@ -662,6 +674,15 @@
         isUpdatingMonth = false;
         console.log('updateMonth function completed');
       }
+    }
+
+    function handleImageError(imgElement) {
+      const leaderboardContainer = imgElement.parentElement;
+      const noImageText = document.createElement('div');
+      noImageText.className = 'no-image-text';
+      noImageText.textContent = 'Family Fishing Fun';
+      leaderboardContainer.replaceChild(noImageText, imgElement);
+      console.log('Image failed to load, replaced with "Family Fishing Fun" text');
     }
 
     let serverTimeOffset = 0;
