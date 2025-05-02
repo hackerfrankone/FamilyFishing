@@ -4,7 +4,15 @@
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
-
+    <style>
+    body {
+      background-image: url(https://hackerfrankone.github.io/FamilyFishing/images/background.jpg);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+  </style>
   <!-- Meta & Security Headers -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
@@ -42,11 +50,8 @@
   <!-- Styles -->
   <style>
     body {
-      background-image: url('images/background.jpg');
+      background: url('images/background.jpg') no-repeat left top fixed;
       background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
@@ -62,16 +67,22 @@
       background: url('images/background.jpg') no-repeat center center fixed;
       background-size: cover;
       z-index: -1;
-      opacity: 0;
+      opacity: 0; /* Fallback visibility */
+    }
+    @media (max-width: 768px) {
+      body {
+        background-position: left top;
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        background-position: left top;
+      }
     }
     a { color: #00ffff; text-decoration: none; }
     .top-bar { text-align: center; margin-bottom: 2rem; }
     .social-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
+      display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
     }
     .facebook-button img, .youtube-button img {
       width: 60px;
@@ -96,17 +107,30 @@
       transition: filter 0.3s ease;
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     }
-    .discord-button { background-color: #5865F2; color: white; }
-    .donate-button { background-color: #FFD700; color: white; border: none; cursor: pointer; }
-    .archive-button { background-color: #808080; color: white; }
-    .tackle-button { background-color: #006400; color: white; }
-
-    .discord-button:hover,
-    .archive-button:hover,
-    .tackle-button:hover { filter: brightness(150%); }
-
-    .donate-button:hover { filter: brightness(75%); }
-
+    .discord-button {
+      background-color: #5865F2;
+      color: white;
+    }
+    .donate-button {
+      background-color: #FFD700;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .archive-button {
+      background-color: #808080;
+      color: white;
+    }
+    .tackle-button {
+      background-color: #006400;
+      color: white;
+    }
+    .discord-button:hover, .archive-button:hover, .tackle-button:hover {
+      filter: brightness(150%);
+    }
+    .donate-button:hover {
+      filter: brightness(75%);
+    }
     .tournament-info {
       display: inline-block;
       background: rgba(0, 0, 0, 0.7);
@@ -127,6 +151,18 @@
       font-size: 1rem;
       margin-top: 0.3rem;
     }
+    @media (max-width: 768px) {
+      .tournament-info {
+        padding: 0.4rem 0.8rem;
+      }
+      .tournament-info .main-text {
+        font-size: 1rem;
+      }
+      .tournament-info .sub-text {
+        font-size: 0.9rem;
+        margin-top: 0.2rem;
+      }
+    }
     .countdown {
       font-size: 1rem;
       font-weight: bold;
@@ -146,12 +182,11 @@
       margin-top: 1rem;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
+    .feedback a {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
     .button-group {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
+      display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;
     }
     .submit-button {
       background-color: #28a745;
@@ -167,6 +202,7 @@
       max-width: 90vw;
       text-decoration: none;
     }
+    .paypal-form { display: grid; justify-items: center; gap: 0.5rem; }
     .paypal-button {
       background-color: #FFD700;
       color: #000;
@@ -181,16 +217,8 @@
     .paypal-button:hover {
       filter: brightness(150%);
     }
-    .leaderboard {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    .leaderboard img {
-      max-width: 200px;
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
+    .leaderboard { text-align: center; margin-bottom: 1rem; }
+    .leaderboard img { max-width: 200px; width: 100%; height: auto; border-radius: 8px; }
     .ads {
       position: fixed;
       bottom: 50px;
@@ -262,19 +290,93 @@
       border-radius: 4px;
     }
     .angler-sidebar ul::-webkit-scrollbar-thumb:hover {
-      background: #FFD700;
+      background: #FFD140;
+    }
+    .angler-sidebar li {
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+    .submit-footer {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 9999;
     }
     @media (max-width: 768px) {
-      .tournament-info .main-text { font-size: 1rem; }
-      .tournament-info .sub-text { font-size: 0.9rem; }
-      .angler-sidebar { max-width: 90%; left: 0.5rem; right: 0.5rem; }
+      .button-group { flex-direction: column; align-items: center; }
+      .countdown { font-size: 0.9rem; }
+      .last-month-winner, .angler-sidebar, .identifier-container {
+        position: static;
+        margin: 1rem auto;
+        max-width: 100%;
+        text-align: center;
+      }
+      .last-month-winner img {
+        max-width: 225px;
+      }
+      .submit-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        bottom: 0.5rem;
+        left: 0.5rem;
+      }
+      .identifier-container .month-identifier {
+        color: #FFA500 !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      }
     }
-  </style>
-</head>
-<body>
-  <!-- Add your HTML content here -->
-</body>
-</html>
+    .submit-fish-button {
+      background-color: #FFA500;
+      transition: filter 0.3s ease;
+    }
+    .submit-fish-button:hover {
+      filter: brightness(75%);
+    }
+    .leaderboard-title {
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .current-leaderboard-title {
+      color: yellow;
+      font-weight: bold;
+      font-family: Arial, Helvetica, sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .leaderboard-container {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .leaderboard-container img {
+      display: block;
+      margin: 0 auto;
+      max-width: 350px;
+      height: auto;
+      border-radius: 8px;
+    }
+    .angler-name {
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .small-button {
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 6px;
     }
     :root {
       --primary-color: #FFA500;
