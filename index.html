@@ -51,14 +51,14 @@
     .facebook-button:hover img, .youtube-button:hover img {
       filter: brightness(150%);
     }
-    .discord-button, .donate-button, .archive-button, .tackle-button, .submit-fish-button {
+    .discord-button, .donate-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
       width: 60px;
       height: 60px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
       text-decoration: none;
       transition: filter 0.3s ease;
@@ -86,11 +86,19 @@
       background-color: #FFA500;
       color: white;
     }
+    .rules-button {
+      background-color: #cc0000;
+      color: white;
+      padding: 0;
+    }
     .discord-button:hover, .archive-button:hover, .tackle-button:hover {
       filter: brightness(150%);
     }
     .donate-button:hover, .submit-fish-button:hover {
       filter: brightness(75%);
+    }
+    .rules-button:hover {
+      background-color: #ff0000;
     }
     .tournament-info {
       display: inline-block;
@@ -280,7 +288,7 @@
       .identifier-container .month-identifier {
         color: #FFA500 !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        font-size: 1.2rem; /* Adjusted for smaller screens */
+        font-size: 1.2rem;
       }
     }
     .leaderboard-title, .current-winner-title {
@@ -341,17 +349,17 @@
       .identifier-container .month-identifier {
         color: var(--primary-color) !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        font-size: 1.2rem; /* Adjusted for smaller screens */
+        font-size: 1.2rem;
       }
     }
     .rules-button {
       background-color: #cc0000;
       color: white;
       border: none;
-      padding: 15px 30px;
-      font-size: 18px;
+      padding: 0;
+      font-size: 12px;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 50%;
       transition: background-color 0.3s ease;
     }
     .rules-button:hover {
@@ -416,6 +424,7 @@
       <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button" aria-label="Join our Discord server">Discord</a>
       <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button" aria-label="View our archive">Archive</a>
       <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-fish-button" aria-label="Submit Fish">Submit Fish</a>
+      <a href="PDFs/rules.pdf" target="_blank" rel="noopener" class="rules-button" aria-label="View Rules">📄 Rules</a>
     </div>
     <div class="tournament-info">
       <p class="main-text">
@@ -439,7 +448,6 @@
     Tournament ends in: <span id="countdown-timer">Calculating...</span>
   </p>
   <div class="button-group">
-    <a href="PDFs/rules.pdf" target="_blank" rel="noopener" class="submit-button small-button rules-button">📄 Rules</a>
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
       <input type="hidden" name="custom" value="tournament-join" />
       <input type="submit" value="Join Tournament $20" class="paypal-button" />
