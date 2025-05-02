@@ -418,7 +418,7 @@
 <body>
   <div class="last-month-winner">
     <div class="leaderboard-title"><strong>Last Month's Winner Jane Smith</strong></div>
-    <img src="images/bass_april_2025.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg';">
+    <img src="images/bass_april_2025.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg'; console.log('Last Month Winner image failed to load: images/bass_april_2025.jpg');">
   </div>
   <div class="identifier-container">
     <p id="monthly-identifier" class="month-identifier">
@@ -482,17 +482,24 @@
   </div>
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
-    <img src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg';">
+    <img src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg'; console.log('Current Month Leaderboard image failed to load: images/current/bass_may_2025.jpg');">
   </div>
   <div class="submit-footer">
     <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-button submit-fish-button">📸 Submit Fish</a>
   </div>
   <div class="ads">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous" onload="console.log('AdSense script loaded');" onerror="console.log('AdSense script failed to load');"></script>
     <ins class="adsbygoogle" style="display:inline-block;width:300px;height:100px"
       data-ad-client="ca-pub-9237571676231200"
       data-ad-slot="7591272404"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <script>
+      try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        console.log('AdSense ad pushed');
+      } catch (e) {
+        console.error('AdSense ad push failed:', e);
+      }
+    </script>
   </div>
   <script>
     console.log('JavaScript executed: Page load started');
@@ -520,13 +527,45 @@
     }
 
     async function fetchCurrentTime() {
+      const cachedTime = localStorage.getItem('serverTime');
+      const cacheTimestamp = localStorage.getItem('serverTimeTimestamp');
+      const cacheAge = cacheTimestamp ? Date.now() - parseInt(cacheTimestamp) : Infinity;
+      if (cachedTime && cacheAge < 3600000) { // Cache for 1 hour
+        console.log('Using cached server time');
+        return new Date(cachedTime);
+      }
       try {
-        const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+        const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { signal: controller.signal });
+        clearTimeout(timeoutId);
         const data = await response.json();
-        return new Date(data.utc_datetime);
+        const serverTime = new Date(data.utc_datetime);
+        localStorage.setItem('serverTime', serverTime.toISOString());
+        localStorage.setItem('serverTimeTimestamp', Date.now().toString());
+        console.log('Fetched new server time');
+        return serverTime;
       } catch (error) {
         console.error('Error fetching time, using local time:', error);
         return new Date();
+      }
+    }
+
+    async function fetchWithRetry(url, maxRetries = 3, timeout = 5000) {
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), timeout);
+          const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+          clearTimeout(timeoutId);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response;
+        } catch (error) {
+          console.error(`Fetch attempt ${i + 1} failed for ${url}:`, error);
+          if (i === maxRetries - 1) throw error;
+        }
       }
     }
 
@@ -542,7 +581,7 @@
         const winner = currentWinnerData.angler;
         let archiveData = [];
         try {
-          const response = await fetch('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json', { cache: 'no-store' });
+          const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
           if (response.ok) {
             archiveData = await response.json();
           }
@@ -597,11 +636,8 @@
         let lastMonthAngler = "Jane Smith";
         try {
           console.log('Attempting to fetch archive.json');
-          const response = await fetch('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json', { cache: 'no-store' });
+          const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
           console.log('Fetch response status:', response.status);
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
           const archiveData = await response.json();
           console.log('Fetched archive data:', archiveData);
           const lastMonthEntry = archiveData.find(item => item.month === `${lastMonthCode} ${lastMonthYear}`);
@@ -610,7 +646,7 @@
             console.log('Found angler:', lastMonthAngler);
           }
         } catch (error) {
-          console.error('Error fetching archive.json:', error.message);
+          console.error('Error fetching archive.json:', error);
         }
 
         if (monthElement && codeElement && biggestBassTitle && biggestBassImage && lastMonthImage && lastMonthTitle) {
@@ -676,24 +712,22 @@
         } else {
           countdownElement.classList.remove('countdown-red');
         }
-        requestAnimationFrame(updateCountdown);
       } catch (error) {
         console.error('Error in updateCountdown:', error);
-        requestAnimationFrame(updateCountdown);
       }
+    }
+
+    function startCountdown() {
+      console.log('Starting countdown interval');
+      setInterval(updateCountdown, 1000); // Update every 1 second
     }
 
     function loadAnglerList() {
       console.log('loadAnglerList started');
       const timestamp = new Date().getTime();
       const csvFilePath = `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv?cachebust=${timestamp}`;
-      fetch(csvFilePath, { cache: 'no-store' })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`CSV file not accessible: ${response.status} ${response.statusText}`);
-          }
-          return response.text();
-        })
+      fetchWithRetry(csvFilePath)
+        .then(response => response.text())
         .then(text => {
           console.log('CSV content:', text);
           const anglerList = document.getElementById("angler-list");
@@ -730,8 +764,10 @@
       console.log('DOM fully loaded');
       updateMonth();
       initializeCountdown();
+      startCountdown();
       loadAnglerList();
       setInterval(updateMonth, 24 * 60 * 60 * 1000);
+      console.log('Page initialization complete');
     });
   </script>
 </body>
