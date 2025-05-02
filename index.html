@@ -192,22 +192,9 @@
       height: auto;
       border-radius: 8px;
     }
-    .last-month-winner {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      text-align: left;
-      max-width: 200px;
-      z-index: 1000;
-    }
-    .last-month-winner img {
-      max-width: 175px;
-      height: auto;
-      border-radius: 8px;
-    }
     .identifier-container {
       position: absolute;
-      top: 15rem;
+      top: 1rem; /* Adjusted from 15rem to 1rem to take the top-left spot */
       left: 1rem;
       z-index: 1000;
     }
@@ -221,7 +208,7 @@
     }
     .angler-sidebar {
       position: fixed;
-      top: 16.5rem;
+      top: 4rem; /* Adjusted from 16.5rem to 4rem to avoid overlap with identifier */
       left: 1rem;
       background: rgba(0, 0, 0, 0.6);
       padding: 1rem;
@@ -283,14 +270,17 @@
       .countdown {
         font-size: 0.9rem;
       }
-      .last-month-winner, .angler-sidebar, .identifier-container {
+      .identifier-container {
         position: static;
         margin: 1rem auto;
         max-width: 100%;
         text-align: center;
       }
-      .last-month-winner img {
-        max-width: 225px;
+      .angler-sidebar {
+        position: static;
+        margin: 1rem auto;
+        max-width: 100%;
+        text-align: center;
       }
       .submit-footer {
         flex-direction: column;
@@ -419,10 +409,6 @@
   <link rel="icon" href="images/favicon.jpg" type="image/jpg">
 </head>
 <body>
-  <div class="last-month-winner">
-    <div class="leaderboard-title"><strong>Last Month's Winner Jane Smith</strong></div>
-    <img id="last-month-image" src="https://upload.wikimedia.org/wikipedia/commons/0/0a/Fluffy_clouds.jpg" alt="Last Month's Winner" style="max-width: 175px; height: auto; border-radius: 8px;" onload="console.log('Last Month Winner image loaded:', this.src);" onerror="console.log('Last Month Winner image failed to load:', this.src);">
-  </div>
   <div class="identifier-container">
     <p id="monthly-identifier" class="month-identifier">
       <span id="month"></span> Identifier: <span id="month-code"></span>
