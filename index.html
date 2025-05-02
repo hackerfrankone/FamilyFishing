@@ -51,7 +51,7 @@
     .facebook-button:hover img, .youtube-button:hover img {
       filter: brightness(150%);
     }
-    .discord-button, .donate-button, .archive-button, .tackle-button {
+    .discord-button, .donate-button, .archive-button, .tackle-button, .submit-fish-button {
       width: 60px;
       height: 60px;
       border-radius: 50%;
@@ -82,7 +82,11 @@
       background-color: #006400;
       color: white;
     }
-    .discord-button:hover, .archive-button:hover, .tackle-button:hover {
+    .submit-fish-button {
+      background-color: #FFA500;
+      color: white;
+    }
+    .discord-button:hover, .archive-button:hover, .tackle-button:hover, .submit-fish-button:hover {
       filter: brightness(150%);
     }
     .donate-button:hover {
@@ -194,7 +198,7 @@
     }
     .identifier-container {
       position: absolute;
-      top: 1rem; /* Adjusted from 15rem to 1rem to take the top-left spot */
+      top: 1rem;
       left: 1rem;
       z-index: 1000;
     }
@@ -208,7 +212,7 @@
     }
     .angler-sidebar {
       position: fixed;
-      top: 4rem; /* Adjusted from 16.5rem to 4rem to avoid overlap with identifier */
+      top: 4rem;
       left: 1rem;
       background: rgba(0, 0, 0, 0.6);
       padding: 1rem;
@@ -253,15 +257,6 @@
       margin: 0.5rem 0;
       font-size: 1rem;
     }
-    .submit-footer {
-      position: fixed;
-      bottom: 1rem;
-      left: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      z-index: 9999;
-    }
     @media (max-width: 768px) {
       .button-group {
         flex-direction: column;
@@ -282,24 +277,10 @@
         max-width: 100%;
         text-align: center;
       }
-      .submit-footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-        bottom: 0.5rem;
-        left: 0.5rem;
-      }
       .identifier-container .month-identifier {
         color: #FFA500 !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       }
-    }
-    .submit-fish-button {
-      background-color: #FFA500;
-      transition: filter 0.3s ease;
-    }
-    .submit-fish-button:hover {
-      filter: brightness(75%);
     }
     .leaderboard-title, .current-winner-title {
       color: yellow;
@@ -354,10 +335,6 @@
       font-weight: bold;
       color: var(--primary-color) !important;
       font-size: 1rem;
-    }
-    .submit-fish-button {
-      background-color: var(--primary-color);
-      transition: filter 0.3s ease;
     }
     @media (max-width: 768px) {
       .identifier-container .month-identifier {
@@ -436,6 +413,7 @@
       </a>
       <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button" aria-label="Join our Discord server">Discord</a>
       <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button" aria-label="View our archive">Archive</a>
+      <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-fish-button" aria-label="Submit Fish">Submit Fish</a>
     </div>
     <div class="tournament-info">
       <p class="main-text">
@@ -473,9 +451,6 @@
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
     <img id="leaderboard-image" src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="handleImageError(this);">
     <div class="current-winner-title"><strong id="current-winner-name">Loading...</strong></div>
-  </div>
-  <div class="submit-footer">
-    <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-button submit-fish-button">📸 Submit Fish</a>
   </div>
   <script>
     console.log('JavaScript executed: Page load started');
