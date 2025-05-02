@@ -563,6 +563,17 @@
         const winnerName = text.trim() || 'No winner yet';
         console.log('Current winner:', winnerName);
         winnerElement.textContent = `Current Winner: ${winnerName}`;
+        // Store the current winner data in localStorage for archiving later
+        const today = await fetchCurrentTime();
+        const monthNumber = today.getMonth();
+        const year = today.getFullYear();
+        const monthCode = monthCodes[monthNumber];
+        const currentWinnerData = {
+          month: `${monthCode} ${year}`,
+          angler: winnerName,
+          image: `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg`
+        };
+        localStorage.setItem('currentWinner', JSON.stringify(currentWinnerData));
       } catch (error) {
         console.error('Error loading current winner:', error);
         winnerElement.textContent = 'No winner yet';
@@ -579,6 +590,7 @@
 
       if (storedMonthYear !== `${year}-${monthNumber}` && currentWinnerData.month === lastMonth) {
         const winner = currentWinnerData.angler;
+        const winnerImage = currentWinnerData.image;
         let archiveData = [];
         try {
           const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
@@ -591,7 +603,7 @@
 
         const lastMonthEntry = archiveData.find(item => item.month === lastMonth);
         if (!lastMonthEntry) {
-          archiveData.push({ month: lastMonth, angler: winner });
+          archiveData.push({ month: lastMonth, angler: winner, image: winnerImage });
           const newArchiveContent = JSON.stringify(archiveData, null, 2);
           const encodedContent = encodeURIComponent(newArchiveContent);
           const commitMessage = encodeURIComponent(`Add ${lastMonth} winner to archive.json`);
