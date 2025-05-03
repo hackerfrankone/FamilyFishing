@@ -1,5 +1,17 @@
 const fs = require('fs-extra');
 const path = require('path');
+const fetch = require('node-fetch'); // Add node-fetch for HTTP requests
+
+async function getAnglerName() {
+  try {
+    const response = await fetch('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/current/current_winner');
+    const text = await response.text();
+    return text.trim() || 'Unknown';
+  } catch (error) {
+    console.error('Error fetching angler name:', error);
+    return 'Unknown';
+  }
+}
 
 async function archiveImage() {
   try {
@@ -24,6 +36,9 @@ async function archiveImage() {
       return;
     }
 
+    // Get angler name
+    const anglerName = await getAnglerName();
+
     // Update archive.json
     let archiveData = [];
     if (await fs.pathExists(archiveJsonPath)) {
@@ -31,8 +46,8 @@ async function archiveImage() {
     }
     archiveData.unshift({
       month: monthStr,
-      filename,
-      angler: 'Unknown' // Replace with actual angler name, e.g., from a CSV
+      filename, // Consider using `images/archive/${filename}` if archive.html expects full path
+      angler: anglerName
     });
     await fs.writeJson(archiveJsonPath, archiveData, { spaces: 2 });
     console.log('Updated archive.json');
