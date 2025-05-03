@@ -10,7 +10,7 @@
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 1rem;
+      padding: 0;
       text-align: center;
       min-height: 100vh;
     }
@@ -22,39 +22,35 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      margin: 1rem;
+      margin: 0.5rem auto;
       transition: filter 0.3s ease;
+      display: block;
     }
     .back-button:hover {
       filter: brightness(150%);
     }
-    h1 {
-      color: yellow;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      margin: 0;
-    }
     .container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: flex-start;
       width: 100%;
       max-width: 1200px;
       margin: 0 auto;
-      padding-top: 1rem;
+      padding-top: 0;
     }
     .sidebar {
       width: 100%;
       max-width: 300px;
       text-align: left;
-      margin: 1rem 0 1rem 0;
-      padding-left: 0;
+      margin: 0;
+      padding: 0 0 1rem 0;
     }
     .main-content {
       width: 100%;
       max-width: 400px;
       text-align: center;
-      margin: 1rem;
+      margin: 0.5rem 0 1rem 320px;
     }
     .item-card {
       background-color: #1a1a1a;
@@ -99,7 +95,7 @@
       background-color: #1a1a1a;
       padding: 1rem;
       border-radius: 6px;
-      margin: 1rem 0;
+      margin: 0.5rem 0;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
     .tournament-offer h3 {
@@ -114,7 +110,14 @@
         max-width: 100%;
       }
       .sidebar {
-        margin: 1rem auto;
+        margin: 0 auto 1rem auto;
+        padding: 0 1rem;
+      }
+      .main-content {
+        margin: 0.5rem auto;
+      }
+      .container {
+        padding-top: 0;
       }
     }
   </style>
@@ -131,8 +134,9 @@
   ">
 </head>
 <body>
+  <button class="back-button" onclick="window.close(); history.back();">Back</button>
   <div class="container">
-    <!-- Sidebar for Items (Left Edge) -->
+    <!-- Sidebar for Items (Leftmost Edge, Topmost Possible) -->
     <div class="sidebar">
       <div class="item-card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
@@ -149,10 +153,8 @@
         <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
       </div>
     </div>
-    <!-- Main Content (Centered) -->
+    <!-- Main Content (Tournament Below Back Button, No Overlap) -->
     <div class="main-content">
-      <h1>Tackle</h1>
-      <button class="back-button" onclick="window.close(); history.back();">Back</button>
       <div class="tournament-offer">
         <h3>Exclusive Monthly Tournament Subscription</h3>
         <p>Secure your spot in the prestigious familyfishing.fun monthly fishing tournaments for only $200 annually. Enjoy a remarkable $160 savings, a 50% discount, and compete for glory all year long!</p>
