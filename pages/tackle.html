@@ -1,71 +1,128 @@
-.container {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  background-color: #000;
-  padding: 20px;
-}
-
-.back-button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-
-.subscription-card, .product-card {
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 15px;
-  border-radius: 10px;
-  color: #fff;
-  width: 45%;
-}
-
-.subscription-card h3 {
-  color: #FFD700;
-  margin-top: 0;
-}
-
-.subscription-card .join-button {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-.product-card .placeholder-image {
-  background-color: #666;
-  height: 150px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
-}
-
-.product-card h3 {
-  color: #FFD700;
-  margin-top: 0;
-}
-
-.product-card .buy-button {
-  background-color: #4CAF50;
-  color: #fff;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-@media (max-width: 600px) {
-  .container {
-    flex-direction: column;
-  }
-  .subscription-card, .product-card {
-    width: 100%;
-  }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tackle - Family Fishing Fun</title>
+  <base href="https://hackerfrankone.github.io/FamilyFishing/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Reuse the same CSP as your main page for consistency -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' https://hackerfrankone.github.io https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
+    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com;
+    frame-ancestors 'none';
+    form-action 'self' https://www.paypal.com;
+    object-src 'none';
+    base-uri 'self';
+  ">
+  <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <!-- Add favicon -->
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
+  <style>
+    body {
+      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1');
+      background-color: #000;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      background-color: #000;
+      padding: 20px;
+    }
+    .back-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .subscription-card, .product-card {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 15px;
+      border-radius: 10px;
+      color: #fff;
+      width: 45%;
+    }
+    .subscription-card h3 {
+      color: #FFD700;
+      margin-top: 0;
+    }
+    .subscription-card .join-button {
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    .product-card .placeholder-image {
+      background-color: #666;
+      height: 150px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+    }
+    .product-card h3 {
+      color: #FFD700;
+      margin-top: 0;
+    }
+    .product-card .buy-button {
+      background-color: #4CAF50;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    @media (max-width: 600px) {
+      .container {
+        flex-direction: column;
+      }
+      .subscription-card, .product-card {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="back-button" onclick="window.location.href='index.html'">Back</button>
+    <div class="subscription-card">
+      <h3>Exclusive Monthly Tournament Subscription</h3>
+      <p>Secure your spot in the prestigious familyfishing.fun monthly fishing tournaments for only $200 annually. Enjoy a remarkable $160 savings, a 50% discount, and compete for glory all year long!</p>
+      <button class="join-button" onclick="window.location.href='https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4'">Join Now</button>
+    </div>
+    <div class="product-card">
+      <div class="placeholder-image">Image Placeholder (Add Image Later)</div>
+      <h3>3" & 5" Kayak Seat Riser</h3>
+      <p>Elevate your kayaking experience with our durable 3" and 5" seat riser. Perfect for added comfort and better visibility on the water.</p>
+      <label for="color">Choose a color:</label>
+      <select id="color">
+        <option value="black">Black</option>
+      </select>
+      <p>Price: $15.99</p>
+      <button class="buy-button">Buy Now</button>
+    </div>
+  </div>
+</body>
+</html>
