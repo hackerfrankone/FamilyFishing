@@ -22,7 +22,7 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      margin: 0.5rem auto;
+      margin: 1rem auto 0.5rem auto;
       transition: filter 0.3s ease;
       display: block;
     }
@@ -32,7 +32,7 @@
     .container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: flex-start;
       width: 100%;
       max-width: 1200px;
@@ -44,13 +44,13 @@
       max-width: 300px;
       text-align: left;
       margin: 0;
-      padding: 0 0 1rem 0;
+      padding: 0 1rem 1rem 1rem;
     }
     .main-content {
       width: 100%;
-      max-width: 400px;
+      max-width: 600px;
       text-align: center;
-      margin: 0.5rem 0 1rem 320px;
+      margin: 0.5rem auto;
     }
     .item-card {
       background-color: #1a1a1a;
@@ -91,11 +91,18 @@
       font-size: 14px;
       margin-bottom: 1rem;
     }
+    select {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border-radius: 6px;
+      border: none;
+    }
     .tournament-offer {
       background-color: #1a1a1a;
       padding: 1rem;
       border-radius: 6px;
-      margin: 0.5rem 0;
+      margin: 1rem auto;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
     .tournament-offer h3 {
@@ -118,6 +125,7 @@
       }
       .container {
         padding-top: 0;
+        flex-direction: column;
       }
     }
   </style>
@@ -135,24 +143,34 @@
 </head>
 <body>
   <button class="back-button" onclick="window.close(); history.back();">Back</button>
+
+  <!-- Monthly Subscription Section Centered Under Back Button -->
+  <div class="main-content">
+    <div class="tournament-offer">
+      <h3>Exclusive Monthly Tournament Subscription</h3>
+      <p>Secure your spot in the prestigious familyfishing.fun monthly fishing tournaments for only $200 annually.</p>
+      <p>Enjoy a remarkable $160 savings — a 50% discount — and compete for glory all year long!</p>
+      <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Join Now</button>
+    </div>
+  </div>
+
   <div class="container">
-    <!-- Sidebar for Items (Leftmost Edge, Topmost Possible) -->
+    <!-- Sidebar for Items -->
     <div class="sidebar">
       <div class="item-card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
         <h3>3" & 5" Kayak Seat Riser</h3>
         <p>Elevate your kayaking experience with our durable 3" and 5" seat riser. Perfect for added comfort and better visibility on the water.</p>
-        
-        <label for="seat-color" style="display:block; margin: 0.5rem 0;">Choose a color:</label>
-        <select id="seat-color" name="seat-color" style="padding: 6px; border-radius: 6px; font-size: 14px;">
+        <label for="riser-color">Choose Color:</label>
+        <select id="riser-color">
+          <option value="black">Black</option>
           <option value="blue">Blue</option>
           <option value="green">Green</option>
-          <option value="black">Black</option>
         </select>
-        
         <p><strong>Price:</strong> $15.99</p>
         <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
       </div>
+
       <div class="item-card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
         <h3>6" Plastic Worms</h3>
@@ -161,15 +179,8 @@
         <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
       </div>
     </div>
-    <!-- Main Content (Tournament Below Back Button, No Overlap) -->
-    <div class="main-content">
-      <div class="tournament-offer">
-        <h3>Exclusive Monthly Tournament Subscription</h3>
-        <p>Secure your spot in the prestigious familyfishing.fun monthly fishing tournaments for only $200 annually. Enjoy a remarkable $160 savings, a 50% discount, and compete for glory all year long!</p>
-        <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Join Now</button>
-      </div>
-    </div>
   </div>
+
   <script>
     console.log('Tackle page loaded');
   </script>
