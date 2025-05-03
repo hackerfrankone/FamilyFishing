@@ -136,7 +136,7 @@
 <body>
   <button class="back-button" onclick="window.close(); history.back();">Back</button>
   <div class="container">
-    <!-- Sidebar for Items (Leftmost Edge, Topmost Possible) -->
+    <!-- Sidebar for Items -->
     <div class="sidebar">
       <div class="item-card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
@@ -146,8 +146,8 @@
         <label for="seat-color" style="display:block; margin: 0.5rem 0;">Choose a color:</label>
         <select id="seat-color" name="seat-color" style="padding: 6px; border-radius: 6px; font-size: 14px;">
           <option value="black">Black</option>
-          <option value="green">Green</option>
           <option value="blue">Blue</option>
+          <option value="green">Green</option>
         </select>
         
         <p><strong>Price:</strong> $15.99</p>
@@ -157,11 +157,20 @@
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
         <h3>6" Plastic Worms</h3>
         <p>Enhance your fishing with our 6" plastic worms, designed for maximum attraction and durability. Ideal for catching bass and other freshwater fish.</p>
+
+        <label for="worm-color" style="display:block; margin: 0.5rem 0;">Pick a color:</label>
+        <select id="worm-color" name="worm-color" style="padding: 6px; border-radius: 6px; font-size: 14px;">
+          <option value="black">Black</option>
+          <option value="green-pumpkin">Green Pumpkin</option>
+          <option value="watermelon">Watermelon</option>
+        </select>
+
         <p><strong>Price:</strong> $4.99</p>
         <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
       </div>
     </div>
-    <!-- Main Content (Tournament Below Back Button, No Overlap) -->
+
+    <!-- Main Content -->
     <div class="main-content">
       <div class="tournament-offer">
         <h3>Exclusive Monthly Tournament Subscription</h3>
