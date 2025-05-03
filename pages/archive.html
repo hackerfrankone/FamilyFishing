@@ -21,15 +21,12 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      margin: 1rem;
       transition: filter 0.3s ease;
+      margin: 1rem auto;
+      display: block;
     }
     .back-button:hover {
       filter: brightness(150%);
-    }
-    h1 {
-      color: yellow;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,8 +42,6 @@
   ">
 </head>
 <body>
-  <h1>Archive</h1>
-  <p>View past tournament winners and highlights.</p>
   <button class="back-button" onclick="window.close(); history.back();">Back</button>
   <script>
     console.log('Archive page loaded');
