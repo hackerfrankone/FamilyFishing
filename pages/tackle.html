@@ -13,6 +13,7 @@
       padding: 0;
       text-align: center;
       min-height: 100vh;
+      position: relative;
     }
     .back-button {
       background-color: #006400;
@@ -22,9 +23,11 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      margin: 0.5rem auto;
+      position: absolute;
+      top: 0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
       transition: filter 0.3s ease;
-      display: block;
     }
     .back-button:hover {
       filter: brightness(150%);
@@ -50,7 +53,11 @@
       width: 100%;
       max-width: 400px;
       text-align: center;
-      margin: 0.5rem 0 1rem 320px;
+      position: absolute;
+      top: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-left: 50px;
     }
     .item-card {
       background-color: #1a1a1a;
@@ -95,7 +102,7 @@
       background-color: #1a1a1a;
       padding: 1rem;
       border-radius: 6px;
-      margin: 0.5rem 0;
+      margin: 0;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
     .tournament-offer h3 {
@@ -104,6 +111,15 @@
     }
     .tournament-offer p {
       margin: 0.5rem 0;
+    }
+    .color-select {
+      background-color: #333;
+      color: white;
+      padding: 5px;
+      border-radius: 4px;
+      border: none;
+      margin: 0.5rem 0;
+      width: 100%;
     }
     @media (max-width: 768px) {
       .sidebar, .main-content {
@@ -114,6 +130,14 @@
         padding: 0 1rem;
       }
       .main-content {
+        position: static;
+        transform: none;
+        margin: 0 auto;
+        margin-left: 0;
+      }
+      .back-button {
+        position: static;
+        transform: none;
         margin: 0.5rem auto;
       }
       .container {
@@ -142,6 +166,12 @@
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
         <h3>3" & 5" Kayak Seat Riser</h3>
         <p>Elevate your kayaking experience with our durable 3" and 5" seat riser. Perfect for added comfort and better visibility on the water.</p>
+        <p><strong>Pick a Color:</strong></p>
+        <select class="color-select">
+          <option value="black">Black</option>
+          <option value="blue">Blue</option>
+          <option value="green">Green</option>
+        </select>
         <p><strong>Price:</strong> $15.99</p>
         <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
       </div>
@@ -153,7 +183,7 @@
         <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
       </div>
     </div>
-    <!-- Main Content (Tournament Below Back Button, No Overlap) -->
+    <!-- Main Content (Tournament Below Back Button, Moved Further Left) -->
     <div class="main-content">
       <div class="tournament-offer">
         <h3>Exclusive Monthly Tournament Subscription</h3>
