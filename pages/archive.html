@@ -30,6 +30,37 @@
     .back-button:hover {
       filter: brightness(150%);
     }
+    .archive-container {
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+    .archive-entry {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+    .archive-entry img {
+      max-width: 300px;
+      height: auto;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+    .archive-entry h2 {
+      color: #FFD140;
+      margin: 0.5rem 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .archive-entry p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      color: #fff;
+    }
+    .error-message {
+      color: #ff5555;
+      font-size: 1.2rem;
+      margin-top: 2rem;
+    }
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
@@ -37,6 +68,7 @@
     script-src 'self' 'unsafe-inline';
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://hackerfrankone.github.io data:;
+    connect-src 'self' https://raw.githubusercontent.com;
     frame-ancestors 'none';
     form-action 'self';
     object-src 'none';
@@ -44,9 +76,60 @@
   ">
 </head>
 <body>
-  <button class="back-button" onclick="window.close(); history.back();">Back</button>
+  <button class="back-button" onclick="window.location.href='index.html'">Back</button>
+  <div class="archive-container" id="archive-container">
+    <p>Loading archive...</p>
+  </div>
   <script>
     console.log('Archive page loaded');
+
+    async function fetchWithRetry(url, maxRetries = 3, timeout = 5000) {
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), timeout);
+          const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+          clearTimeout(timeoutId);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          console.log(`Fetch successful: ${url}`);
+          return response;
+        } catch (error) {
+          console.error(`Fetch attempt ${i + 1} failed for ${url}:`, error);
+          if (i === maxRetries - 1) throw error;
+        }
+      }
+    }
+
+    async function loadArchive() {
+      const container = document.getElementById('archive-container');
+      try {
+        const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
+        const archiveData = await response.json();
+        if (archiveData.length === 0) {
+          container.innerHTML = '<p class="error-message">No archived winners yet.</p>';
+          return;
+        }
+        container.innerHTML = '';
+        archiveData.forEach(entry => {
+          const entryDiv = document.createElement('div');
+          entryDiv.className = 'archive-entry';
+          entryDiv.innerHTML = `
+            <h2>${entry.month}</h2>
+            <p>Winner: ${entry.angler}</p>
+            <img src="${entry.filename}" alt="${entry.month} Winner" onerror="this.style.display='none';">
+          `;
+          container.appendChild(entryDiv);
+        });
+      } catch (error) {
+        console.error('Error loading archive:', error);
+        container.innerHTML = '<p class="error-message">Failed to load archive. Please try again later.</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM fully loaded, loading archive');
+      loadArchive();
+    });
   </script>
 </body>
 </html>
