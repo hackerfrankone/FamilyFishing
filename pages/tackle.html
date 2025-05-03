@@ -1,181 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Tackle - Family Fishing Fun</title>
-  <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/png" href="images/tackleicon.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src 'self' 'unsafe-inline';
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' https://hackerfrankone.github.io data:;
-    frame-ancestors 'none';
-    form-action 'self';
-    object-src 'none';
-    base-uri 'self';
-  ">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fishing Gear Shop</title>
   <style>
     body {
-      background-color: #000;
+      background-color: #111;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      text-align: center;
-      min-height: 100vh;
-      position: relative;
     }
-    .back-button {
-      background-color: #006400;
-      color: white;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      position: absolute;
-      top: 0.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: filter 0.3s ease;
-      z-index: 100;
-    }
-    .back-button:hover {
-      filter: brightness(150%);
-    }
+
     .container {
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .header-buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .back-button {
+      background-color: #228B22;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .yearly-pass {
+      background-color: #222;
+      padding: 1rem;
+      text-align: center;
+      border-radius: 10px;
+      max-width: 400px;
+      margin-bottom: 2rem;
+    }
+
+    .yearly-pass h2 {
+      color: #ffff00;
+      margin-bottom: 0.5rem;
+    }
+
+    .yearly-pass p {
+      margin: 0.3rem 0;
+    }
+
+    .yearly-pass .join-btn {
+      background-color: #228B22;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .products {
+      display: flex;
       justify-content: flex-start;
-      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
       width: 100%;
       max-width: 1200px;
-      margin: 0 auto;
-      padding-top: 3rem;
     }
-    .sidebar {
-      width: 300px;
-      text-align: left;
-      margin: 0;
-      padding: 0 1rem;
-    }
-    .main-content {
-      flex-grow: 1;
-      text-align: center;
-      margin-top: 2rem;
-    }
-    .item-card {
+
+    .card {
       background-color: #1a1a1a;
+      border-radius: 10px;
       padding: 1rem;
-      border-radius: 6px;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      flex: 1 1 300px;
+      max-width: 300px;
     }
-    .item-card h3 {
-      color: yellow;
-      margin: 0 0 0.5rem 0;
+
+    .card h3 {
+      color: #ffff00;
+      margin-top: 0;
     }
-    .item-card p {
-      margin: 0.5rem 0;
-    }
-    .buy-button {
-      background-color: #006400;
-      color: white;
-      padding: 8px 16px;
-      font-size: 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: filter 0.3s ease;
-    }
-    .buy-button:hover {
-      filter: brightness(150%);
-    }
-    .image-placeholder {
+
+    .card select,
+    .card .buy-btn {
       width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    .buy-btn {
+      background-color: #228B22;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .image-placeholder {
+      background-color: #444;
       height: 150px;
-      background-color: #333;
-      border-radius: 6px;
+      margin-bottom: 1rem;
+      border-radius: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #888;
-      font-size: 14px;
-      margin-bottom: 1rem;
-    }
-    .tournament-offer {
-      background-color: #1a1a1a;
-      padding: 1rem;
-      border-radius: 6px;
-      margin: 2rem auto;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      max-width: 400px;
-    }
-    .tournament-offer h3 {
-      color: yellow;
-      margin: 0 0 0.5rem 0;
-    }
-    .tournament-offer p {
-      margin: 0.5rem 0;
-    }
-    .color-select {
-      background-color: #333;
-      color: white;
-      padding: 5px;
-      border-radius: 4px;
-      border: none;
-      margin: 0.5rem 0;
-      width: 100%;
-    }
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        align-items: center;
-      }
-      .sidebar, .main-content {
-        max-width: 100%;
-        margin: 0 auto;
-      }
-      .back-button {
-        position: static;
-        transform: none;
-        margin: 0.5rem auto;
-      }
+      color: #aaa;
     }
   </style>
 </head>
 <body>
-  <button class="back-button" onclick="window.history.back();">Back</button>
-  <div class="main-content">
-    <div class="tournament-offer">
-      <h3>Huge Discount: $120 Yearly Subscription!</h3>
-      <p>Compete for glory and win Bass Pro Shop gift cards all year long!</p>
-      <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Join Now</button>
-    </div>
-  </div>
   <div class="container">
-    <div class="sidebar">
-      <div class="item-card">
+
+    <!-- Top bar -->
+    <div class="header-buttons">
+      <button class="back-button" onclick="history.back()">Back</button>
+    </div>
+
+    <!-- Centered yearly pass -->
+    <div class="yearly-pass">
+      <h2>Yearly Tournament Pass</h2>
+      <p><strong>Huge Discount!</strong> Join now and compete all year long.</p>
+      <p>Win Bass Pro Shop gift cards all year long, Bass.</p>
+      <button class="join-btn" onclick="alert('Joined!')">Join Now - $120/year</button>
+    </div>
+
+    <!-- Products -->
+    <div class="products">
+
+      <!-- Product 1 -->
+      <div class="card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
         <h3>3" & 5" Kayak Seat Riser</h3>
-        <p>Elevate comfort and visibility with our durable seat risers.</p>
-        <p><strong>Pick a Color:</strong></p>
-        <select class="color-select">
-          <option value="black">Black</option>
-          <option value="blue">Blue</option>
-          <option value="green">Green</option>
+        <p>Elevate your kayaking experience with our durable 3" and 5" seat riser. Perfect for added comfort and better visibility on the water.</p>
+        <label for="color1"><strong>Pick a Color:</strong></label>
+        <select id="color1">
+          <option>Black</option>
+          <option>Gray</option>
         </select>
         <p><strong>Price:</strong> $15.99</p>
-        <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
+        <button class="buy-btn" onclick="alert('Added to cart')">Buy Now</button>
       </div>
-      <div class="item-card">
+
+      <!-- Product 2 -->
+      <div class="card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
         <h3>6" Plastic Worms</h3>
-        <p>Max attraction & durability for catching bass & freshwater fish.</p>
-        <p><strong>Price:</strong> $4.99</p>
-        <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
+        <p>Enhance your fishing with our 6" plastic worms, designed for maximum attraction and durability. Ideal for catching bass and other freshwater fish.</p>
+        <label for="color2"><strong>Pick a Color:</strong></label>
+        <select id="color2">
+          <option>Green</option>
+          <option>Brown</option>
+        </select>
+        <p><strong>Price:</strong> $6.49</p>
+        <button class="buy-btn" onclick="alert('Added to cart')">Buy Now</button>
       </div>
+
     </div>
   </div>
 </body>
