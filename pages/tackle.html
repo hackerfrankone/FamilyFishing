@@ -47,7 +47,8 @@
       width: 100%;
       max-width: 300px;
       text-align: left;
-      margin: 1rem;
+      margin: 1rem 0 1rem 0;
+      padding-left: 0;
     }
     .main-content {
       width: 100%;
@@ -112,6 +113,9 @@
       .sidebar, .main-content {
         max-width: 100%;
       }
+      .sidebar {
+        margin: 1rem auto;
+      }
     }
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -128,7 +132,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- Sidebar for Items (Top-Left) -->
+    <!-- Sidebar for Items (Left Edge) -->
     <div class="sidebar">
       <div class="item-card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
@@ -148,7 +152,6 @@
     <!-- Main Content (Centered) -->
     <div class="main-content">
       <h1>Tackle</h1>
-      <p>Explore fishing tackle</p>
       <button class="back-button" onclick="window.close(); history.back();">Back</button>
       <div class="tournament-offer">
         <h3>Exclusive Monthly Tournament Subscription</h3>
