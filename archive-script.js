@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const fetch = require('node-fetch'); // Add node-fetch for HTTP requests
+const fetch = require('node-fetch');
 
 async function getAnglerName() {
   try {
@@ -46,7 +46,7 @@ async function archiveImage() {
     }
     archiveData.unshift({
       month: monthStr,
-      filename, // Consider using `images/archive/${filename}` if archive.html expects full path
+      filename: `images/archive/${filename}`, // Full path for archive.html
       angler: anglerName
     });
     await fs.writeJson(archiveJsonPath, archiveData, { spaces: 2 });
