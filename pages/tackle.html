@@ -1,187 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Tackle - Family Fishing Fun</title>
-  <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      min-height: 100vh;
-    }
-    .back-button {
-      background-color: #006400;
-      color: white;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin: 0.5rem auto;
-      transition: filter 0.3s ease;
-      display: block;
-    }
-    .back-button:hover {
-      filter: brightness(150%);
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      align-items: flex-start;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding-top: 0;
-    }
-    .sidebar {
-      width: 100%;
-      max-width: 300px;
-      text-align: left;
-      margin: 0;
-      padding: 0 0 1rem 0;
-    }
-    .main-content {
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      margin: 0.5rem 0 1rem 320px;
-    }
-    .item-card {
-      background-color: #1a1a1a;
-      padding: 1rem;
-      border-radius: 6px;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    }
-    .item-card h3 {
-      color: yellow;
-      margin: 0 0 0.5rem 0;
-    }
-    .item-card p {
-      margin: 0.5rem 0;
-    }
-    .buy-button {
-      background-color: #006400;
-      color: white;
-      padding: 8px 16px;
-      font-size: 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: filter 0.3s ease;
-    }
-    .buy-button:hover {
-      filter: brightness(150%);
-    }
-    .image-placeholder {
-      width: 100%;
-      height: 150px;
-      background-color: #333;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #888;
-      font-size: 14px;
-      margin-bottom: 1rem;
-    }
-    .tournament-offer {
-      background-color: #1a1a1a;
-      padding: 1rem;
-      border-radius: 6px;
-      margin: 0.5rem 0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    }
-    .tournament-offer h3 {
-      color: yellow;
-      margin: 0 0 0.5rem 0;
-    }
-    .tournament-offer p {
-      margin: 0.5rem 0;
-    }
-    @media (max-width: 768px) {
-      .sidebar, .main-content {
-        max-width: 100%;
-      }
-      .sidebar {
-        margin: 0 auto 1rem auto;
-        padding: 0 1rem;
-      }
-      .main-content {
-        margin: 0.5rem auto;
-      }
-      .container {
-        padding-top: 0;
-      }
-    }
-  </style>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src 'self' 'unsafe-inline';
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' https://hackerfrankone.github.io data:;
-    frame-ancestors 'none';
-    form-action 'self';
-    object-src 'none';
-    base-uri 'self';
-  ">
-</head>
-<body>
-  <button class="back-button" onclick="window.close(); history.back();">Back</button>
-  <div class="container">
-    <!-- Sidebar for Items -->
-    <div class="sidebar">
-      <div class="item-card">
-        <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
-        <h3>3" & 5" Kayak Seat Riser</h3>
-        <p>Elevate your kayaking experience with our durable 3" and 5" seat riser. Perfect for added comfort and better visibility on the water.</p>
-        
-        <label for="seat-color" style="display:block; margin: 0.5rem 0;">Choose a color:</label>
-        <select id="seat-color" name="seat-color" style="padding: 6px; border-radius: 6px; font-size: 14px;">
-          <option value="black">Black</option>
-          <option value="blue">Blue</option>
-          <option value="green">Green</option>
-        </select>
-        
-        <p><strong>Price:</strong> $15.99</p>
-        <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
-      </div>
-      <div class="item-card">
-        <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
-        <h3>6" Plastic Worms</h3>
-        <p>Enhance your fishing with our 6" plastic worms, designed for maximum attraction and durability. Ideal for catching bass and other freshwater fish.</p>
+.container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  background-color: #000;
+  padding: 20px;
+}
 
-        <label for="worm-color" style="display:block; margin: 0.5rem 0;">Pick a color:</label>
-        <select id="worm-color" name="worm-color" style="padding: 6px; border-radius: 6px; font-size: 14px;">
-          <option value="black">Black</option>
-          <option value="old-purple">Old Purple</option>
-          <option value="green-pumpkin">Green Pumpkin</option>
-          <option value="watermelon">Watermelon</option>
-        </select>
+.back-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
 
-        <p><strong>Price:</strong> $4.99</p>
-        <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Buy Now</button>
-      </div>
-    </div>
+.subscription-card, .product-card {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 10px;
+  color: #fff;
+  width: 45%;
+}
 
-    <!-- Main Content -->
-    <div class="main-content">
-      <div class="tournament-offer">
-        <h3>Exclusive Monthly Tournament Subscription</h3>
-        <p>Secure your spot in the prestigious familyfishing.fun monthly fishing tournaments for only $200 annually. Enjoy a remarkable $160 savings, a 50% discount, and compete for glory all year long!</p>
-        <button class="buy-button" onclick="alert('Purchase functionality coming soon!')">Join Now</button>
-      </div>
-    </div>
-  </div>
-  <script>
-    console.log('Tackle page loaded');
-  </script>
-</body>
-</html>
+.subscription-card h3 {
+  color: #FFD700;
+  margin-top: 0;
+}
+
+.subscription-card .join-button {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.product-card .placeholder-image {
+  background-color: #666;
+  height: 150px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+}
+
+.product-card h3 {
+  color: #FFD700;
+  margin-top: 0;
+}
+
+.product-card .buy-button {
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .container {
+    flex-direction: column;
+  }
+  .subscription-card, .product-card {
+    width: 100%;
+  }
+}
