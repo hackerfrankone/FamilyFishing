@@ -1,7 +1,7 @@
-name: Archive Biggest Bass Image
+name: Archive Monthly Winner
 on:
   schedule:
-    - cron: '0 0 1 * *' # Runs at midnight UTC on the 1st of each month
+    - cron: '0 0 1 * *'
 jobs:
   archive:
     runs-on: ubuntu-latest
@@ -12,15 +12,15 @@ jobs:
         with:
           node-version: '16'
       - name: Install dependencies
-        run: npm install fs-extra
+        run: npm install fs-extra node-fetch
       - name: Run archive script
         run: node archive-script.js
       - name: Commit changes
         run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
           git add images/archive/*
-          git commit -m "Archive biggest bass image for $(date +%B-%Y)" || echo "No changes to commit"
+          # Compute previous month for commit message
+          PREV_MONTH=$(date -d "$(date +%Y-%m-01) -1 month" +"%B %Y")
+          git commit -m "Archive winner for ${PREV_MONTH}" || echo "No changes to commit"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
