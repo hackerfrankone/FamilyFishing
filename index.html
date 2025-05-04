@@ -394,6 +394,16 @@
     gtag('js', new Date());
     gtag('config', 'G-6EBHYE2X44', { 'anonymize_ip': true });
     console.log('JavaScript executed: Page load started');
+
+    function handleImageError(imgElement) {
+      const leaderboardContainer = imgElement.parentElement;
+      const noImageText = document.createElement('div');
+      noImageText.className = 'no-image-text';
+      noImageText.textContent = 'Family Fishing Fun';
+      leaderboardContainer.replaceChild(noImageText, imgElement);
+      console.log('Image failed to load, replaced with "Family Fishing Fun" text');
+    }
+
     const monthCodes = ["January", "February", "March", "April", "May", "June",
                         "July", "August", "September", "October", "November", "December"];
 
@@ -574,15 +584,6 @@
         isUpdatingMonth = false;
         console.log('updateMonth function completed');
       }
-    }
-
-    function handleImageError(imgElement) {
-      const leaderboardContainer = imgElement.parentElement;
-      const noImageText = document.createElement('div');
-      noImageText.className = 'no-image-text';
-      noImageText.textContent = 'Family Fishing Fun';
-      leaderboardContainer.replaceChild(noImageText, imgElement);
-      console.log('Image failed to load, replaced with "Family Fishing Fun" text');
     }
 
     let serverTimeOffset = 0;
@@ -799,8 +800,8 @@
   </div>
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
-    <img id="leaderboard-image" src="images/current/bass_may_2025.jpg?v=1" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="handleImageError(this);">
     <div class="current-winner-title"><strong id="current-winner-name">Loading...</strong></div>
+    <img id="leaderboard-image" src="images/current/bass_may_2025.jpg?v=1" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="handleImageError(this);">
   </div>
 </body>
 </html>
