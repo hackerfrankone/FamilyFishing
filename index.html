@@ -297,9 +297,6 @@
       font-weight: bold;
       font-family: Arial, Helvetica, sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      background: #000;
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
       display: block;
     }
     .current-leaderboard-title {
@@ -307,6 +304,12 @@
     }
     .current-winner-title {
       margin-top: 0.2rem;
+    }
+    .current-leaderboard-title span, .current-winner-title span {
+      background: #000;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      display: inline;
     }
     .leaderboard-container {
       text-align: center;
@@ -561,7 +564,7 @@
         } else {
           randomCode = generateSeededCode(0, false);
         }
-        const monthElement = document.getElementById("month");
+        const monthElement = document.getElement superconductorsId("month");
         const codeElement = document.getElementById("month-code");
         const biggestBassTitle = document.getElementById("biggest-bass-title");
         const leaderboardImage = document.getElementById("leaderboard-image");
@@ -798,8 +801,8 @@
     </form>
   </div>
   <div class="leaderboard-container">
-    <div class="current-leaderboard-title"><strong id="biggest-bass-title">May's Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
-    <div class="current-winner-title"><strong id="current-winner-name">Current Winner: Frank 16.50"</strong></div>
+    <div class="current-leaderboard-title"><span><strong id="biggest-bass-title">May's Biggest Bass (Updates: Mon. Wed. Fri.)</strong></span></div>
+    <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Frank 16.50"</strong></span></div>
     <img id="leaderboard-image" src="images/current/bass_may_2025.jpg?v=1" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="handleImageError(this);">
   </div>
 </body>
