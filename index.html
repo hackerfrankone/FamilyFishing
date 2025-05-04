@@ -300,7 +300,7 @@
       background: #000;
       padding: 0.3rem 0.6rem;
       border-radius: 4px;
-      display: inline-block;
+      display: block;
     }
     .current-leaderboard-title {
       margin-top: 0.5rem;
@@ -796,13 +796,11 @@
         Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;" />
       </section>
     </form>
-<div class="leaderboard-container">
-  <div class="current-leaderboard-title">
-    <strong id="biggest-bass-title">May's Biggest Bass (Updates: Mon. Wed. Fri.)</strong>
   </div>
-  <p class="current-winner-title">
-    <strong id="current-winner-name">Current Winner: Frank 16.50"</strong>
-  </p>
-</div>
+  <div class="leaderboard-container">
+    <div class="current-leaderboard-title"><strong id="biggest-bass-title">May's Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
+    <div class="current-winner-title"><strong id="current-winner-name">Current Winner: Frank 16.50"</strong></div>
+    <img id="leaderboard-image" src="images/current/bass_may_2025.jpg?v=1" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="handleImageError(this);">
+  </div>
 </body>
 </html>
