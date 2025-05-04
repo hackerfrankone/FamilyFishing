@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=1">
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
@@ -481,7 +481,7 @@
         const currentWinnerData = {
           month: `${monthCode} ${year}`,
           angler: winnerName,
-          image: `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg`
+          image: `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg?v=${Date.now()}`
         };
         localStorage.setItem('currentWinner', JSON.stringify(currentWinnerData));
       } catch (error) {
@@ -561,7 +561,7 @@
           monthElement.textContent = monthCode;
           codeElement.textContent = randomCode;
           biggestBassTitle.textContent = `${monthCode}'s Biggest Bass (Updates: Mon. Wed. Fri.)`;
-          const currentBassImageSrc = `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg?v=1`;
+          const currentBassImageSrc = `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg?v=${Date.now()}`;
           console.log(`Setting current bass image src: ${currentBassImageSrc}`);
           leaderboardImage.src = currentBassImageSrc;
           currentWinnerElement.textContent = `Current Winner: Loading...`;
@@ -715,6 +715,22 @@
         button.addEventListener('keydown', handleSpacebar);
       });
 
+      // Apply cache busting to static images
+      const images = [
+        { selector: 'link[rel="icon"]', attr: 'href', value: 'images/favicon.jpg?v=' + Date.now() },
+        { selector: '.facebook-button img', attr: 'src', value: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg?v=' + Date.now() },
+        { selector: '.youtube-button img', attr: 'src', value: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg?v=' + Date.now() },
+        { selector: '.paypal-form img[src*="Debit_Credit_APM"]', attr: 'src', value: 'https://www.paypalobjects.com/images/Debit_Credit_APM.svg?v=' + Date.now() },
+        { selector: '.paypal-form img[src*="paypal-wordmark-color"]', attr: 'src', value: 'https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg?v=' + Date.now() }
+      ];
+      images.forEach(img => {
+        const element = document.querySelector(img.selector);
+        if (element) {
+          element.setAttribute(img.attr, img.value);
+          console.log(`Cache busting applied to ${img.selector}: ${img.value}`);
+        }
+      });
+
       console.log('Page initialization complete');
     });
   </script>
@@ -740,7 +756,7 @@
       </form>
       <a href="pages/tackle.html" target="_blank" rel="noopener noreferrer" class="tackle-button" aria-label="Visit our Tackle" tabindex="0">Tackle</a>
       <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page" tabindex="0">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" width="60" height="60">
       </a>
       <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button" aria-label="Visit our YouTube channel" tabindex="0">
         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube logo">
@@ -783,7 +799,7 @@
   </div>
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><strong id="biggest-bass-title">Biggest Bass (Updates: Mon. Wed. Fri.)</strong></div>
-    <img id="leaderboard-image" src="images/current/bass_may_2025.jpg" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="handleImageError(this);">
+    <img id="leaderboard-image" src="images/current/bass_may_2025.jpg?v=1" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onload="console.log('Current Month Leaderboard image loaded:', this.src);" onerror="handleImageError(this);">
     <div class="current-winner-title"><strong id="current-winner-name">Loading...</strong></div>
   </div>
 </body>
