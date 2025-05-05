@@ -556,7 +556,10 @@
           await checkAndArchivePreviousWinner(today, monthNumber, year);
         }
         let randomCode;
-        if (year === 2025 && monthNumber === 3) {
+        if (year === 2025 && monthNumber === 4) {
+          randomCode = 'QEF'; // Explicitly set May 2025 code
+          console.log('Using fixed code for May 2025: QEF');
+        } else if (year === 2025 && monthNumber === 3) {
           randomCode = 'IKY';
         } else if (year > 2025 || (year === 2025 && monthNumber >= 4)) {
           const seed = parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`);
@@ -564,7 +567,7 @@
         } else {
           randomCode = generateSeededCode(0, false);
         }
-        const monthElement = document.getElement superconductorsId("month");
+        const monthElement = document.getElementById("month");
         const codeElement = document.getElementById("month-code");
         const biggestBassTitle = document.getElementById("biggest-bass-title");
         const leaderboardImage = document.getElementById("leaderboard-image");
@@ -671,6 +674,7 @@
         const text = await response.text();
         const lines = text.split('\n').filter(line => line.trim() !== '');
         if (lines.length === 0) {
+          console.warn('No anglers found in CSV');
           anglerList.innerHTML = '<li>No anglers found.</li>';
           return;
         }
@@ -682,9 +686,14 @@
           .filter(item => item !== null)
           .join('');
         anglerList.innerHTML = anglerNames || '<li>No anglers found.</li>';
+        console.log('Angler list loaded successfully');
       } catch (error) {
-        console.error('Error loading angler list:', error);
-        anglerList.innerHTML = '<li>Failed to load anglers. Fallback: John Doe, Jane Smith</li>';
+        console.error('Error loading angler list:', error.message);
+        console.error('Error stack:', error.stack);
+        // Fallback to a default list
+        const fallbackAnglers = ['John Doe', 'Jane Smith', 'Bob Johnson'];
+        anglerList.innerHTML = fallbackAnglers.map(name => `<li>${name}</li>`).join('');
+        console.log('Loaded fallback angler list');
       }
     }
 
