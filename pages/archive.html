@@ -4,132 +4,80 @@
   <meta charset="UTF-8">
   <title>Archive - Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/png" href="images/favicon.png">
-  <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 1rem;
-      text-align: center;
-    }
-    .back-button {
-      background-color: #006400;
-      color: white;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: filter 0.3s ease;
-      position: absolute;
-      top: 10px;
-      left: 10px;
-    }
-    .back-button:hover {
-      filter: brightness(150%);
-    }
-    .archive-container {
-      max-width: 800px;
-      margin: 2rem auto;
-    }
-    .archive-entry {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1rem;
-      margin: 1rem 0;
-      border-radius: 8px;
-    }
-    .archive-entry img {
-      max-width: 300px;
-      height: auto;
-      border-radius: 8px;
-      margin-top: 0.5rem;
-    }
-    .archive-entry h2 {
-      color: #FFD140;
-      margin: 0.5rem 0;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
-    .archive-entry p {
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      color: #fff;
-    }
-    .error-message {
-      color: #ff5555;
-      font-size: 1.2rem;
-      margin-top: 2rem;
-    }
-  </style>
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' 'unsafe-inline';
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://hackerfrankone.github.io data:;
-    connect-src 'self' https://raw.githubusercontent.com;
+    connect-src 'self';
     frame-ancestors 'none';
     form-action 'self';
     object-src 'none';
     base-uri 'self';
   ">
-</head>
-<body>
-  <button class="back-button" onclick="window.location.href='index.html'">Back</button>
-  <div class="archive-container" id="archive-container">
-    <p>Loading archive...</p>
-  </div>
+  <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <style>
+    body {
+      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1');
+      background-color: #000;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+    }
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background-color: #006400;
+      color: white;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: filter 0.3s ease;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+      z-index: 1000;
+    }
+    .back-button:hover {
+      filter: brightness(150%);
+    }
+  </style>
   <script>
-    console.log('Archive page loaded');
-
-    async function fetchWithRetry(url, maxRetries = 3, timeout = 5000) {
-      for (let i = 0; i < maxRetries; i++) {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), timeout);
-          const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
-          clearTimeout(timeoutId);
-          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-          console.log(`Fetch successful: ${url}`);
-          return response;
-        } catch (error) {
-          console.error(`Fetch attempt ${i + 1} failed for ${url}:`, error);
-          if (i === maxRetries - 1) throw error;
-        }
-      }
-    }
-
-    async function loadArchive() {
-      const container = document.getElementById('archive-container');
+    function handleBackButton() {
       try {
-        const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
-        const archiveData = await response.json();
-        if (archiveData.length === 0) {
-          container.innerHTML = '<p class="error-message">No archived winners yet.</p>';
-          return;
-        }
-        container.innerHTML = '';
-        archiveData.forEach(entry => {
-          const entryDiv = document.createElement('div');
-          entryDiv.className = 'archive-entry';
-          entryDiv.innerHTML = `
-            <h2>${entry.month}</h2>
-            <p>Winner: ${entry.angler}</p>
-            <img src="${entry.filename}" alt="${entry.month} Winner" onerror="this.style.display='none';">
-          `;
-          container.appendChild(entryDiv);
-        });
+        window.close();
+        setTimeout(() => {
+          window.location.href = 'https://hackerfrankone.github.io/FamilyFishing/index.html';
+        }, 500);
       } catch (error) {
-        console.error('Error loading archive:', error);
-        container.innerHTML = '<p class="error-message">Failed to load archive. Please try again later.</p>';
+        window.location.href = 'https://hackerfrankone.github.io/FamilyFishing/index.html';
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('DOM fully loaded, loading archive');
-      loadArchive();
+    document.addEventListener('DOMContentLoaded', function() {
+      const backButton = document.querySelector('.back-button');
+      if (backButton) {
+        backButton.addEventListener('click', handleBackButton);
+      }
     });
   </script>
+</head>
+<body>
+  <button class="back-button">Back</button>
 </body>
 </html>
