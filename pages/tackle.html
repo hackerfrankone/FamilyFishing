@@ -118,7 +118,11 @@
   </style>
   <script>
     function handleBackButton() {
-      window.location.href = 'https://hackerfrankone.github.io/FamilyFishing/index.html';
+      try {
+        window.close();
+      } catch (error) {
+        // Silently handle error without redirect or logging
+      }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
