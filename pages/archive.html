@@ -61,11 +61,8 @@
     function handleBackButton() {
       try {
         window.close();
-        setTimeout(() => {
-          window.location.href = 'https://hackerfrankone.github.io/FamilyFishing/index.html';
-        }, 500);
       } catch (error) {
-        window.location.href = 'https://hackerfrankone.github.io/FamilyFishing/index.html';
+        // Silently handle error without redirect or logging
       }
     }
 
