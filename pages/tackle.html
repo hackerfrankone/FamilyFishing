@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <link rel="icon" type="image/png" href="images/tackleicon.png">
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fishing Gear Shop</title>
@@ -14,14 +13,12 @@
       margin: 0;
       padding: 0;
     }
-
     .container {
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 1rem;
     }
-
     .header-buttons {
       width: 100%;
       display: flex;
@@ -29,7 +26,6 @@
       padding: 0 1rem;
       margin-bottom: 1rem;
     }
-
     .back-button {
       background-color: #228B22;
       color: white;
@@ -39,7 +35,6 @@
       cursor: pointer;
       font-size: 1rem;
     }
-
     .yearly-pass {
       background-color: #222;
       padding: 1rem;
@@ -48,16 +43,13 @@
       max-width: 400px;
       margin-bottom: 2rem;
     }
-
     .yearly-pass h2 {
       color: #ffff00;
       margin-bottom: 0.5rem;
     }
-
     .yearly-pass p {
       margin: 0.3rem 0;
     }
-
     .yearly-pass .join-btn {
       background-color: #228B22;
       color: white;
@@ -68,7 +60,6 @@
       font-size: 1rem;
       margin-top: 0.5rem;
     }
-
     .products {
       display: flex;
       justify-content: flex-start;
@@ -77,7 +68,6 @@
       width: 100%;
       max-width: 1200px;
     }
-
     .card {
       background-color: #1a1a1a;
       border-radius: 10px;
@@ -85,19 +75,16 @@
       flex: 1 1 300px;
       max-width: 300px;
     }
-
     .card h3 {
       color: #ffff00;
       margin-top: 0;
     }
-
     .card select,
     .card .buy-btn {
       width: 100%;
       margin-top: 0.5rem;
       padding: 0.5rem;
     }
-
     .buy-btn {
       background-color: #228B22;
       color: white;
@@ -106,7 +93,6 @@
       cursor: pointer;
       font-size: 1rem;
     }
-
     .image-placeholder {
       background-color: #444;
       height: 150px;
@@ -118,25 +104,33 @@
       color: #aaa;
     }
   </style>
+  <script>
+    function handleBackButton() {
+      window.location.href = 'https://hackerfrankone.github.io/FamilyFishing/index.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const backButton = document.querySelector('.back-button');
+      if (backButton) {
+        backButton.addEventListener('click', handleBackButton);
+      }
+    });
+  </script>
 </head>
 <body>
   <div class="container">
-
     <!-- Top bar -->
     <div class="header-buttons">
-      <button class="back-button" onclick="history.back()">Back</button>
+      <button class="back-button">Back</button>
     </div>
-
     <!-- Centered yearly pass -->
     <div class="yearly-pass">
       <h2>Yearly Tournament Pass</h2>
       <p><strong>50% off</strong> Join now and compete for 1 year.</p>
       <button class="join-btn" onclick="alert('Coming soon')">Join Now - $120/year</button>
     </div>
-
     <!-- Products -->
     <div class="products">
-
       <!-- Product 1 -->
       <div class="card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
@@ -156,7 +150,6 @@
         <p><strong>Price:</strong> $14.99</p>
         <button class="buy-btn" onclick="alert('Coming soon')">Buy Now</button>
       </div>
-
       <!-- Product 2 -->
       <div class="card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
@@ -170,7 +163,6 @@
         <p><strong>Price:</strong> $4.99</p>
         <button class="buy-btn" onclick="alert('Coming soon')">Buy Now</button>
       </div>
-
     </div>
   </div>
 </body>
