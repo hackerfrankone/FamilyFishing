@@ -6,12 +6,22 @@
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <style>
+    :root {
+      --primary-color: #FFA500; /* Orange for primary elements */
+      --secondary-color: #FFD140; /* Yellow for countdown, titles */
+      --accent-color: #00ffff; /* Cyan for links */
+      --button-hover: #ffcc00; /* Lighter orange for hover */
+    }
     body {
-      background-color: #000;
+      background-image: url('images/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 1rem;
+      min-height: 100vh;
     }
     @media (max-width: 768px) {
       body {
@@ -24,7 +34,7 @@
       }
     }
     a {
-      color: #00ffff;
+      color: var(--accent-color);
       text-decoration: none;
     }
     .top-bar {
@@ -58,7 +68,7 @@
       font-size: 12px;
       font-weight: bold;
       text-decoration: none;
-      transition: filter 0.3s ease;
+      transition: background-color 0.3s ease;
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     }
     .discord-button {
@@ -66,7 +76,7 @@
       color: white;
     }
     .donate-button {
-      background-color: #FFD700;
+      background-color: var(--primary-color);
       color: white;
       border: none;
       cursor: pointer;
@@ -80,7 +90,7 @@
       color: white;
     }
     .submit-fish-button {
-      background-color: #FFA500;
+      background-color: var(--primary-color);
       color: white;
     }
     .rules-button {
@@ -89,10 +99,10 @@
       padding: 0;
     }
     .discord-button:hover, .archive-button:hover, .tackle-button:hover {
-      filter: brightness(150%);
+      background-color: var(--button-hover);
     }
     .donate-button:hover, .submit-fish-button:hover {
-      filter: brightness(75%);
+      background-color: var(--button-hover);
     }
     .rules-button:hover {
       background-color: #ff0000;
@@ -135,11 +145,11 @@
       max-width: 600px;
       margin: 0.5rem auto 0;
       text-align: center;
-      color: #FFD140;
+      color: var(--secondary-color);
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .countdown span {
-      background: #000;
+      background: rgba(0, 0, 0, 0.8);
       padding: 0.5rem 1rem;
       border-radius: 6px;
     }
@@ -183,7 +193,7 @@
       gap: 0.5rem;
     }
     .paypal-button {
-      background-color: #FFD700;
+      background-color: var(--primary-color);
       color: #000;
       font-weight: bold;
       font-size: 1rem;
@@ -191,10 +201,10 @@
       border-radius: 6px;
       padding: 10px 2rem;
       cursor: pointer;
-      transition: filter 0.3s ease;
+      transition: background-color 0.3s ease;
     }
     .paypal-button:hover {
-      filter: brightness(150%);
+      background-color: var(--button-hover);
     }
     .leaderboard {
       text-align: center;
@@ -217,7 +227,7 @@
       margin: 0.2rem 0;
       font-family: Arial, Helvetica, sans-serif;
       font-weight: bold;
-      color: #FFA500 !important;
+      color: var(--primary-color) !important;
       font-size: 1.5rem;
     }
     .angler-sidebar {
@@ -231,7 +241,7 @@
       z-index: 1000;
     }
     .angler-sidebar h3 {
-      color: yellow;
+      color: var(--secondary-color);
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -253,14 +263,14 @@
       border-radius: 4px;
     }
     .angler-sidebar ul::-webkit-scrollbar-thumb {
-      background: yellow;
+      background: var(--secondary-color);
       border-radius: 4px;
     }
     .angler-sidebar ul::-webkit-scrollbar-thumb:hover {
-      background: #FFD140;
+      background: var(--button-hover);
     }
     .angler-sidebar li {
-      color: yellow;
+      color: var(--secondary-color);
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -272,7 +282,7 @@
         flex-direction: column;
         align-items: center;
       }
-      .countdown {
+      .count Fdown {
         font-size: 0.9rem;
       }
       .identifier-container {
@@ -288,13 +298,13 @@
         text-align: center;
       }
       .identifier-container .month-identifier {
-        color: #FFA500 !important;
+        color: var(--primary-color) !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         font-size: 1.2rem;
       }
     }
     .current-leaderboard-title, .current-winner-title {
-      color: yellow;
+      color: var(--secondary-color);
       font-weight: bold;
       font-family: Arial, Helvetica, sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -307,7 +317,7 @@
       margin-top: 0.2rem;
     }
     .current-leaderboard-title span, .current-winner-title span {
-      background: #000;
+      background: rgba(0, 0, 0, 0.8);
       padding: 0.3rem 0.6rem;
       border-radius: 4px;
       display: inline;
@@ -329,7 +339,7 @@
       max-width: 350px;
       font-size: 1.5rem;
       font-weight: bold;
-      color: #FFD140;
+      color: var(--secondary-color);
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       text-align: center;
     }
@@ -337,24 +347,6 @@
       padding: 8px 16px;
       font-size: 14px;
       border-radius: 6px;
-    }
-    :root {
-      --primary-color: #FFA500;
-    }
-    .identifier-container .month-identifier {
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      margin: 0.2rem 0;
-      font-family: Arial, Helvetica, sans-serif;
-      font-weight: bold;
-      color: var(--primary-color) !important;
-      font-size: 1.5rem;
-    }
-    @media (max-width: 768px) {
-      .identifier-container .month-identifier {
-        color: var(--primary-color) !important;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        font-size: 1.2rem;
-      }
     }
     .rules-button {
       background-color: #cc0000;
@@ -732,7 +724,7 @@
       const images = [
         { selector: 'link[rel="icon"]', attr: 'href', value: 'images/favicon.jpg?v=' + Date.now() },
         { selector: '.facebook-button img', attr: 'src', value: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg?v=' + Date.now() },
-        { selector: '.youtube-button img', attr: 'src', value: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg?v=' + Date.now() },
+        { selector: '.youtube-button img', attr: 'src', value: 'https://www.youtube.com/@usafamilyfishingfun?v=' + Date.now() },
         { selector: '.paypal-form img[src*="Debit_Credit_APM"]', attr: 'src', value: 'https://www.paypalobjects.com/images/Debit_Credit_APM.svg?v=' + Date.now() },
         { selector: '.paypal-form img[src*="paypal-wordmark-color"]', attr: 'src', value: 'https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg?v=' + Date.now() }
       ];
