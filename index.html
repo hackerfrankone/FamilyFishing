@@ -7,11 +7,7 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <style>
     body {
-      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1');
       background-color: #000;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
@@ -226,7 +222,7 @@
     }
     .angler-sidebar {
       position: fixed;
-      top: 3rem; /* Adjusted to be just below the identifier */
+      top: 3rem;
       left: 1rem;
       background: rgba(0, 0, 0, 0.6);
       padding: 1rem;
@@ -397,7 +393,9 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44" onload="console.log('Google Analytics script loaded');" onerror="console.log('Google Analytics script failed to load');"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
     gtag('js', new Date());
     gtag('config', 'G-6EBHYE2X44', { 'anonymize_ip': true });
     console.log('JavaScript executed: Page load started');
@@ -562,7 +560,7 @@
         }
         let randomCode;
         if (year === 2025 && monthNumber === 4) {
-          randomCode = 'QEF'; // Explicitly set May 2025 code
+          randomCode = 'QEF';
           console.log('Using fixed code for May 2025: QEF');
         } else if (year === 2025 && monthNumber === 3) {
           randomCode = 'IKY';
@@ -695,7 +693,6 @@
       } catch (error) {
         console.error('Error loading angler list:', error.message);
         console.error('Error stack:', error.stack);
-        // Fallback to a default list
         const fallbackAnglers = ['John Doe', 'Jane Smith', 'Bob Johnson'];
         anglerList.innerHTML = fallbackAnglers.map(name => `<li>${name}</li>`).join('');
         console.log('Loaded fallback angler list');
@@ -732,7 +729,6 @@
         button.addEventListener('keydown', handleSpacebar);
       });
 
-      // Apply cache busting to static images
       const images = [
         { selector: 'link[rel="icon"]', attr: 'href', value: 'images/favicon.jpg?v=' + Date.now() },
         { selector: '.facebook-button img', attr: 'src', value: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg?v=' + Date.now() },
