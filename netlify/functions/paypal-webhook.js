@@ -1,125 +1,71 @@
-const fetch = require('node-fetch');
-const crypto = require('crypto');
+const fetch = require('node-fetch'); // For IPN verification
 
-function verifyWebhookSignature(event, headers, webhookId) {
-  const signature = headers['paypal-auth-algo'] + '|' +
-                   headers['paypal-cert-url'] + '|' +
-                   headers['paypal-transmission-id'] + '|' +
-                   headers['paypal-transmission-sig'] + '|' +
-                   headers['paypal-transmission-time'];
-  
-  const expectedSignature = crypto.createHmac('sha256', webhookId)
-    .update(event.body)
-    .digest('base64');
-  
-  return signature.includes(expectedSignature);
-}
+// Dummy store to simulate deduplication (in production, use a DB or KV store)
+const processedTransactions = new Set();
 
-exports.handler = async function (event, context) {
+exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ message: 'Method Not Allowed' }),
+      body: 'Method Not Allowed',
     };
   }
 
-  console.log('Received webhook event:', JSON.stringify(event, null, 2));
+  const rawBody = event.body;
+  const headers = event.headers;
+
+  // Parse x-www-form-urlencoded body
+  const params = new URLSearchParams(rawBody);
+  const txn_id = params.get('txn_id');
+  const payment_status = params.get('payment_status');
+  const payer_email = params.get('payer_email');
+  const mc_gross = params.get('mc_gross');
+  const custom = params.get('custom');
+
+  // 1. Validate IPN with PayPal
+  const verificationBody = `cmd=_notify-validate&${rawBody}`;
+  const paypalVerifyUrl = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+
+  let isValid = false;
 
   try {
-    const webhookData = JSON.parse(event.body);
-    console.log('Parsed webhook data:', JSON.stringify(webhookData, null, 2));
-
-    // Verify webhook (uncomment after setting PAYPAL_WEBHOOK_ID)
-    /*
-    const webhookId = process.env.PAYPAL_WEBHOOK_ID;
-    if (webhookId && !verifyWebhookSignature(event, event.headers, webhookId)) {
-      return {
-        statusCode: 403,
-        body: JSON.stringify({ message: 'Webhook signature verification failed' }),
-      };
-    }
-    */
-
-    if (webhookData.event_type !== 'PAYMENT.CAPTURE.COMPLETED') {
-      console.log(`Ignoring event type: ${webhookData.event_type}`);
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: 'Event ignored' }),
-      };
-    }
-
-    const anglerName = webhookData.resource.custom_id?.trim() || webhookData.resource.custom?.trim();
-    if (!anglerName) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'No angler name provided in custom or custom_id field' }),
-      };
-    }
-    const sanitizedName = anglerName.replace(/[^a-zA-Z0-9\s]/g, '');
-    if (!sanitizedName) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'Invalid angler name after sanitization' }),
-      };
-    }
-
-    const githubToken = process.env.GITHUB_TOKEN;
-    if (!githubToken) {
-      throw new Error('GITHUB_TOKEN not set');
-    }
-    const repoOwner = 'hackerfrankone';
-    const repoName = 'FamilyFishing';
-    const filePath = 'CSV/angler_list.csv';
-    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
-
-    const fileResponse = await fetch(apiUrl, {
+    const res = await fetch(paypalVerifyUrl, {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${githubToken}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'FamilyFishing-Webhook'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Netlify-IPN-Validator',
       },
+      body: verificationBody,
     });
-    if (!fileResponse.ok) {
-      throw new Error(`GitHub API error: ${fileResponse.statusText}`);
-    }
-    const fileData = await fileResponse.json();
-    let anglers = fileData.content
-      ? Buffer.from(fileData.content, 'base64').toString().split('\n').filter(line => line.trim())
-      : [];
 
-    if (!anglers.includes(sanitizedName)) {
-      anglers.push(sanitizedName);
-      const newContent = anglers.join('\n');
-      const updateResponse = await fetch(apiUrl, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${githubToken}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'FamilyFishing-Webhook'
-        },
-        body: JSON.stringify({
-          message: `Add angler ${sanitizedName} to angler_list.csv`,
-          content: Buffer.from(newContent).toString('base64'),
-          sha: fileData.sha,
-        }),
-      });
-      if (!updateResponse.ok) {
-        throw new Error(`GitHub API update error: ${updateResponse.statusText}`);
-      }
-      console.log(`Successfully appended ${sanitizedName} to angler_list.csv`);
-    } else {
-      console.log(`Angler ${sanitizedName} already in CSV`);
+    const text = await res.text();
+    if (text === 'VERIFIED') {
+      isValid = true;
     }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Angler list updated', angler: sanitizedName }),
-    };
-  } catch (error) {
-    console.error('Error processing webhook:', error.message, error.stack);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
-    };
+  } catch (err) {
+    console.error('Verification failed:', err);
+    return { statusCode: 500, body: 'Verification error' };
   }
+
+  if (!isValid) {
+    return { statusCode: 400, body: 'Invalid IPN' };
+  }
+
+  // 2. Deduplicate txn_id
+  if (processedTransactions.has(txn_id)) {
+    return { statusCode: 200, body: 'Duplicate notification ignored' };
+  }
+  processedTransactions.add(txn_id);
+
+  // 3. Handle payment
+  if (payment_status === 'Completed') {
+    console.log(`✅ Payment received: $${mc_gross} from ${payer_email}`);
+    console.log(`Transaction ID: ${txn_id} | Custom field: ${custom}`);
+    // TODO: Trigger your business logic here (e.g., save to DB, send confirmation, etc.)
+  }
+
+  return {
+    statusCode: 200,
+    body: 'OK',
+  };
 };
