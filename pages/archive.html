@@ -6,17 +6,18 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Google AdSense Script -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
-
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://fundingchoicesmessages.google.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.com https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net;
+    script-src-attr 'self' 'unsafe-inline';
     style-src 'self' 'unsafe-inline';
-    img-src 'self' https://hackerfrankone.github.io data: https://pagead2.googlesyndication.com;
-    connect-src 'self' https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com;
-    frame-ancestors 'none';
+    img-src 'self' https://hackerfrankone.github.io https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:;
+    connect-src 'self' https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.com https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net;
+    frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
+    child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
+    worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
+    media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
+    font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com;
     form-action 'self';
     object-src 'none';
     base-uri 'self';
@@ -29,9 +30,14 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous" onload="console.log('AdSense script loaded successfully');" onerror="console.error('AdSense script failed to load. Type:', event.type, 'Message:', event.message || 'No message', 'URL:', this.src, 'Check network, CSP (script-src, connect-src, img-src, frame-src, etc.), or AdSense account status (ca-pub-9237571676231200).');"></script>
   <style>
     body {
-      background-color: #000;
+      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1');
+      background-color: black;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
@@ -56,25 +62,190 @@
     .back-button:hover {
       filter: brightness(150%);
     }
+    .archive-container {
+      max-width: 800px;
+      margin: 4rem auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .archive-container h1 {
+      color: yellow;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin-bottom: 1rem;
+    }
+    .archive-list {
+      list-style: none;
+      padding: 0;
+    }
+    .archive-item {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+    }
+    .archive-item img {
+      max-width: 200px;
+      height: auto;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+    .archive-item p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .no-archive {
+      font-size: 1.2rem;
+      color: #FFD140;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    ins.adsbygoogle {
+      display: block;
+      margin: 1rem auto;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .archive-container {
+        margin: 3rem 1rem;
+        padding: 0.5rem;
+      }
+      .back-button {
+        top: 0.5rem;
+        left: 0.5rem;
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+      .archive-item img {
+        max-width: 150px;
+      }
+    }
   </style>
   <script>
-    function handleBackButton() {
+    function handleBackButton(event) {
+      event.preventDefault();
+      window.location.href = 'index.html';
+      console.log('Back button clicked, redirecting to index.html');
+    }
+
+    function checkBackgroundImage() {
+      const bgImage = new Image();
+      bgImage.src = 'https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1';
+      bgImage.onload = () => console.log('Background image loaded successfully:', bgImage.src);
+      bgImage.onerror = (error) => {
+        console.error('Background image failed to load:', bgImage.src, 'Error:', error.message || 'Unknown error');
+        const fallbackImage = new Image();
+        fallbackImage.src = 'https://hackerfrankone.github.io/FamilyFishing/images/fallback.jpg?v=1';
+        fallbackImage.onload = () => {
+          document.body.style.backgroundImage = "url('https://hackerfrankone.github.io/FamilyFishing/images/fallback.jpg?v=1')";
+          console.log('Fallback background image loaded:', fallbackImage.src);
+        };
+        fallbackImage.onerror = () => {
+          console.error('Fallback background image failed to load:', fallbackImage.src);
+          document.body.style.backgroundColor = '#1a3c34';
+        };
+      };
+    }
+
+    async function fetchWithRetry(url, maxRetries = 3, timeout = 5000) {
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), timeout);
+          const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+          clearTimeout(timeoutId);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          console.log(`Fetch successful: ${url}`);
+          return response;
+        } catch (error) {
+          console.error(`Fetch attempt ${i + 1} failed for ${url}:`, error);
+          if (i === maxRetries - 1) throw error;
+        }
+      }
+    }
+
+    async function loadArchive() {
+      console.log('loadArchive started');
+      const archiveList = document.getElementById('archive-list');
+      if (!archiveList) {
+        console.error('DOM element not found: archive-list');
+        return;
+      }
       try {
-        window.close();
+        const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json?cachebust=' + Date.now());
+        const archiveData = await response.json();
+        if (archiveData.length === 0) {
+          console.warn('No archive data found');
+          archiveList.innerHTML = '<p class="no-archive">No archive data available.</p>';
+          return;
+        }
+        const items = archiveData.map(item => `
+          <li class="archive-item">
+            <p><strong>Month:</strong> ${item.month}</p>
+            <p><strong>Winner:</strong> ${item.angler}</p>
+            <img src="${item.image}" alt="${item.month} Winner" onload="console.log('Archive image loaded:', this.src);" onerror="this.style.display='none'; console.error('Archive image failed to load:', this.src);">
+          </li>
+        `).join('');
+        archiveList.innerHTML = items;
+        console.log('Archive loaded successfully');
       } catch (error) {
-        // Silently handle error without redirect or logging
+        console.error('Error loading archive:', error.message);
+        archiveList.innerHTML = '<p class="no-archive">Failed to load archive. Please try again later.</p>';
+      }
+    }
+
+    function handleSpacebar(event) {
+      if (event.key === ' ' || event.keyCode === 32) {
+        event.preventDefault();
+        handleBackButton(event);
       }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM fully loaded');
       const backButton = document.querySelector('.back-button');
       if (backButton) {
         backButton.addEventListener('click', handleBackButton);
+        backButton.addEventListener('keydown', handleSpacebar);
       }
+
+      const favicon = document.querySelector('link[rel="icon"]');
+      if (favicon) {
+        favicon.href = 'images/favicon.jpg?v=' + Date.now();
+        console.log('Cache busting applied to favicon');
+      }
+
+      checkBackgroundImage();
+      loadArchive();
+
+      try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        console.log('AdSense auto ads initialized');
+      } catch (e) {
+        console.error('AdSense initialization failed:', e.message || 'Unknown error', 'Stack:', e.stack || 'No stack');
+      }
+
+      console.log('Page initialization complete');
     });
   </script>
 </head>
 <body>
   <button class="back-button">Back</button>
+  <div class="archive-container">
+    <h1>Past Winners</h1>
+    <ul id="archive-list">
+      <li class="archive-item">Loading...</li>
+    </ul>
+  </div>
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-9237571676231200"
+       data-ad-slot="auto"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
 </body>
 </html>
