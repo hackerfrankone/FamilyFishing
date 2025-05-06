@@ -714,18 +714,33 @@
       }
     }
 
-    window.onload = function() {
-      console.log('Page fully loaded (window.onload triggered)');
-    };
+// ✅ This should be its own function
+window.onload = function() {
+  console.log('Page fully loaded (window.onload triggered)');
+};
 
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM fully loaded');
-      updateMonth();
-      initializeCountdown();
-      startCountdown();
-      loadAnglerList();
-      loadCurrentWinner();
-      setInterval(updateMonth, 48 * 60 * 60 * 1000);
+// ✅ DOM ready logic goes here
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM fully loaded');
+
+  const paypalForm = document.querySelector('.paypal-form');
+  if (paypalForm) {
+    paypalForm.addEventListener('submit', function(event) {
+      const anglerName = document.getElementById('angler-name').value.trim();
+      if (!anglerName) {
+        event.preventDefault();
+        alert('Please enter your name.');
+      }
+    });
+  }
+
+  updateMonth();
+  initializeCountdown();
+  startCountdown();
+  loadAnglerList();
+  loadCurrentWinner();
+  setInterval(updateMonth, 48 * 60 * 60 * 1000);
+});
 
       const socialButtons = document.querySelectorAll('.social-buttons a, .social-buttons button');
       socialButtons.forEach(button => {
@@ -804,16 +819,17 @@
   <p class="countdown" id="countdown">
     <span>Tournament ends in: </span><span id="countdown-timer">26d 23h 39m 42s</span>
   </p>
-  <div class="button-group">
-    <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
-      <input type="hidden" name="custom" value="tournament-join" />
-      <input type="submit" value="Join Tournament $20" class="paypal-button" />
-      <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" />
-      <section style="font-size: 0.75rem;">
-        Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;" />
-      </section>
-    </form>
-  </div>
+<div class="button-group">
+  <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
+    <input type="text" name="custom" id="angler-name" placeholder="Enter your name" required style="padding: 8px; margin-bottom: 0.5rem; border-radius: 4px;" />
+    <input type="hidden" name="item_name" value="Tournament Entry" />
+    <input type="submit" value="Join Tournament $20" class="paypal-button" />
+    <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" />
+    <section style="font-size: 0.75rem;">
+      Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;" />
+    </section>
+  </form>
+</div>
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><span><strong id="biggest-bass-title">May's Biggest Bass (Updates: Mon. Wed. Fri.)</strong></span></div>
     <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Frank 16.50"</strong></span></div>
