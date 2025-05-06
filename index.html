@@ -7,7 +7,7 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <style>
     body {
-      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1');
+      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=1');
       background-color: #000;
       background-size: cover;
       background-position: center;
@@ -377,11 +377,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com;
+    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' https://hackerfrankone.github.io https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
-    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com;
-    frame-ancestors 'none';
+    img-src 'self' https://hackerfrankone.github.io https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com data:;
+    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com;
+    frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com;
     form-action 'self' https://www.paypal.com;
     object-src 'none';
     base-uri 'self';
@@ -819,9 +819,9 @@
   </p>
   <div class="button-group">
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
+      <input type="submit" value="Join Tournament $20" class="paypal-button" />
       <input type="text" name="custom" id="angler-name" placeholder="Enter your name" required style="padding: 8px; margin-bottom: 0.5rem; border-radius: 4px;" />
       <input type="hidden" name="item_name" value="Tournament Entry" />
-      <input type="submit" value="Join Tournament $20" class="paypal-button" />
       <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" />
       <section style="font-size: 0.75rem;">
         Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;" />
