@@ -382,11 +382,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.com https://securepubads.g.doubleclick.net https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.com https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net;
     script-src-attr 'self' 'unsafe-inline';
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://hackerfrankone.github.io https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:;
-    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.com https://securepubads.g.doubleclick.net https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net;
+    connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.com https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net;
     frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
     child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
     worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
@@ -418,8 +418,16 @@
       const noImageText = document.createElement('div');
       noImageText.className = 'no-image-text';
       noImageText.textContent = 'Family Fishing Fun';
-      leaderboardContainer.replaceChild(noImageText, imgElement);
-      console.error('Leaderboard image failed to load:', imgElement.src, 'Error:', imgElement.error || 'Unknown error', 'Replacing with "Family Fishing Fun" text');
+      leaderboardContainer.appendChild(noImageText);
+      imgElement.style.display = 'none';
+      console.error('Leaderboard image failed to load:', imgElement.src, 'Error:', imgElement.error || 'Unknown error', 'Attempting fallback image');
+      imgElement.src = 'https://hackerfrankone.github.io/FamilyFishing/images/current/fallback_bass.jpg?v=' + Date.now();
+      imgElement.style.display = 'block';
+      imgElement.onerror = () => {
+        console.error('Fallback leaderboard image failed to load:', imgElement.src);
+        leaderboardContainer.removeChild(imgElement);
+        noImageText.style.display = 'block';
+      };
     }
 
     function checkBackgroundImage() {
@@ -779,7 +787,7 @@
 
       updateMonth();
       initializeCountdown();
-      start倒计时();
+      startCountdown();
       loadAnglerList();
       loadCurrentWinner();
       checkBackgroundImage();
