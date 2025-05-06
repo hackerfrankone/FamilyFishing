@@ -226,7 +226,7 @@
     }
     .angler-sidebar {
       position: fixed;
-      top: 3rem; /* Adjusted to be just below the identifier */
+      top: 3rem;
       left: 1rem;
       background: rgba(0, 0, 0, 0.6);
       padding: 1rem;
@@ -377,7 +377,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com;
+    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' https://hackerfrankone.github.io https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com data:;
     connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com;
@@ -395,6 +395,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44" onload="console.log('Google Analytics script loaded');" onerror="console.log('Google Analytics script failed to load');"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous" onload="console.log('AdSense script loaded successfully');" onerror="console.error('AdSense script failed to load. Check network, CSP, or AdSense account status.');"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -562,7 +563,7 @@
         }
         let randomCode;
         if (year === 2025 && monthNumber === 4) {
-          randomCode = 'QEF'; // Explicitly set May 2025 code
+          randomCode = 'QEF';
           console.log('Using fixed code for May 2025: QEF');
         } else if (year === 2025 && monthNumber === 3) {
           randomCode = 'IKY';
@@ -714,33 +715,19 @@
       }
     }
 
-// ✅ This should be its own function
-window.onload = function() {
-  console.log('Page fully loaded (window.onload triggered)');
-};
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM fully loaded');
 
-// ✅ DOM ready logic goes here
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM fully loaded');
-
-  const paypalForm = document.querySelector('.paypal-form');
-  if (paypalForm) {
-    paypalForm.addEventListener('submit', function(event) {
-      const anglerName = document.getElementById('angler-name').value.trim();
-      if (!anglerName) {
-        event.preventDefault();
-        alert('Please enter your name.');
+      const paypalForm = document.querySelector('.paypal-form');
+      if (paypalForm) {
+        paypalForm.addEventListener('submit', function(event) {
+          const anglerName = document.getElementById('angler-name').value.trim();
+          if (!anglerName) {
+            event.preventDefault();
+            alert('Please enter your name.');
+          }
+        });
       }
-    });
-  }
-
-  updateMonth();
-  initializeCountdown();
-  startCountdown();
-  loadAnglerList();
-  loadCurrentWinner();
-  setInterval(updateMonth, 48 * 60 * 60 * 1000);
-});
 
       const socialButtons = document.querySelectorAll('.social-buttons a, .social-buttons button');
       socialButtons.forEach(button => {
@@ -763,8 +750,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
 
+      updateMonth();
+      initializeCountdown();
+      startCountdown();
+      loadAnglerList();
+      loadCurrentWinner();
+      setInterval(updateMonth, 48 * 60 * 60 * 1000);
+
       console.log('Page initialization complete');
     });
+
+    window.onload = function() {
+      console.log('Page fully loaded (window.onload triggered)');
+    };
   </script>
 </head>
 <body>
@@ -819,17 +817,17 @@ document.addEventListener('DOMContentLoaded', function() {
   <p class="countdown" id="countdown">
     <span>Tournament ends in: </span><span id="countdown-timer">26d 23h 39m 42s</span>
   </p>
-<div class="button-group">
-  <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
-    <input type="text" name="custom" id="angler-name" placeholder="Enter your name" required style="padding: 8px; margin-bottom: 0.5rem; border-radius: 4px;" />
-    <input type="hidden" name="item_name" value="Tournament Entry" />
-    <input type="submit" value="Join Tournament $20" class="paypal-button" />
-    <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" />
-    <section style="font-size: 0.75rem;">
-      Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;" />
-    </section>
-  </form>
-</div>
+  <div class="button-group">
+    <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
+      <input type="text" name="custom" id="angler-name" placeholder="Enter your name" required style="padding: 8px; margin-bottom: 0.5rem; border-radius: 4px;" />
+      <input type="hidden" name="item_name" value="Tournament Entry" />
+      <input type="submit" value="Join Tournament $20" class="paypal-button" />
+      <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" />
+      <section style="font-size: 0.75rem;">
+        Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;" />
+      </section>
+    </form>
+  </div>
   <div class="leaderboard-container">
     <div class="current-leaderboard-title"><span><strong id="biggest-bass-title">May's Biggest Bass (Updates: Mon. Wed. Fri.)</strong></span></div>
     <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Frank 16.50"</strong></span></div>
