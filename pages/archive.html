@@ -6,12 +6,16 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google AdSense Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
+
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline';
+    script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://fundingchoicesmessages.google.com;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' https://hackerfrankone.github.io data:;
-    connect-src 'self';
+    img-src 'self' https://hackerfrankone.github.io data: https://pagead2.googlesyndication.com;
+    connect-src 'self' https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com;
     frame-ancestors 'none';
     form-action 'self';
     object-src 'none';
