@@ -1,16 +1,37 @@
 exports.handler = async (event, context) => {
   try {
-    // Log the incoming webhook data
-    console.log("Webhook received:", event.body);
+    // Log the entire event for debugging
+    console.log("Full event:", JSON.stringify(event, null, 2));
 
-    // Parse the body (PayPal sends JSON)
-    const payload = JSON.parse(event.body);
+    // Check if body exists and is not empty
+    if (!event.body) {
+      console.log("No body received in request");
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Empty request body" }),
+      };
+    }
 
-    // Log specific details for debugging
-    console.log("Event type:", payload.event_type);
-    console.log("Payload:", payload);
+    // Log the raw body
+    console.log("Webhook received, raw body:", event.body);
 
-    // Return a 200 status to acknowledge receipt
+    // Try parsing the body as JSON
+    let payload;
+    try {
+      payload = JSON.parse(event.body);
+    } catch (parseError) {
+      console.error("Failed to parse JSON:", parseError);
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Invalid JSON payload" }),
+      };
+    }
+
+    // Log parsed payload and event type
+    console.log("Parsed payload:", payload);
+    console.log("Event type:", payload.event_type || "Not specified");
+
+    // Return success response
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "Webhook received" }),
