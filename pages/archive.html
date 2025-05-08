@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Archive</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/jpeg" href="images/background.jpg?v=1">
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
@@ -33,11 +33,7 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous" onload="console.log('AdSense script loaded successfully');" onerror="console.error('AdSense script failed to load. Type:', event.type, 'Message:', event.message || 'No message', 'URL:', this.src, 'Check network, CSP (script-src, connect-src, img-src, frame-src, etc.), or AdSense account status (ca-pub-9237571676231200).');"></script>
   <style>
     body {
-      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1');
       background-color: black;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
@@ -55,30 +51,17 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      transition: filter 0.3s ease;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
       z-index: 1000;
     }
     .back-button:hover {
       filter: brightness(150%);
     }
-    .archive-container {
-      max-width: 800px;
-      margin: 4rem auto;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 1rem;
-      border-radius: 8px;
-      text-align: center;
-    }
-    .archive-container h1 {
-      color: yellow;
-      font-weight: bold;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      margin-bottom: 1rem;
-    }
     .archive-list {
       list-style: none;
       padding: 0;
+      max-width: 800px;
+      margin: 5rem auto 2rem; /* Increased top margin to clear back button */
+      text-align: center;
     }
     .archive-item {
       margin: 1rem 0;
@@ -96,11 +79,13 @@
       margin: 0.5rem 0;
       font-size: 1rem;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      text-align: center; /* Center the text */
     }
     .no-archive {
       font-size: 1.2rem;
       color: #FFD140;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      text-align: center;
     }
     ins.adsbygoogle {
       display: block;
@@ -108,9 +93,8 @@
       text-align: center;
     }
     @media (max-width: 768px) {
-      .archive-container {
-        margin: 3rem 1rem;
-        padding: 0.5rem;
+      .archive-list {
+        margin: 4rem 1rem 2rem; /* Adjusted for smaller screens */
       }
       .back-button {
         top: 0.5rem;
@@ -127,26 +111,8 @@
     function handleBackButton(event) {
       event.preventDefault();
       window.location.href = 'index.html';
-      console.log('Back button clicked, redirecting to index.html');
-    }
-
-    function checkBackgroundImage() {
-      const bgImage = new Image();
-      bgImage.src = 'https://hackerfrankone.github.io/FamilyFishing/images/background.jpg?v=1';
-      bgImage.onload = () => console.log('Background image loaded successfully:', bgImage.src);
-      bgImage.onerror = (error) => {
-        console.error('Background image failed to load:', bgImage.src, 'Error:', error.message || 'Unknown error');
-        const fallbackImage = new Image();
-        fallbackImage.src = 'https://hackerfrankone.github.io/FamilyFishing/images/fallback.jpg?v=1';
-        fallbackImage.onload = () => {
-          document.body.style.backgroundImage = "url('https://hackerfrankone.github.io/FamilyFishing/images/fallback.jpg?v=1')";
-          console.log('Fallback background image loaded:', fallbackImage.src);
-        };
-        fallbackImage.onerror = () => {
-          console.error('Fallback background image failed to load:', fallbackImage.src);
-          document.body.style.backgroundColor = '#1a3c34';
-        };
-      };
+      window.close(); // Attempt to close the tab
+      console.log('Back button clicked, redirecting to index.html and attempting to close tab');
     }
 
     async function fetchWithRetry(url, maxRetries = 3, timeout = 5000) {
@@ -219,7 +185,6 @@
         console.log('Cache busting applied to favicon');
       }
 
-      checkBackgroundImage();
       loadArchive();
 
       try {
@@ -235,12 +200,9 @@
 </head>
 <body>
   <button class="back-button">Back</button>
-  <div class="archive-container">
-    <h1>Past Winners</h1>
-    <ul id="archive-list">
-      <li class="archive-item">Loading...</li>
-    </ul>
-  </div>
+  <ul id="archive-list">
+    <li class="archive-item">Loading...</li>
+  </ul>
   <ins class="adsbygoogle"
        style="display:block"
        data-ad-client="ca-pub-9237571676231200"
