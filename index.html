@@ -733,7 +733,7 @@ async function loadAnglerList() {
   } catch (error) {
     console.error('Error loading angler list:', error.message);
     console.error('Error stack:', error.stack);
-    anglerList.innerHTML = '<li>Error Loading Anglers. Please try again.</li>';
+    anglerList.innerHTML = '<li>Error loading anglers. Please try again later.</li>';
     console.log('Displayed error message due to fetch failure');
   }
 }
