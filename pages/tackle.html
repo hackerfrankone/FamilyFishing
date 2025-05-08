@@ -1,10 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="../images/tackle/tackleicon.png">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>FunBait</title>
+  <link rel="icon" type="image/png" href="../images/tackle/tackleicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net;
+    script-src-attr 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' https://hackerfrankone.github.io https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:;
+    connect-src 'self' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net;
+    frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net;
+    child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net;
+    worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
+    media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net;
+    font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com;
+    form-action 'self';
+    object-src 'none';
+    base-uri 'self';
+  ">
+  <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
   <style>
     body {
       background-color: #111;
@@ -129,6 +154,11 @@
       max-height: 100%;
       object-fit: contain;
     }
+    ins.adsbygoogle {
+      display: block;
+      margin: 1rem auto;
+      text-align: center;
+    }
   </style>
   <script>
     function handleBackButton() {
@@ -143,6 +173,13 @@
       const backButton = document.querySelector('.back-button');
       if (backButton) {
         backButton.addEventListener('click', handleBackButton);
+      }
+
+      try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        console.log('AdSense auto ads initialized');
+      } catch (e) {
+        console.error('AdSense initialization failed:', e.message || 'Unknown error', 'Stack:', e.stack || 'No stack');
       }
     });
   </script>
@@ -202,16 +239,22 @@
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
         <h3>1/8oz LeadHead | Hook 4/0 x10</h3>
         <p>Our 1/8oz leadhead with 4/0 hook & fun worms make the perfect combo for shakeyheads.</p>
-        <label for="color1"><strong>Pick a Color:</strong></label>
-        <select id="color1">
+        <label for="color3"><strong>Pick a Color:</strong></label>
+        <select id="color3">
           <option>Unpainted</option>
           <option>Black</option>
           <option>Green</option>
         </select>
-        <p><strong>Price:</strong> 8.99</p>
+        <p><strong>Price:</strong> $8.99</p>
         <button class="buy-btn" onclick="alert('Coming soon')">Buy Now</button>
       </div>
     </div>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-9237571676231200"
+         data-ad-slot="auto"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
   </div>
 </body>
 </html>
