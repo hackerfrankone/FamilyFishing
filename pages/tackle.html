@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="images/tackleicon.png">
+  <link rel="icon" type="image/png" href="../images/tackleicon.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fishing Gear Shop</title>
@@ -115,6 +115,20 @@
       justify-content: center;
       color: #aaa;
     }
+    .image-container {
+      height: 150px;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
   </style>
   <script>
     function handleBackButton() {
@@ -149,7 +163,9 @@
     <div class="products">
       <!-- Product 1 -->
       <div class="card">
-        <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
+        <div class="image-container">
+          <img src="../images/tackle/2SeatRiser.png" alt="2 Inch Seat Riser for OldTown Kayak" onerror="this.onerror=null; this.parentElement.innerHTML='Image failed to load. Check the path: ../images/tackle/2SeatRiser.png';">
+        </div>
         <h3>2" Old-Town Seat Riser x2</h3>
         <p>Simple but robust design. Stronger than plastic designs!</p>
         <label for="color1"><strong>Pick a Color:</strong></label>
@@ -179,8 +195,8 @@
         <p><strong>Price:</strong> $4.99</p>
         <button class="buy-btn" onclick="alert('Coming soon')">Buy Now</button>
       </div>
-            <!-- Product 3 -->
-            <div class="card">
+      <!-- Product 3 -->
+      <div class="card">
         <div class="image-placeholder">Image Placeholder (Add Image Later)</div>
         <h3>1/8oz LeadHead | Hook 4/0 x10</h3>
         <p>Our 1/8oz leadhead with 4/0 hook & fun worms make the perfect combo for shakeyheads.</p>
