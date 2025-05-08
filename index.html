@@ -755,21 +755,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('DOM fully loaded');
 
-      const paypalForm = document.querySelector('.paypal-form');
-      if (paypalForm) {
-        paypalForm.addEventListener('submit', function(event) {
-          const anglerName = document.getElementById('angler-name').value.trim();
-          if (!anglerName) {
-            event.preventDefault();
-            alert('Please enter your name.');
-          } else {
-            console.log('Submitting PayPal form with angler name:', anglerName);
-            const customInput = document.getElementById('custom-input');
-            customInput.value = anglerName; // Ensure the hidden input has the correct value
-          }
-        });
-      }
-
       const socialButtons = document.querySelectorAll('.social-buttons a, .social-buttons button');
       socialButtons.forEach(button => {
         button.addEventListener('keydown', handleSpacebar);
@@ -868,8 +853,6 @@
   <div class="button-group">
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
       <input type="submit" value="Join Tournament $20" class="paypal-button" />
-      <input type="text" name="custom" id="angler-name" placeholder="Enter your name" required style="padding: 8px; margin-bottom: 0.5rem; border-radius: 4px;" />
-      <input type="hidden" name="custom" id="custom-input" value="" />
       <input type="hidden" name="item_name" value="Tournament Entry" />
       <input type="hidden" name="notify_url" value="https://paypal-webhook.familyfishingfun2025.workers.dev" />
       <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods" />
