@@ -42,23 +42,23 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1rem;
+      padding: 0.5rem;
     }
     .header-buttons {
       width: 100%;
       display: flex;
       justify-content: space-between;
-      padding: 0 1rem;
-      margin-bottom: 1rem;
+      padding: 0 0.5rem;
+      margin-bottom: 0.5rem;
     }
     .back-button {
       background-color: #228B22;
       color: white;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.8rem;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 0.9rem;
       transition: filter 0.3s ease;
     }
     .back-button:hover {
@@ -66,28 +66,30 @@
     }
     .yearly-pass {
       background-color: #222;
-      padding: 1rem;
+      padding: 0.8rem;
       text-align: center;
-      border-radius: 10px;
-      max-width: 400px;
-      margin-bottom: 2rem;
+      border-radius: 8px;
+      max-width: 350px;
+      margin-bottom: 1rem;
     }
     .yearly-pass h2 {
       color: #ffff00;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
+      font-size: 1.2rem;
     }
     .yearly-pass p {
-      margin: 0.3rem 0;
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
     }
     .yearly-pass .join-btn {
       background-color: #228B22;
       color: white;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.8rem;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 1rem;
-      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
       transition: filter 0.3s ease;
     }
     .yearly-pass .join-btn:hover {
@@ -95,28 +97,31 @@
     }
     .products {
       display: flex;
-      justify-content: flex-start;
+      justify-content: center;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.8rem;
       width: 100%;
-      max-width: 1200px;
+      max-width: 1000px;
     }
     .card {
       background-color: #1a1a1a;
-      border-radius: 10px;
-      padding: 1rem;
-      flex: 1 1 300px;
-      max-width: 300px;
+      border-radius: 8px;
+      padding: 0.8rem;
+      flex: 1 1 250px;
+      max-width: 250px;
+      font-size: 0.9rem;
     }
     .card h3 {
       color: #ffff00;
       margin-top: 0;
+      font-size: 1.1rem;
     }
     .card select,
     .card .buy-btn {
       width: 100%;
-      margin-top: 0.5rem;
-      padding: 0.5rem;
+      margin-top: 0.4rem;
+      padding: 0.4rem;
+      font-size: 0.9rem;
     }
     .buy-btn {
       background-color: #228B22;
@@ -124,7 +129,7 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 0.9rem;
       transition: filter 0.3s ease;
     }
     .buy-btn:hover {
@@ -132,17 +137,18 @@
     }
     .image-placeholder {
       background-color: #444;
-      height: 150px;
-      margin-bottom: 1rem;
+      height: 120px;
+      margin-bottom: 0.8rem;
       border-radius: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #aaa;
+      font-size: 0.9rem;
     }
     .image-container {
-      height: 150px;
-      margin-bottom: 1rem;
+      height: 120px;
+      margin-bottom: 0.8rem;
       border-radius: 5px;
       display: flex;
       align-items: center;
@@ -156,7 +162,7 @@
     }
     ins.adsbygoogle {
       display: block;
-      margin: 1rem auto;
+      margin: 0.8rem auto;
       text-align: center;
     }
   </style>
@@ -204,8 +210,7 @@
           <img src="../images/tackle/2SeatRiser.png" alt="2 Inch Seat Riser for OldTown Kayak" onerror="this.onerror=null; this.parentElement.innerHTML='Image failed to load. Check the path: ../images/tackle/2SeatRiser.png';">
         </div>
         <h3>2" Old-Town Seat Riser x2</h3>
-        <p>Simple design but robust durablity. 
-          </p>Stronger than plastic!</p>
+        <p>Simple design but robust durablity.<br>Stronger than plastic!</p>
         <label for="color1"><strong>Pick a Color:</strong></label>
         <select id="color1">
           <option>Black</option>
@@ -219,23 +224,25 @@
         </select>
         <p><strong>Price:</strong> $14.99</p>
         <button class="buy-btn" onclick="alert('Coming soon')">Buy Now</button>
+      </div>
+      <!-- Product 2 -->
       <div class="card">
-  <div class="image-placeholder">Coming soon!</div>
-  <h3>6" Plastic Fun Worms x10</h3>
-  <p>Home recipe. Tested. Easy casting.<br>Maximum attraction and MORE BITES!</p>
-  <label for="color2"><strong>Pick a Color:</strong></label>
-  <select id="color2">
-    <option>Fun Blue</option>
-    <option>Fun Green</option>
-  </select>
-  <label for="scent2"><strong>Pick a Scent:</strong></label>
-  <select id="scent2">
-    <option>Garlic</option>
-    <option>Shrimp</option>
-  </select>
-  <p><strong>Price:</strong> $4.99</p>
-  <button class="buy-btn" onclick="alert('Coming soon')">Buy Now</button>
-</div>
+        <div class="image-placeholder">Coming soon!</div>
+        <h3>6" Plastic Fun Worms x10</h3>
+        <p>Home recipe. Tested. Easy casting.<br>Maximum attraction and MORE BITES!</p>
+        <label for="color2"><strong>Pick a Color:</strong></label>
+        <select id="color2">
+          <option>Fun Blue</option>
+          <option>Fun Green</option>
+        </select>
+        <label for="scent2"><strong>Pick a Scent:</strong></label>
+        <select id="scent2">
+          <option>Garlic</option>
+          <option>Shrimp</option>
+        </select>
+        <p><strong>Price:</strong> $4.99</p>
+        <button class="buy-btn" onclick="alert('Coming soon')">Buy Now</button>
+      </div>
       <!-- Product 3 -->
       <div class="card">
         <div class="image-placeholder">Coming soon!</div>
