@@ -119,7 +119,25 @@
       color: white;
       padding: 0;
     }
-    .discord-button:hover, .archive-button:hover, .tackle-button:hover {
+    .select-state-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: filter 0.3s ease;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+      background-color: #1E90FF;
+      color: white;
+      text-align: center;
+      line-height: 1.1;
+      overflow: hidden;
+    }
+    .discord-button:hover, .archive-button:hover, .tackle-button:hover, .select-state-button:hover {
       filter: brightness(150%);
     }
     .donate-button:hover, .submit-fish-button:hover {
@@ -828,6 +846,7 @@
       <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button" aria-label="View our archive" tabindex="0">Archive</a>
       <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-fish-button" aria-label="Submit Fish" tabindex="0">Submit Fish</a>
       <a href="PDFs/rules.pdf" target="_blank" rel="noopener" class="rules-button" aria-label="View Rules" tabindex="0">📄 Rules</a>
+      <a href="javascript:void(0)" target="_blank" rel="noopener noreferrer" class="select-state-button" aria-label="Select State" tabindex="0">Select State</a>
     </div>
     <div class="tournament-info">
       <p class="main-text">
