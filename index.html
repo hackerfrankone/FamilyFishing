@@ -123,10 +123,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 1rem;
     }
     .state-select {
-      background-color: #1E90FF;
+      background-color: #808080;
       color: white;
       font-size: 12px;
       font-weight: bold;
@@ -211,11 +210,19 @@
     .button-group {
       display: flex;
       justify-content: center;
-      gap: 1rem;
+      gap: 0;
       flex-wrap: wrap;
-      margin-bottom: 2rem;
-      flex-direction: column;
+      margin: 0 auto 2rem;
       align-items: center;
+    }
+    @media (max-width: 768px) {
+      .button-group {
+        flex-direction: column;
+        align-items: center;
+      }
+      .state-select-container {
+        margin-bottom: 0.5rem;
+      }
     }
     .submit-button {
       background-color: #28a745;
@@ -322,10 +329,6 @@
       font-size: 1rem;
     }
     @media (max-width: 768px) {
-      .button-group {
-        flex-direction: column;
-        align-items: center;
-      }
       .countdown {
         font-size: 0.9rem;
       }
@@ -874,6 +877,14 @@
     <span>Tournament ends in: </span><span id="countdown-timer">26d 23h 39m 42s</span>
   </p>
   <div class="button-group">
+    <div class="state-select-container">
+      <select class="state-select" aria-label="Pick a State" tabindex="0">
+        <option value="" disabled selected>Pick a State</option>
+        <option value="Tennessee">Tennessee</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Alabama">Alabama</option>
+      </select>
+    </div>
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
       <input type="submit" value="Join Tournament $20" class="paypal-button" />
       <input type="hidden" name="item_name" value="Tournament Entry" />
@@ -883,14 +894,6 @@
         Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;" />
       </section>
     </form>
-    <div class="state-select-container">
-      <select class="state-select" aria-label="Pick a State" tabindex="0">
-        <option value="" disabled selected>Pick a State</option>
-        <option value="Tennessee">Tennessee</option>
-        <option value="Georgia">Georgia</option>
-        <option value="Alabama">Alabama</option>
-      </select>
-    </div>
   </div>
   <ins class="adsbygoogle"
        style="display:block"
