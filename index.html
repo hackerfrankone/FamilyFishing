@@ -119,25 +119,28 @@
       color: white;
       padding: 0;
     }
-    .select-state-button {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
+    .state-select-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: filter 0.3s ease;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+      margin-top: 1rem;
+    }
+    .state-select {
       background-color: #1E90FF;
       color: white;
-      text-align: center;
-      line-height: 1.1;
-      overflow: hidden;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+      transition: filter 0.3s ease;
     }
-    .discord-button:hover, .archive-button:hover, .tackle-button:hover, .select-state-button:hover {
+    .state-select:hover {
+      filter: brightness(150%);
+    }
+    .discord-button:hover, .archive-button:hover, .tackle-button:hover {
       filter: brightness(150%);
     }
     .donate-button:hover, .submit-fish-button:hover {
@@ -211,6 +214,8 @@
       gap: 1rem;
       flex-wrap: wrap;
       margin-bottom: 2rem;
+      flex-direction: column;
+      align-items: center;
     }
     .submit-button {
       background-color: #28a745;
@@ -846,7 +851,6 @@
       <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button" aria-label="View our archive" tabindex="0">Archive</a>
       <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-fish-button" aria-label="Submit Fish" tabindex="0">Submit Fish</a>
       <a href="PDFs/rules.pdf" target="_blank" rel="noopener" class="rules-button" aria-label="View Rules" tabindex="0">📄 Rules</a>
-      <a href="javascript:void(0)" target="_blank" rel="noopener noreferrer" class="select-state-button" aria-label="Select State" tabindex="0">Select State</a>
     </div>
     <div class="tournament-info">
       <p class="main-text">
@@ -879,6 +883,14 @@
         Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;" />
       </section>
     </form>
+    <div class="state-select-container">
+      <select class="state-select" aria-label="Pick a State" tabindex="0">
+        <option value="" disabled selected>Pick a State</option>
+        <option value="Tennessee">Tennessee</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Alabama">Alabama</option>
+      </select>
+    </div>
   </div>
   <ins class="adsbygoogle"
        style="display:block"
