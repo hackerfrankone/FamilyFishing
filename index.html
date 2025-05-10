@@ -119,26 +119,6 @@
       color: white;
       padding: 0;
     }
-    .state-select-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .state-select {
-      background-color: #808080;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-      transition: filter 0.3s ease;
-    }
-    .state-select:hover {
-      filter: brightness(150%);
-    }
     .discord-button:hover, .archive-button:hover, .tackle-button:hover {
       filter: brightness(150%);
     }
@@ -219,9 +199,6 @@
       .button-group {
         flex-direction: column;
         align-items: center;
-      }
-      .state-select-container {
-        margin-bottom: 0.5rem;
       }
     }
     .submit-button {
@@ -877,14 +854,6 @@
     <span>Tournament ends in: </span><span id="countdown-timer">26d 23h 39m 42s</span>
   </p>
   <div class="button-group">
-    <div class="state-select-container">
-      <select class="state-select" aria-label="Pick a State" tabindex="0">
-        <option value="" disabled selected>Pick a State</option>
-        <option value="Tennessee">Tennessee</option>
-        <option value="Georgia">Georgia</option>
-        <option value="Alabama">Alabama</option>
-      </select>
-    </div>
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
       <input type="submit" value="Join Tournament $20" class="paypal-button" />
       <input type="hidden" name="item_name" value="Tournament Entry" />
