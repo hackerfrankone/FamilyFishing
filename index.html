@@ -621,7 +621,7 @@
         if (monthElement && codeElement && biggestBassTitle && leaderboardImage && currentWinnerElement) {
           monthElement.textContent = monthCode;
           codeElement.textContent = randomCode;
-          biggestBassTitle.textContent = `${monthCode}'s Biggest Bass (Updates: Mon. Wed. Fri.)`;
+          biggestBassTitle.textContent = `${monthCode}'s Biggest Bass (Updates: Every Sunday)`;
           const currentBassImageSrc = `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg?v=${Date.now()}`;
           console.log(`Setting current bass image src: ${currentBassImageSrc}`);
           leaderboardImage.src = currentBassImageSrc;
