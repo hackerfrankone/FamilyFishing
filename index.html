@@ -166,15 +166,15 @@
       max-width: 600px;
       margin: 0.5rem auto 0;
       text-align: center;
-      color: #ff0000;
+      color: #FFD700; /* Default yellow color */
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      background: none; /* Removed background shade */
+      background: none;
     }
     .countdown span {
-      background: none; /* Removed background shade */
+      background: none;
     }
     .countdown-red {
-      color: red !important;
+      color: #ff0000 !important; /* Red when 7 days or fewer are left */
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .feedback {
@@ -685,7 +685,7 @@
         const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
         timerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-        if (days <= 3) {
+        if (days <= 7) { /* Changed from 3 to 7 days */
           countdownElement.classList.add('countdown-red');
         } else {
           countdownElement.classList.remove('countdown-red');
