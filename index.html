@@ -53,53 +53,223 @@
     .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
     .donate-button:hover, .submit-fish-button:hover { filter: brightness(75%); }
     .rules-button:hover { background-color: #ff0000; }
-    .tournament-info { display: inline-block; padding: 0.5rem 1rem; border-radius: 6px; margin: 1rem auto 0; }
-    .tournament-info p { margin: 0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); text-align: center; }
-    .tournament-info .main-text { font-size: 1.5rem; font-weight: bold; color: #FFD700; white-space: nowrap; background: none; }
-    .tournament-info .sub-text { font-size: 1rem; margin-top: 0.1rem; }
-    @media (max-width: 768px) {
-      .tournament-info { padding: 0.4rem 0.8rem; }
-      .tournament-info .main-text { font-size: 1.2rem; }
-      .tournament-info .sub-text { font-size: 0.9rem; margin-top: 0.2rem; }
+    .tournament-info {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin: 1rem auto 0;
+      text-align: center;
     }
-    .countdown { font-size: 2rem; font-weight: bold; max-width: 600px; margin: 0.2rem auto 0; text-align: center; color: #FFD700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); background: none; }
-    .countdown span { background: none; }
-    .countdown-red { color: #ff0000 !important; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
-    .feedback { font-size: 0.9rem; text-align: center; margin-top: 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
-    .feedback a { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
-    .button-group { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; margin: 0 auto 2rem; align-items: center; }
-    @media (max-width: 768px) { .button-group { flex-direction: column; align-items: center; } }
-    .paypal-form  
-
-
- { display: grid; justify-items: center; gap: 0.5rem; }
-    .paypal-button { background-color: #FFD700; color: #000; font-weight: bold; font-size: 1rem; border: none; border-radius: 6px; padding: 10px 2rem; cursor: pointer; transition: filter 0.3s ease; }
-    .paypal-button:hover { filter: brightness(150%); }
-    .leaderboard-container { text-align: center; margin-top: 2rem; }
-    .leaderboard-container img { display: block; margin: 0 auto; max-width: 350px; height: auto; border-radius: 8px; }
-    .leaderboard-container .no-image-text { display: block; margin: 0 auto; max-width: 350px; font-size: 1.5rem; font-weight: bold; color: #FFD140; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); text-align: center; }
-    .current-leaderboard-title, .current-winner-title { color: #FFD700; font-weight: bold; font-size: 1.5rem; font-family: Arial, Helvetica, sans-serif; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); display: block; }
-    .current-leaderboard-title { margin-top: 0.5rem; }
-    .current-winner-title { margin-top: 0.2rem; }
-    .current-leaderboard-title span, .current-winner-title span { background: none; padding: 0; border-radius: 0; display: inline; }
-    .identifier-container { position: fixed; top: 1rem; left: 1rem; z-index: 1000; }
-    .identifier-container .month-identifier { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); margin: 0.2rem 0; font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: #FFA500; font-size: 1.5rem; }
-    .angler-sidebar { position: fixed; top: 3rem; left: 1rem; padding: 1rem; border-radius: 8px; max-width: 200px; z-index: 1000; }
-    .angler-sidebar h3 { color: yellow; font-weight: bold; font-family: 'Arial', sans-serif; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); margin: 0 0 0.5rem; font-size: 1.2rem; }
-    .angler-sidebar ul { list-style: none; padding: 0; margin: 0; max-height: 300px; overflow-y: auto; }
-    .angler-sidebar ul::-webkit-scrollbar { width: 8px; }
-    .angler-sidebar ul::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 4px; }
-    .angler-sidebar ul::-webkit-scrollbar-thumb { background: yellow; border-radius: 4px; }
-    .angler-sidebar ul::-webkit-scrollbar-thumb:hover { background: #FFD140; }
-    .angler-sidebar li { color: yellow; font-weight: bold; font-family: 'Arial', sans-serif; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); margin: 0.5rem 0; font-size: 1.2rem; }
-    @media (max-width: 768px) {
-      .countdown { font-size: 1.5rem; }
-      .identifier-container { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
-      .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
-      .identifier-container .month-identifier { font-size: 1.2rem; }
+    .tournament-info p {
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      text-align: center;
     }
-    ins.adsbygoogle { display: block; margin: 1rem auto; text-align: center; }
-    :root { --primary-color: #FFA500; }
+    .tournament-info .main-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #FFD700;
+      white-space: nowrap;
+      background: none;
+    }
+    .tournament-info .sub-text {
+      font-size: 1rem;
+      margin-top: 0.1rem;
+    }
+    @media (max-width: 768px) {
+      .tournament-info {
+        padding: 0.4rem 0.8rem;
+      }
+      .tournament-info .main-text {
+        font-size: 1.2rem;
+      }
+      .tournament-info .sub-text {
+        font-size: 0.9rem;
+        margin-top: 0.2rem;
+      }
+    }
+    .countdown {
+      font-size: 2rem;
+      font-weight: bold;
+      max-width: 600px;
+      margin: 0.2rem auto;
+      text-align: center;
+      color: #FFD700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      background: none;
+    }
+    .countdown span {
+      background: none;
+    }
+    .countdown-red {
+      color: #ff0000 !important;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .feedback {
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .feedback a {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .paypal-form {
+      display: grid;
+      justify-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .paypal-button {
+      background-color: #FFD700;
+      color: #000;
+      font-weight: bold;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 2rem;
+      cursor: pointer;
+      transition: filter 0.3s ease;
+    }
+    .paypal-button:hover {
+      filter: brightness(150%);
+    }
+    .leaderboard-container {
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+    .leaderboard-container img {
+      display: block;
+      margin: 0 auto;
+      max-width: 350px;
+      height: auto;
+      border-radius: 8px;
+    }
+    .leaderboard-container .no-image-text {
+      display: block;
+      margin: 0 auto;
+      max-width: 350px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #FFD140;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      text-align: center;
+    }
+    .current-leaderboard-title, .current-winner-title {
+      color: #FFD700;
+      font-weight: bold;
+      font-size: 1.5rem;
+      font-family: Arial, Helvetica, sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      display: block;
+    }
+    .current-leaderboard-title {
+      margin-top: 0.5rem;
+    }
+    .current-winner-title {
+      margin-top: 0;
+    }
+    .current-leaderboard-title span, .current-winner-title span {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+      display: inline;
+    }
+    .identifier-container {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1000;
+    }
+    .identifier-container .month-identifier {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin: 0.2rem 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      color: #FFA500;
+      font-size: 1.5rem;
+    }
+    .angler-sidebar {
+      position: fixed;
+      top: 3rem;
+      left: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      max-width: 200px;
+      z-index: 1000;
+    }
+    .angler-sidebar h3 {
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
+    }
+    .angler-sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .angler-sidebar ul::-webkit-scrollbar {
+      width: 8px;
+    }
+    .angler-sidebar ul::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+    .angler-sidebar ul::-webkit-scrollbar-thumb {
+      background: yellow;
+      border-radius: 4px;
+    }
+    .angler-sidebar ul::-webkit-scrollbar-thumb:hover {
+      background: #FFD140;
+    }
+    .angler-sidebar li {
+      color: yellow;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin: 0.5rem 0;
+      font-size: 1.2rem;
+    }
+    @media (max-width: 768px) {
+      .countdown {
+        font-size: 1.5rem;
+      }
+      .identifier-container {
+        position: static;
+        margin: 1rem auto;
+        max-width: 100%;
+        text-align: center;
+      }
+      .angler-sidebar {
+        position: static;
+        margin: 1rem auto;
+        max-width: 100%;
+        text-align: center;
+      }
+      .identifier-container .month-identifier {
+        font-size: 1.2rem;
+      }
+      .paypal-form {
+        margin-top: 0.3rem;
+      }
+      .paypal-button {
+        font-size: 0.9rem;
+        padding: 8px 1.5rem;
+      }
+    }
+    ins.adsbygoogle {
+      display: block;
+      margin: 1rem auto;
+      text-align: center;
+    }
+    :root {
+      --primary-color: #FFA500;
+    }
   </style>
   <script>
     window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-6EBHYE2X44', { 'anonymize_ip': true });
@@ -165,16 +335,14 @@
       <p class="sub-text">Tennessee Lakes Only</p>
       <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
       <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">26d 23h 39m 42s</span></p>
+      <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
+        <input type="submit" value="Join Tournament $20" class="paypal-button">
+        <input type="hidden" name="item_name" value="Tournament Entry">
+        <input type="hidden" name="notify_url" value="https://paypal-webhook.familyfishingfun2025.workers.dev">
+        <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods">
+        <section style="font-size: 0.75rem;">Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;"></section>
+      </form>
     </div>
-  </div>
-  <div class="button-group">
-    <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
-      <input type="submit" value="Join Tournament $20" class="paypal-button">
-      <input type="hidden" name="item_name" value="Tournament Entry">
-      <input type="hidden" name="notify_url" value="https://paypal-webhook.familyfishingfun2025.workers.dev">
-      <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods">
-      <section style="font-size: 0.75rem;">Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;"></section>
-    </form>
   </div>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
   <div class="leaderboard-container">
