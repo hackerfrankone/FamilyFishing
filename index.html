@@ -62,14 +62,17 @@
       .tournament-info .main-text { font-size: 1.2rem; }
       .tournament-info .sub-text { font-size: 0.9rem; margin-top: 0.2rem; }
     }
-    .countdown { font-size: 2rem; font-weight: bold; max-width: 600px; margin: 0.5rem auto 0; text-align: center; color: #FFD700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); background: none; }
+    .countdown { font-size: 2rem; font-weight: bold; max-width: 600px; margin: 0.2rem auto 0; text-align: center; color: #FFD700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); background: none; }
     .countdown span { background: none; }
     .countdown-red { color: #ff0000 !important; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
     .feedback { font-size: 0.9rem; text-align: center; margin-top: 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
     .feedback a { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
     .button-group { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; margin: 0 auto 2rem; align-items: center; }
     @media (max-width: 768px) { .button-group { flex-direction: column; align-items: center; } }
-    .paypal-form { display: grid; justify-items: center; gap: 0.5rem; }
+    .paypal-form  
+
+
+ { display: grid; justify-items: center; gap: 0.5rem; }
     .paypal-button { background-color: #FFD700; color: #000; font-weight: bold; font-size: 1rem; border: none; border-radius: 6px; padding: 10px 2rem; cursor: pointer; transition: filter 0.3s ease; }
     .paypal-button:hover { filter: brightness(150%); }
     .leaderboard-container { text-align: center; margin-top: 2rem; }
@@ -161,9 +164,9 @@
       <p class="main-text">Month long tournament | More anglers | More payout</p>
       <p class="sub-text">Tennessee Lakes Only</p>
       <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
+      <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">26d 23h 39m 42s</span></p>
     </div>
   </div>
-  <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">26d 23h 39m 42s</span></p>
   <div class="button-group">
     <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
       <input type="submit" value="Join Tournament $20" class="paypal-button">
