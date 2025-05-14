@@ -141,20 +141,20 @@
       margin-top: 0.2rem;
       position: relative; /* Positioning context for zoomed image */
       overflow: visible; /* Allow zoomed image to overflow container */
-.leaderboard-container img {
-  display: block;
-  margin: 0 auto;
-  max-width: 350px;
-  min-width: 350px; /* Prevents shrinking */
-  height: auto;
-  border-radius: 8px;
-  transition: transform 0.2s ease;
-  transform-origin: center;
-  cursor: zoom-in;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: pinch-zoom;
-}
+    }
+    .leaderboard-container img {
+      display: block;
+      margin: 0 auto;
+      max-width: 350px;
+      height: auto;
+      border-radius: 8px;
+      transition: transform 0.2s ease; /* Smooth zoom transition */
+      transform-origin: center; /* Zoom from center */
+      cursor: zoom-in; /* Indicate zoomability */
+      user-select: none; /* Prevent image dragging */
+      -webkit-user-select: none; /* For Safari */
+      touch-action: pinch-zoom; /* Enable pinch-to-zoom on mobile */
+    }
     .leaderboard-container .no-image-text {
       display: block;
       margin: 0 auto;
