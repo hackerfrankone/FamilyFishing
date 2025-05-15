@@ -139,8 +139,8 @@
     .leaderboard-container {
       text-align: center;
       margin-top: 0.2rem;
-      position: relative; /* Positioning context for zoomed image */
-      overflow: visible; /* Allow zoomed image to overflow container */
+      position: relative;
+      overflow: visible;
     }
     .leaderboard-container img {
       display: block;
@@ -148,12 +148,12 @@
       max-width: 350px;
       height: auto;
       border-radius: 8px;
-      transition: transform 0.2s ease; /* Smooth zoom transition */
-      transform-origin: center; /* Zoom from center */
-      cursor: zoom-in; /* Indicate zoomability */
-      user-select: none; /* Prevent image dragging */
-      -webkit-user-select: none; /* For Safari */
-      touch-action: pinch-zoom; /* Enable pinch-to-zoom on mobile */
+      transition: transform 0.2s ease;
+      transform-origin: center;
+      cursor: zoom-in;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pinch-zoom;
     }
     .leaderboard-container .no-image-text {
       display: block;
@@ -299,7 +299,7 @@
       noImageText.textContent = 'Family Fishing Fun';
       leaderboardContainer.appendChild(noImageText);
       imgElement.style.display = 'none';
-      imgElement.src = 'https://hackerfrankone.github.io/FamilyFishing/images/current/fallback_bass.jpg?v=' + Date.now();
+      imgElement.src = 'https://hackerfrankone.github.io/FamilyFishing/images/current/fallback_bass.png?v=' + Date.now();
       imgElement.style.display = 'block';
       imgElement.onerror = () => {
         leaderboardContainer.removeChild(imgElement);
@@ -369,7 +369,7 @@
         localStorage.setItem('currentWinner', JSON.stringify({ 
           month: `${monthCode} ${year}`, 
           angler: winnerName, 
-          image: `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg?v=${Date.now()}` 
+          image: `images/current/bass_${monthCode.toLowerCase()}_${year}.png?v=${Date.now()}` 
         })); 
       } catch (error) { 
         winnerElement.textContent = 'No winner yet'; 
@@ -417,7 +417,7 @@
         document.getElementById("month").textContent = monthCode; 
         document.getElementById("month-code").textContent = randomCode; 
         document.getElementById("biggest-bass-title").textContent = `${monthCode}'s Biggest Bass`; 
-        document.getElementById("leaderboard-image").src = `images/current/bass_${monthCode.toLowerCase()}_${year}.jpg?v=${Date.now()}`; 
+        document.getElementById("leaderboard-image").src = `images/current/bass_${monthCode.toLowerCase()}_${year}.png?v=${Date.now()}`; 
         document.getElementById("current-winner-name").textContent = `Current Winner: Loading...`; 
       } catch (error) {} 
       finally { 
@@ -501,21 +501,18 @@
         image.style.transform = `scale(${scale})`;
       }
 
-      // Mouse wheel zoom for desktop
       image.addEventListener('wheel', (event) => {
         event.preventDefault();
         const delta = event.deltaY > 0 ? -scaleStep : scaleStep;
         updateZoom(scale + delta);
       });
 
-      // Double-click to reset zoom
       image.addEventListener('dblclick', (event) => {
         event.preventDefault();
         scale = 1;
         image.style.transform = 'scale(1)';
       });
 
-      // Touch event for pinch-to-zoom enhancement (optional, as native pinch-to-zoom works)
       let initialDistance = null;
       let initialScale = scale;
 
@@ -555,7 +552,7 @@
 
     document.addEventListener('DOMContentLoaded', function() { 
       window.dataLayer.push({event: 'pageview'}); 
-      initializeZoom(); // Initialize zoom functionality
+      initializeZoom();
       updateMonth(); 
       initializeCountdown(); 
       startCountdown(); 
@@ -588,7 +585,7 @@
       <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button" aria-label="Visit our YouTube channel" tabindex="0">
         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube logo">
       </a>
-      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button" aria-label="Join our Discord server" tabindex="0">Discord</a>
+      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class=" discord-button" aria-label="Join our Discord server" tabindex="0">Discord</a>
       <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button" aria-label="View our archive" tabindex="0">Archive</a>
       <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-fish-button" aria-label="Submit Fish" tabindex="0">Submit Fish</a>
       <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button" aria-label="View Rules" tabindex="0">📄 Rules</a>
@@ -610,7 +607,7 @@
   </div>
   <div class="leaderboard-container">
     <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Loading...</strong></span></div>
-    <img id="leaderboard-image" src="images/current/bass_may_2025.jpg?v=1" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onerror="handleImageError(this);">
+    <img id="leaderboard-image" src="images/current/bass_may_2025.png?v=1" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onerror="handleImageError(this);">
   </div>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
