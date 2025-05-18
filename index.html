@@ -162,7 +162,7 @@
       left: 1rem;
       padding: 1rem;
       border-radius: 8px;
-      max-width: 200px W;
+      max-width: 200px;
       z-index: 1000;
     }
     .angler-sidebar h3 {
@@ -319,12 +319,24 @@
       return code;
     }
 
-    function setIdentifier() {
+    function getMonthName(monthIndex) {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                      'July', 'August', 'September', 'October', 'November', 'December'];
+      return months[monthIndex];
+    }
+
+    function setIdentifier(year, month) {
       const identifierElement = document.getElementById('identifier-code');
       if (!identifierElement) return;
-      const seed = Date.now(); // Use current timestamp as seed
-      const code = generateSeededCode(seed);
-      identifierElement.textContent = `Identifier: ${code}`;
+      const monthKey = `identifier-${year}${month.toString().padStart(2, '0')}`;
+      let code = localStorage.getItem(monthKey);
+      if (!code) {
+        const seed = parseInt(`${year}${month.toString().padStart(2, '0')}`);
+        code = generateSeededCode(seed);
+        localStorage.setItem(monthKey, code);
+      }
+      const monthName = getMonthName(month);
+      identifierElement.textContent = `${monthName} Identifier: ${code}`;
     }
 
     async function fetchCurrentTime() { 
@@ -478,12 +490,16 @@
       try { 
         const serverTime = await fetchCurrentTime(); 
         serverTimeOffset = serverTime.getTime() - Date.now(); 
+        const now = new Date(Date.now() + serverTimeOffset); 
+        setIdentifier(now.getUTCFullYear(), now.getUTCMonth()); 
         updateCountdown(); 
       } catch (error) { 
         if (countdownInterval) { 
           clearInterval(countdownInterval); 
           countdownInterval = null; 
         } 
+        const now = new Date(); 
+        setIdentifier(now.getUTCFullYear(), now.getUTCMonth()); 
         updateCountdown(); 
       } 
     }
@@ -492,9 +508,9 @@
       const timerElement = document.getElementById("countdown-timer"); 
       const countdownElement = document.getElementById("countdown"); 
       if (!timerElement || !countdownElement) return; 
-      const now = new Date(Date.now() + serverTimeOffset); 
-      const year = now.getFullYear(); 
-      const month = now.getMonth(); 
+      const now = new Date(Date.now() + serverTimeOffset);16
+      const year = now.getUTCFullYear(); 
+      const month = now.getUTCMonth(); 
       const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0)); 
       const timeDiff = target - now; 
       if (timeDiff <= 0) { 
@@ -524,7 +540,6 @@
       initializeCountdown(); 
       startCountdown(); 
       loadAnglerList(); 
-      setIdentifier(); 
       (adsbygoogle = window.adsbygoogle || []).push({}); 
       document.getElementById("rules-link").href = "PDFs/rules.pdf?v=" + Date.now();
     });
