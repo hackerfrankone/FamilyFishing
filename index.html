@@ -20,7 +20,7 @@
   <style>
     body {
       background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=1');
-      background-color: #000 Apepepepepe;
+      background-color: #000;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -126,82 +126,19 @@
       background-color: #FFD700;
       color: #000;
       font-weight: bold;
-      font-size: 1rem;
+      font-size: 1.2rem;
       border: none;
       border-radius: 6px;
-      padding: 10px 2rem;
+      padding: 12px 3rem;
       cursor: pointer;
       transition: filter 0.3s ease;
     }
     .paypal-button:hover {
       filter: brightness(150%);
     }
-    .leaderboard-container {
-      text-align: center;
-      margin-top: 0.2rem;
-      position: relative;
-      overflow: visible;
-    }
-    .leaderboard-container img {
-      display: block;
-      margin: 0 auto;
-      max-width: 350px;
-      height: auto;
-      border-radius: 8px;
-      transition: transform 0.2s ease;
-      transform-origin: center;
-      cursor: zoom-in;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: pinch-zoom;
-    }
-    .leaderboard-container .no-image-text {
-      display: block;
-      margin: 0 auto;
-      max-width: 350px;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #FFD140;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      text-align: center;
-    }
-    .current-leaderboard-title, .current-winner-title {
-      color: #FFD700;
-      font-weight: bold;
-      font-size: 1.5rem;
-      font-family: Arial, Helvetica, sans-serif;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      display: block;
-    }
-    .current-leaderboard-title {
-      margin-top: 0.5rem;
-    }
-    .current-winner-title {
-      margin-top: 0;
-    }
-    .current-leaderboard-title span, .current-winner-title span {
-      background: none;
-      padding: 0;
-      border-radius: 0;
-      display: inline;
-    }
-    .identifier-container {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 1000;
-    }
-    .identifier-container .month-identifier {
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      margin: 0.2rem 0;
-      font-family: Arial, Helvetica, sans-serif;
-      font-weight: bold;
-      color: #FFFFFF;
-      font-size: 1.5rem;
-    }
     .angler-sidebar {
       position: fixed;
-      top: 3rem;
+      top: 1rem;
       left: 1rem;
       padding: 1rem;
       border-radius: 8px;
@@ -237,43 +174,74 @@
     .angler-sidebar ul::-webkit-scrollbar-thumb:hover {
       background: #FFD140;
     }
-    .angler-sidebar li {
+    .angler-item {
+      cursor: pointer;
+      position: relative;
+    }
+    .angler-name {
+      display: block;
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       margin: 0.5rem 0;
       font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+    .angler-name:hover {
+      color: #FFD140;
+    }
+    .dropdown {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 4px;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      font-size: 0.9rem;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    .dropdown p {
+      margin: 0.3rem 0;
+    }
+    .dropdown ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .dropdown li {
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+    .fish-length {
+      cursor: pointer;
+      color: #00ffff;
+      transition: color 0.3s ease;
+    }
+    .fish-length:hover, .fish-length:focus {
+      color: #FFD140;
+      outline: none;
     }
     @media (max-width: 768px) {
       .countdown {
         font-size: 1.5rem;
       }
-      .identifier-container {
-        position: static;
-        margin: 1rem auto;
-        max-width: 100%;
-        text-align: center;
-      }
       .angler-sidebar {
         position: static;
         margin: 1rem auto;
-        max-width: 100%;
-        text-align: center;
-      }
-      .identifier-container .month-identifier {
-        font-size: 1.2rem;
-        color: #FFFFFF;
+        max-width: 90%;
+        text-align: left;
       }
       .paypal-form {
         margin-top: 0.3rem;
       }
       .paypal-button {
-        font-size: 0.9rem;
-        padding: 8px 1.5rem;
+        font-size: 1rem;
+        padding: 10px 2rem;
       }
-      .leaderboard-container {
-        margin-top: 0.1rem;
+      .dropdown {
+        font-size: 0.8rem;
       }
     }
     ins.adsbygoogle {
@@ -292,40 +260,6 @@
     gtag('js', new Date()); 
     gtag('config', 'G-6EBHYE2X44', { 'anonymize_ip': true });
 
-    function handleImageError(imgElement) {
-      const leaderboardContainer = imgElement.parentElement;
-      const noImageText = document.createElement('div');
-      noImageText.className = 'no-image-text';
-      noImageText.textContent = 'Family Fishing Fun';
-      leaderboardContainer.appendChild(noImageText);
-      imgElement.style.display = 'none';
-      imgElement.src = 'https://hackerfrankone.github.io/FamilyFishing/images/current/fallback_bass.png?v=' + Date.now();
-      imgElement.style.display = 'block';
-      imgElement.onerror = () => {
-        leaderboardContainer.removeChild(imgElement);
-        noImageText.style.display = 'block';
-      };
-    }
-
-    const monthCodes = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    function mulberry32(seed) { 
-      return function() { 
-        let t = seed += 0x6D2B79F5; 
-        t = Math.imul(t ^ t >>> 15, t | 1); 
-        t ^= t + Math.imul(t ^ t >>> 7, t | 61); 
-        return ((t ^ t >>> 14) >>> 0) / 4294967296; 
-      }; 
-    }
-
-    function generateSeededCode(seed, useSeed = true) { 
-      const random = useSeed ? mulberry32(seed) : Math.random; 
-      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
-      let code = ''; 
-      for (let i = 0; i < 3; i++) code += letters.charAt(Math.floor(random() * letters.length)); 
-      return code; 
-    }
-
     async function fetchCurrentTime() { 
       const cachedTime = localStorage.getItem('serverTime'); 
       const cacheTimestamp = localStorage.getItem('serverTimeTimestamp'); 
@@ -339,6 +273,7 @@
         localStorage.setItem('serverTimeTimestamp', Date.now().toString()); 
         return serverTime; 
       } catch (error) { 
+        console.error('Failed to fetch current time:', error); 
         return new Date(); 
       } 
     }
@@ -346,82 +281,115 @@
     async function fetchWithRetry(url, maxRetries = 3, timeout = 5000) { 
       for (let i = 0; i < maxRetries; i++) { 
         try { 
-          const response = await fetch(url, { signal: new AbortController().signal, timeout }); 
-          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); 
+          const controller = new AbortController(); 
+          const id = setTimeout(() => controller.abort(), timeout); 
+          const response = await fetch(url, { signal: controller.signal }); 
+          clearTimeout(id); 
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`); 
           return response; 
         } catch (error) { 
+          console.warn(`Fetch attempt ${i + 1} failed for ${url}:`, error.message); 
           if (i === maxRetries - 1) throw error; 
         } 
       } 
     }
 
-    async function loadCurrentWinner() { 
-      const winnerElement = document.getElementById("current-winner-name"); 
-      if (!winnerElement) return; 
+    async function loadAnglerList() { 
+      const anglerList = document.getElementById("angler-list"); 
+      if (!anglerList) return; 
+      anglerList.innerHTML = "<li>Loading...</li>"; 
       try { 
-        const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/current/current_winner'); 
-        const winnerName = (await response.text()).trim() || 'No winner yet'; 
-        winnerElement.textContent = `Current Winner: ${winnerName}`; 
-        const today = await fetchCurrentTime(); 
-        const monthNumber = today.getMonth(); 
-        const year = today.getFullYear(); 
-        const monthCode = monthCodes[monthNumber]; 
-        localStorage.setItem('currentWinner', JSON.stringify({ 
-          month: `${monthCode} ${year}`, 
-          angler: winnerName, 
-          image: `images/current/bass_${monthCode.toLowerCase()}_${year}.png?v=${Date.now()}` 
-        })); 
-      } catch (error) { 
-        winnerElement.textContent = 'No winner yet'; 
-      } 
-    }
+        const anglerResponse = await fetchWithRetry( 
+          "https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv?cachebust=" + 
+            new Date().getTime() 
+        ); 
+        const anglerText = await anglerResponse.text(); 
+        const anglerNames = anglerText 
+          .split("\n") 
+          .filter((line) => line.trim()) 
+          .slice(1) 
+          .map((line) => line.split(",")[0]?.trim()) 
+          .filter((name) => name); 
 
-    async function checkAndArchivePreviousWinner(today, monthNumber, year) { 
-      const lastMonthDate = new Date(year, monthNumber - 1, 1); 
-      const lastMonthCode = monthCodes[lastMonthDate.getMonth()]; 
-      const lastMonthYear = lastMonthDate.getFullYear(); 
-      const lastMonth = `${lastMonthCode} ${lastMonthYear}`; 
-      const currentWinnerData = JSON.parse(localStorage.getItem('currentWinner') || '{}'); 
-      const storedMonthYear = localStorage.getItem('monthYear'); 
-      if (storedMonthYear !== `${year}-${monthNumber}` && currentWinnerData.month === lastMonth) { 
-        const winner = currentWinnerData.angler; 
-        const winnerImage = currentWinnerData.image; 
-        let archiveData = []; 
+        let fishData = []; 
         try { 
-          const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json'); 
-          if (response.ok) archiveData = await response.json(); 
-        } catch (error) {} 
-        if (!archiveData.find(item => item.month === lastMonth)) { 
-          archiveData.push({ month: lastMonth, angler: winner, image: winnerImage }); 
-          const newArchiveContent = JSON.stringify(archiveData, null, 2); 
-          console.log(`Update archive.json with: ${newArchiveContent}`); 
+          const fishResponse = await fetchWithRetry( 
+            "https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/fish_submissions.csv?cachebust=" + 
+              new Date().getTime() 
+          ); 
+          const fishText = await fishResponse.text(); 
+          fishData = fishText 
+            .split("\n") 
+            .filter((line) => line.trim()) 
+            .slice(1) 
+            .map((line) => { 
+              const [angler, length, date, image] = line.split(","); 
+              return { 
+                angler: angler?.trim(), 
+                length: parseFloat(length?.trim()) || 0, 
+                date: date?.trim(), 
+                image: image?.trim() || '' 
+              }; 
+            }) 
+            .filter((entry) => entry.angler && entry.length > 0); 
+        } catch (fishError) { 
+          console.warn("Failed to load fish submissions, proceeding with angler names only:", fishError.message); 
         } 
+
+        const fishByAngler = {}; 
+        anglerNames.forEach((angler) => { 
+          fishByAngler[angler] = fishData 
+            .filter((fish) => fish.angler === angler) 
+            .sort((a, b) => new Date(b.date) - new Date(a.date)) 
+            .slice(0, 5); 
+        }); 
+
+        const anglerHtml = anglerNames 
+          .map((angler) => { 
+            const fishList = fishByAngler[angler] || []; 
+            const totalInches = fishList 
+              .reduce((sum, fish) => sum + fish.length, 0) 
+              .toFixed(1); 
+            const fishCount = fishList.length; 
+            const fishItems = fishList 
+              .map((fish) => { 
+                return `<li><span class="fish-length" role="button" tabindex="0">${fish.length.toFixed(1)} inches</span></li>`; 
+              }) 
+              .join(""); 
+            return ` 
+              <li class="angler-item"> 
+                <span class="angler-name" onclick="toggleDropdown('${angler.replace(/[^a-zA-Z0-9]/g, "")}')" aria-expanded="false" aria-controls="dropdown-${angler.replace(/[^a-zA-Z0-9]/g, "")}">${angler}</span> 
+                <div class="dropdown" id="dropdown-${angler.replace(/[^a-zA-Z0-9]/g, "")}" style="display: none;"> 
+                  <p>Fish Submitted: ${fishCount}</p> 
+                  <ul>${fishItems}</ul> 
+                  <p>Total: ${totalInches} inches</p> 
+                </div> 
+              </li> 
+            `; 
+          }) 
+          .join(""); 
+        anglerList.innerHTML = anglerHtml || "<li>No anglers registered.</li>"; 
+      } catch (error) { 
+        console.error("Failed to load angler list:", error.message); 
+        anglerList.innerHTML = "<li>No anglers registered.</li>"; 
       } 
     }
 
-    let isUpdatingMonth = false; 
-    async function updateMonth() { 
-      if (isUpdatingMonth) return; 
-      isUpdatingMonth = true; 
-      try { 
-        const today = await fetchCurrentTime(); 
-        const monthNumber = today.getMonth(); 
-        const year = today.getFullYear(); 
-        const monthCode = monthCodes[monthNumber]; 
-        const currentMonthYear = `${year}-${monthNumber}`; 
-        if (localStorage.getItem('monthYear') !== currentMonthYear) { 
-          localStorage.setItem('monthYear', currentMonthYear); 
-          await checkAndArchivePreviousWinner(today, monthNumber, year); 
+    function toggleDropdown(id) { 
+      const dropdown = document.getElementById(`dropdown-${id}`); 
+      const trigger = document.querySelector(`[aria-controls="dropdown-${id}"]`); 
+      if (dropdown && trigger) { 
+        const isHidden = dropdown.style.display === "none"; 
+        document.querySelectorAll(".dropdown").forEach((d) => { 
+          d.style.display = "none"; 
+        }); 
+        document.querySelectorAll("[aria-expanded='true']").forEach((t) => { 
+          t.setAttribute("aria-expanded", "false"); 
+        }); 
+        if (isHidden) { 
+          dropdown.style.display = "block"; 
+          trigger.setAttribute("aria-expanded", "true"); 
         } 
-        let randomCode = year === 2025 && monthNumber === 4 ? 'QEF' : year === 2025 && monthNumber === 3 ? 'IKY' : year > 2025 || (year === 2025 && monthNumber >= 4) ? generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`, true)) : generateSeededCode(0, false); 
-        document.getElementById("month").textContent = monthCode; 
-        document.getElementById("month-code").textContent = randomCode; 
-        document.getElementById("biggest-bass-title").textContent = `${monthCode}'s Biggest Bass`; 
-        document.getElementById("leaderboard-image").src = `images/current/bass_${monthCode.toLowerCase()}_${year}.png?v=${Date.now()}`; 
-        document.getElementById("current-winner-name").textContent = `Current Winner: Loading...`; 
-      } catch (error) {} 
-      finally { 
-        isUpdatingMonth = false; 
       } 
     }
 
@@ -451,7 +419,6 @@
       const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0)); 
       const timeDiff = target - now; 
       if (timeDiff <= 0) { 
-        updateMonth(); 
         timerElement.textContent = "Tournament ended!"; 
         countdownElement.classList.remove('countdown-red'); 
         if (countdownInterval) { 
@@ -473,102 +440,17 @@
       if (!countdownInterval) countdownInterval = setInterval(updateCountdown, 2000); 
     }
 
-    async function loadAnglerList() { 
-      const anglerList = document.getElementById("angler-list"); 
-      if (!anglerList) return; 
-      try { 
-        const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv?cachebust=' + new Date().getTime()); 
-        const text = await response.text(); 
-        console.log("Fetched CSV content:", text); 
-        const anglerNames = text.split('\n').filter(line => line.trim()).slice(1).map(line => line.split(',')[0]?.trim()).filter(name => name).map(name => `<li>${name}</li>`).join(''); 
-        anglerList.innerHTML = anglerNames || ''; 
-      } catch (error) { 
-        console.error("Failed to load angler list:", error); 
-        anglerList.innerHTML = '<li>Error loading anglers. Please try again later.</li>'; 
-      } 
-    }
-
-    /* Zoom functionality */
-    function initializeZoom() {
-      const image = document.getElementById('leaderboard-image');
-      let scale = 1;
-      const minScale = 0.5;
-      const maxScale = 3;
-      const scaleStep = 0.1;
-
-      function updateZoom(newScale) {
-        scale = Math.max(minScale, Math.min(maxScale, newScale));
-        image.style.transform = `scale(${scale})`;
-      }
-
-      image.addEventListener('wheel', (event) => {
-        event.preventDefault();
-        const delta = event.deltaY > 0 ? -scaleStep : scaleStep;
-        updateZoom(scale + delta);
-      });
-
-      image.addEventListener('dblclick', (event) => {
-        event.preventDefault();
-        scale = 1;
-        image.style.transform = 'scale(1)';
-      });
-
-      let initialDistance = null;
-      let initialScale = scale;
-
-      image.addEventListener('touchstart', (event) => {
-        if (event.touches.length === 2) {
-          event.preventDefault();
-          const touch1 = event.touches[0];
-          const touch2 = event.touches[1];
-          initialDistance = Math.hypot(
-            touch1.pageX - touch2.pageX,
-            touch1.pageY - touch2.pageY
-          );
-          initialScale = scale;
-        }
-      });
-
-      image.addEventListener('touchmove', (event) => {
-        if (event.touches.length === 2) {
-          event.preventDefault();
-          const touch1 = event.touches[0];
-          const touch2 = event.touches[1];
-          const currentDistance = Math.hypot(
-            touch1.pageX - touch2.pageX,
-            touch1.pageY - touch2.pageY
-          );
-          if (initialDistance) {
-            const zoomFactor = currentDistance / initialDistance;
-            updateZoom(initialScale * zoomFactor);
-          }
-        }
-      });
-
-      image.addEventListener('touchend', () => {
-        initialDistance = null;
-      });
-    }
-
     document.addEventListener('DOMContentLoaded', function() { 
       window.dataLayer.push({event: 'pageview'}); 
-      initializeZoom();
-      updateMonth(); 
       initializeCountdown(); 
       startCountdown(); 
       loadAnglerList(); 
-      loadCurrentWinner(); 
-      setInterval(updateMonth, 48 * 60 * 60 * 1000); 
       (adsbygoogle = window.adsbygoogle || []).push({}); 
-      // Dynamic cache busting for rules.pdf
       document.getElementById("rules-link").href = "PDFs/rules.pdf?v=" + Date.now();
     });
   </script>
 </head>
 <body>
-  <div class="identifier-container">
-    <p id="monthly-identifier" class="month-identifier"><span id="month"></span> Identifier: <span id="month-code"></span></p>
-  </div>
   <div class="angler-sidebar">
     <h3>ANGLERS:</h3>
     <ul id="angler-list"><li>Loading...</li></ul>
@@ -593,7 +475,7 @@
       <a href="PDFs/rules.pdf" id="rules-link" target="_blank" rel="noopener" class="rules-button" aria-label="View Rules" tabindex="0">📄 Rules</a>
     </div>
     <div class="tournament-info">
-      <p class="main-text">The longest bass wins $100 Bass Pro Shop gift card!</p>
+      <p class="main-text">Highest total inches (up to 5 fish) wins $100 Bass Pro Shop gift card!</p>
       <p class="main-text">Month long tournament | More anglers | More payout</p>
       <p class="sub-text">Tennessee Lakes Only</p>
       <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
@@ -606,10 +488,6 @@
         <section style="font-size: 0.75rem;">Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;"></section>
       </form>
     </div>
-  </div>
-  <div class="leaderboard-container">
-    <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Loading...</strong></span></div>
-    <img id="leaderboard-image" src="images/current/bass_may_2025.png?v=1" alt="Current Month Leaderboard" style="max-width: 350px; height: auto; border-radius: 8px;" onerror="handleImageError(this);">
   </div>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
