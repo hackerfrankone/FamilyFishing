@@ -6,7 +6,7 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
@@ -237,13 +237,69 @@
     .angler-sidebar ul::-webkit-scrollbar-thumb:hover {
       background: #FFD140;
     }
-    .angler-sidebar li {
+    .angler-item {
+      cursor: pointer;
+      position: relative;
+    }
+    .angler-name {
+      display: block;
       color: yellow;
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       margin: 0.5rem 0;
       font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+    .angler-name:hover {
+      color: #FFD140;
+    }
+    .dropdown {
+      display: none;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 4px;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      font-size: 0.9rem;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      max-width: 180px;
+    }
+    .dropdown.show {
+      display: block;
+    }
+    .dropdown p {
+      margin: 0.3rem 0;
+    }
+    .dropdown ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .dropdown li {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .fish-length {
+      color: #00ffff;
+    }
+    .fish-image {
+      max-width: 150px;
+      height: auto;
+      border-radius: 4px;
+      margin-top: 0.3rem;
+      border: 1px solid #FFD700;
+    }
+    .no-image-text {
+      color: #FFD140;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 0.3rem;
     }
     @media (max-width: 768px) {
       .countdown {
@@ -274,6 +330,12 @@
       }
       .leaderboard-container {
         margin-top: 0.1rem;
+      }
+      .dropdown {
+        max-width: 100%;
+      }
+      .fish-image {
+        max-width: 120px;
       }
     }
     ins.adsbygoogle {
@@ -476,16 +538,109 @@
     async function loadAnglerList() { 
       const anglerList = document.getElementById("angler-list"); 
       if (!anglerList) return; 
+      anglerList.innerHTML = "<li>Loading...</li>"; 
       try { 
-        const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv?cachebust=' + new Date().getTime()); 
-        const text = await response.text(); 
-        console.log("Fetched CSV content:", text); 
-        const anglerNames = text.split('\n').filter(line => line.trim()).slice(1).map(line => line.split(',')[0]?.trim()).filter(name => name).map(name => `<li>${name}</li>`).join(''); 
-        anglerList.innerHTML = anglerNames || ''; 
+        // Fetch angler_list.csv
+        const anglerResponse = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv?cachebust=' + new Date().getTime()); 
+        const anglerText = await anglerResponse.text(); 
+        const anglerNames = anglerText.split('\n').filter(line => line.trim()).slice(1).map(line => line.split(',')[0]?.trim()).filter(name => name); 
+
+        // Fetch fish_submissions.csv
+        let fishData = [];
+        try {
+          const fishResponse = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/fish_submissions.csv?cachebust=' + new Date().getTime());
+          const fishText = await fishResponse.text();
+          fishData = fishText.split('\n').filter(line => line.trim()).slice(1).map(line => {
+            const [angler, length, date, image] = line.split(',');
+            return { 
+              angler: angler?.trim(), 
+              length: parseFloat(length) || 0, 
+              date: date?.trim(), 
+              image: image?.trim() || ''
+            };
+          }).filter(entry => entry.angler && entry.length > 0);
+        } catch (fishError) {
+          console.warn('No fish submissions found:', fishError);
+        }
+
+        // Group fish by angler and limit to 5 newest
+        const fishByAngler = {};
+        anglerNames.forEach(angler => {
+          fishByAngler[angler] = fishData.filter(fish => fish.angler === angler)
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 5);
+        });
+
+        // Generate HTML for anglers
+        const anglerHtml = anglerNames.map(angler => {
+          const fishList = fishByAngler[angler] || [];
+          const fishCount = fishList.length;
+          const totalLength = fishList.reduce((sum, fish) => sum + fish.length, 0).toFixed(1);
+          const fishItems = fishList.map(fish => {
+            const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}?v=${Date.now()}` : '';
+            const imageHtml = imageUrl ? 
+              `<img class="fish-image" src="${imageUrl}" alt="${fish.length.toFixed(1)} inch bass by ${angler}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">` : 
+              '';
+            const noImageHtml = `<span class="no-image-text" style="display: ${imageUrl ? 'none' : 'block'};">No image available</span>`;
+            return `
+              <li>
+                <span class="fish-length">${fish.length.toFixed(1)} inches</span>
+                ${imageHtml}${noImageHtml}
+              </li>
+            `;
+          }).join('');
+          // Generate placeholders for remaining slots (up to 5)
+          const placeholders = Array.from({ length: 5 - fishCount }, () => `
+            <li>
+              <span class="no-image-text">No fish submitted</span>
+            </li>
+          `).join('');
+          return `
+            <li class="angler-item">
+              <span class="angler-name" onclick="toggleDropdown('${angler.replace(/[^a-zA-Z0-9]/g, '')}')" aria-expanded="false" aria-controls="dropdown-${angler.replace(/[^a-zA-Z0-9]/g, '')}">${angler}</span>
+              <div class="dropdown" id="dropdown-${angler.replace(/[^a-zA-Z0-9]/g, '')}">
+                <p>Fish Submitted: ${fishCount}</p>
+                <ul>${fishItems}${placeholders}</ul>
+                <p>Total: ${totalLength} inches</p>
+              </div>
+            </li>
+          `;
+        }).join('');
+        anglerList.innerHTML = anglerHtml || '<li>No anglers registered.</li>';
+
+        // Add click event listeners (optional, as onclick is in HTML)
+        document.querySelectorAll('.angler-name').forEach(name => {
+          name.addEventListener('click', () => {
+            const dropdown = document.getElementById(name.getAttribute('aria-controls'));
+            const isExpanded = name.getAttribute('aria-expanded') === 'true';
+            // Close all dropdowns
+            document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.angler-name[aria-expanded="true"]').forEach(n => n.setAttribute('aria-expanded', 'false'));
+            // Toggle current dropdown
+            if (!isExpanded) {
+              dropdown.classList.add('show');
+              name.setAttribute('aria-expanded', 'true');
+            }
+          });
+        });
       } catch (error) { 
         console.error("Failed to load angler list:", error); 
         anglerList.innerHTML = '<li>Error loading anglers. Please try again later.</li>'; 
       } 
+    }
+
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(`dropdown-${id}`);
+      const trigger = document.querySelector(`[aria-controls="dropdown-${id}"]`);
+      if (dropdown && trigger) {
+        const isHidden = !dropdown.classList.contains('show');
+        document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
+        document.querySelectorAll('[aria-expanded="true"]').forEach(t => t.setAttribute('aria-expanded', 'false'));
+        if (isHidden) {
+          dropdown.classList.add('show');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      }
     }
 
     /* Zoom functionality */
@@ -595,7 +750,7 @@
       <p class="main-text">Month long tournament | More anglers | More payout</p>
       <p class="sub-text">Tennessee Lakes Only</p>
       <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
-      <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">26d 23h 39m 42s</span></p>
+      <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
       <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
         <input type="submit" value="Join Tournament $20" class="paypal-button">
         <input type="hidden" name="item_name" value="Tournament Entry">
