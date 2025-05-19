@@ -798,8 +798,12 @@
 
       image.addEventListener('click', (event) => {
         event.preventDefault();
-        console.log(`Opening image: ${image.src}`);
-        window.open(image.src, '_blank');
+        const anglerName = image.closest('.angler-item').querySelector('.angler-name').textContent;
+        const fishLength = image.closest('li').querySelector('.fish-length').textContent.replace(' inches', '');
+        const imageUrl = encodeURIComponent(image.src);
+        const viewerUrl = `image-viewer.html?image=${imageUrl}&angler=${encodeURIComponent(anglerName)}&length=${encodeURIComponent(fishLength)}`;
+        console.log(`Opening: ${viewerUrl}`);
+        window.open(viewerUrl, '_blank');
       });
     }
 
