@@ -74,45 +74,19 @@
     }
     .tournament-info .sub-text {
       font-size: 1rem;
+      color: #ff0000; /* Red text as requested */
       margin-top: 0.1rem;
-    }
-    @media (max-width: 768px) {
-      .tournament-info {
-        padding: 0.4rem 0.8rem;
-      }
-      .tournament-info .main-text {
-        font-size: 1.2rem;
-      }
-      .tournament-info .sub-text {
-        font-size: 0.9rem;
-        margin-top: 0.2rem;
-      }
-    }
-    .countdown {
-      font-size: 2rem;
-      font-weight: bold;
-      max-width: 600px;
-      margin: 0.2rem auto;
-      text-align: center;
-      color: #FFD700;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      background: none;
-    }
-    .countdown span {
-      background: none;
-    }
-    .countdown-red {
-      color: #ff0000 !important;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .feedback {
       font-size: 0.9rem;
       text-align: center;
       margin-top: 0.5rem;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      color: #ff0000; /* Red text as requested */
     }
     .feedback a {
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      color: #00ffff; /* Cyan link */
     }
     .paypal-form {
       display: grid;
@@ -205,6 +179,8 @@
       padding: 1rem;
       border-radius: 8px;
       max-width: 250px;
+      max-height: 500px; /* Increased for more scrollable space */
+      overflow-y: auto;
       z-index: 1000;
     }
     .angler-sidebar h3 {
@@ -219,8 +195,6 @@
       list-style: none;
       padding: 0;
       margin: 0;
-      max-height: 500px;
-      overflow-y: auto;
     }
     .angler-sidebar ul::-webkit-scrollbar {
       width: 8px;
@@ -268,7 +242,7 @@
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
       max-width: 180px;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
     }
     .dropdown.show {
       display: block !important;
@@ -280,24 +254,31 @@
       list-style: none;
       padding: 0;
       margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 0.3rem;
     }
     .dropdown li {
-      margin: 0.5rem 0;
+      margin: 0;
       font-size: 0.9rem;
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
     .fish-length {
       color: #00ffff;
+      font-size: 0.7rem;
+      margin-bottom: 0.2rem;
     }
     .fish-image {
-      max-width: 150px;
+      width: 60px;
       height: auto;
       border-radius: 4px;
-      margin-top: 0.3rem;
-      border: 1px solid #FFD700;
+      margin: 0.2rem;
+      border: none;
+      outline: none;
       transition: transform 0.2s ease;
       transform-origin: center;
       cursor: zoom-in;
@@ -307,14 +288,12 @@
     }
     .no-image-text {
       color: #FFD140;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       text-align: center;
-      margin-top: 0.3rem;
+      margin: 0.2rem;
+      width: 60px;
     }
     @media (max-width: 768px) {
-      .countdown {
-        font-size: 1.5rem;
-      }
       .identifier-container {
         position: static;
         margin: 1rem auto;
@@ -348,7 +327,17 @@
         max-width: 100%;
       }
       .fish-image {
-        max-width: 120px;
+        width: 50px;
+      }
+      .no-image-text {
+        width: 50px;
+        font-size: 0.6rem;
+      }
+      .fish-length {
+        font-size: 0.6rem;
+      }
+      .dropdown ul {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
       }
     }
     ins.adsbygoogle {
@@ -374,7 +363,7 @@
       noImageText.textContent = 'Family Fishing Fun';
       leaderboardContainer.appendChild(noImageText);
       imgElement.style.display = 'none';
-      imgElement.src = 'https://hackerfrankone.github.io/FamilyFishing/images/current/fallback_bass.png?v=' + Date.now();
+      imgElement.src = 'https://hackerfrankone.github.io/FamilyFishing/images/current/fallback_bass.png';
       imgElement.style.display = 'block';
       imgElement.onerror = () => {
         leaderboardContainer.removeChild(imgElement);
@@ -452,7 +441,7 @@
         localStorage.setItem('currentWinner', JSON.stringify({
           month: `${monthCode} ${year}`,
           angler: winnerName,
-          image: `images/current/bass_${monthCode.toLowerCase()}_${year}.png?v=${Date.now()}`
+          image: `images/current/bass_${monthCode.toLowerCase()}_${year}.png`
         }));
       } catch (error) {
         winnerElement.textContent = 'No winner yet';
@@ -563,25 +552,20 @@
       try {
         const anglerResponse = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv?cachebust=' + new Date().getTime());
         const anglerText = await anglerResponse.text();
-        console.log("Angler CSV:", anglerText);
         const anglerNames = anglerText.split('\n').filter(line => line.trim()).slice(1).map(line => line.split(',')[0]?.trim()).filter(name => name);
-        console.log("Parsed Anglers:", anglerNames);
 
         let fishData = [];
         try {
           const fishResponse = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/fish_submissions.csv?cachebust=' + new Date().getTime());
           const fishText = await fishResponse.text();
-          console.log("Fish CSV:", fishText);
           fishData = fishText.split('\n').filter(line => line.trim()).slice(1).map(line => {
             const [angler, length, image] = line.split(',');
-            console.log(`Raw CSV Line: ${line}, Parsed: angler=${angler}, length=${length}, image=${image}`);
             return {
               angler: angler?.trim(),
               length: parseFloat(length) || 0,
               image: image?.trim() || ''
             };
           }).filter(entry => entry.angler && entry.length > 0 && entry.image);
-          console.log("Parsed Fish:", fishData);
         } catch (fishError) {
           console.warn('No fish submissions found:', fishError);
         }
@@ -608,12 +592,11 @@
           const totalLength = fishList.reduce((sum, fish) => sum + fish.length, 0);
 
           const fishItems = fishList.map((fish, index) => {
-            const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}?v=${Date.now()}` : '';
-            console.log(`Angler: ${angler}, Fish Length: ${fish.length}, Image URL: ${imageUrl || 'None'}`);
+            const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}` : '';
             const imageHtml = imageUrl
               ? `<img class="fish-image" id="fish-image-${angler.replace(/[^a-zA-Z0-9]/g, '')}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="console.log('Image load failed for', this.src); this.style.display='none'; this.nextSibling.style.display='block';">`
               : '';
-            const noImageHtml = `<span class="no-image-text" style="display: ${imageUrl ? 'none' : 'block'};">No image available</span>`;
+            const noImageHtml = `<span class="no-image-text" style="display: ${imageUrl ? 'none' : 'block'};">No fish submitted</span>`;
             return `
               <li>
                 <span class="fish-length">${fish.length} inches</span>
@@ -657,7 +640,6 @@
     }
 
     function toggleDropdown(id) {
-      console.log("Toggling dropdown for ID:", id);
       const dropdown = document.getElementById(`dropdown-${id}`);
       const trigger = document.querySelector(`[aria-controls="dropdown-${id}"]`);
       if (dropdown && trigger) {
@@ -668,8 +650,6 @@
           dropdown.classList.add('show');
           trigger.setAttribute('aria-expanded', 'true');
         }
-      } else {
-        console.error("Dropdown or trigger not found for ID:", id);
       }
     }
 
@@ -799,9 +779,12 @@
         event.preventDefault();
         const anglerName = image.closest('.angler-item').querySelector('.angler-name').textContent;
         const fishLength = image.closest('li').querySelector('.fish-length').textContent.replace(' inches', '');
-        const imageUrl = encodeURIComponent(image.src);
+        const cleanImageUrl = image.src.split('?v=')[0];
+        const imageUrl = encodeURIComponent(cleanImageUrl);
         const viewerUrl = `https://hackerfrankone.github.io/FamilyFishing/image-viewer.html?image=${imageUrl}&angler=${encodeURIComponent(anglerName)}&length=${encodeURIComponent(fishLength)}`;
-        console.log(`Attempting to open image viewer: ${viewerUrl}`);
+        console.log(`Image src: ${cleanImageUrl}`);
+        console.log(`Angler: ${anglerName}, Length: ${fishLength}`);
+        console.log(`Constructed viewer URL: ${viewerUrl}`);
         window.open(viewerUrl, '_blank');
       });
     }
