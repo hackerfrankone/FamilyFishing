@@ -801,8 +801,8 @@
         const anglerName = image.closest('.angler-item').querySelector('.angler-name').textContent;
         const fishLength = image.closest('li').querySelector('.fish-length').textContent.replace(' inches', '');
         const imageUrl = encodeURIComponent(image.src);
-        const viewerUrl = `image-viewer.html?image=${imageUrl}&angler=${encodeURIComponent(anglerName)}&length=${encodeURIComponent(fishLength)}`;
-        console.log(`Opening: ${viewerUrl}`);
+        const viewerUrl = `https://hackerfrankone.github.io/FamilyFishing/image-viewer.html?image=${imageUrl}&angler=${encodeURIComponent(anglerName)}&length=${encodeURIComponent(fishLength)}`;
+        console.log(`Attempting to open image viewer: ${viewerUrl}`);
         window.open(viewerUrl, '_blank');
       });
     }
