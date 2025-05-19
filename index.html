@@ -799,7 +799,7 @@
       image.addEventListener('click', (event) => {
         event.preventDefault();
         const imageUrl = encodeURIComponent(image.src);
-        const viewerUrl = `image-viewer.html?image=${imageUrl}`;
+        const viewerUrl = `https://hackerfrankone.github.io/FamilyFishing/image-viewer.html?image=${imageUrl}`;
         console.log(`Opening: ${viewerUrl}`);
         window.open(viewerUrl, '_blank');
         // Fallback if image-viewer.html is not found:
