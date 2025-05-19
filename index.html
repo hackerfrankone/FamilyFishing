@@ -243,14 +243,7 @@
       display: flex;
       align-items: center;
       margin-bottom: 0.5rem;
-    }
-    .angler-image {
-      width: 30px;
-      height: 30px;
-      border-radius: 4px;
-      margin-right: 0.5rem;
-      border: 1px solid #FFD700;
-      object-fit: cover;
+      justify-content: flex-start; /* Align name to the left when no image */
     }
     .angler-name {
       display: block;
@@ -275,6 +268,8 @@
       color: #fff;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
       max-width: 180px;
+      position: relative; /* Ensure zoomed images stay within dropdown */
+      overflow: visible; /* Allow zoomed images to expand beyond dropdown */
     }
     .dropdown.show {
       display: block !important;
@@ -304,6 +299,12 @@
       border-radius: 4px;
       margin-top: 0.3rem;
       border: 1px solid #FFD700;
+      transition: transform 0.2s ease;
+      transform-origin: center;
+      cursor: zoom-in;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pinch-zoom;
     }
     .no-image-text {
       color: #FFD140;
@@ -329,10 +330,6 @@
       }
       .angler-item {
         justify-content: center;
-      }
-      .angler-image {
-        width: 25px;
-        height: 25px;
       }
       .identifier-container .month-identifier {
         font-size: 1.2rem;
@@ -594,20 +591,12 @@
           const fishList = fishByAngler[angler] || [];
           const fishCount = fishList.length;
           const totalLength = fishList.reduce((sum, fish) => sum + fish.length, 0);
-          const newestFishWithImage = fishList.find(fish => fish.image) || null;
-          const anglerImageUrl = newestFishWithImage
-            ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${newestFishWithImage.image}?v=${Date.now()}`
-            : '';
-          console.log(`Angler: ${angler}, Sidebar Image URL: ${anglerImageUrl || 'None'}`);
-          const anglerImageHtml = anglerImageUrl
-            ? `<img class="angler-image" src="${anglerImageUrl}" alt="Latest fish by ${angler}" onerror="this.style.display='none';">`
-            : '';
 
-          const fishItems = fishList.map(fish => {
+          const fishItems = fishList.map((fish, index) => {
             const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}?v=${Date.now()}` : '';
             console.log(`Angler: ${angler}, Fish Length: ${fish.length}, Image URL: ${imageUrl || 'None'}`);
             const imageHtml = imageUrl
-              ? `<img class="fish-image" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">`
+              ? `<img class="fish-image" id="fish-image-${angler.replace(/[^a-zA-Z0-9]/g, '')}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">`
               : '';
             const noImageHtml = `<span class="no-image-text" style="display: ${imageUrl ? 'none' : 'block'};">No image available</span>`;
             return `
@@ -625,7 +614,6 @@
           const safeAnglerId = angler.replace(/[^a-zA-Z0-9]/g, '');
           return `
             <li class="angler-item">
-              ${anglerImageHtml}
               <div>
                 <span class="angler-name" onclick="toggleDropdown('${safeAnglerId}')" aria-expanded="false" aria-controls="dropdown-${safeAnglerId}">${angler}</span>
                 <div class="dropdown" id="dropdown-${safeAnglerId}">
@@ -638,6 +626,16 @@
           `;
         }).join('');
         anglerList.innerHTML = anglerHtml || '<li>No anglers registered.</li>';
+
+        // Initialize zoom for all fish images after rendering
+        anglerNames.forEach(angler => {
+          const safeAnglerId = angler.replace(/[^a-zA-Z0-9]/g, '');
+          fishByAngler[angler]?.forEach((fish, index) => {
+            if (fish.image) {
+              initializeFishImageZoom(`${safeAnglerId}-${index}`);
+            }
+          });
+        });
       } catch (error) {
         console.error("Failed to load angler list:", error);
         anglerList.innerHTML = '<li>Error loading anglers. Please try again later.</li>';
@@ -663,6 +661,68 @@
 
     function initializeZoom() {
       const image = document.getElementById('leaderboard-image');
+      let scale = 1;
+      const minScale = 0.5;
+      const maxScale = 3;
+      const scaleStep = 0.1;
+
+      function updateZoom(newScale) {
+        scale = Math.max(minScale, Math.min(maxScale, newScale));
+        image.style.transform = `scale(${scale})`;
+      }
+
+      image.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        const delta = event.deltaY > 0 ? -scaleStep : scaleStep;
+        updateZoom(scale + delta);
+      });
+
+      image.addEventListener('dblclick', (event) => {
+        event.preventDefault();
+        scale = 1;
+        image.style.transform = 'scale(1)';
+      });
+
+      let initialDistance = null;
+      let initialScale = scale;
+
+      image.addEventListener('touchstart', (event) => {
+        if (event.touches.length === 2) {
+          event.preventDefault();
+          const touch1 = event.touches[0];
+          const touch2 = event.touches[1];
+          initialDistance = Math.hypot(
+            touch1.pageX - touch2.pageX,
+            touch1.pageY - touch2.pageY
+          );
+          initialScale = scale;
+        }
+      });
+
+      image.addEventListener('touchmove', (event) => {
+        if (event.touches.length === 2) {
+          event.preventDefault();
+          const touch1 = event.touches[0];
+          const touch2 = event.touches[1];
+          const currentDistance = Math.hypot(
+            touch1.pageX - touch2.pageX,
+            touch1.pageY - touch2.pageY
+          );
+          if (initialDistance) {
+            const zoomFactor = currentDistance / initialDistance;
+            updateZoom(initialScale * zoomFactor);
+          }
+        }
+      });
+
+      image.addEventListener('touchend', () => {
+        initialDistance = null;
+      });
+    }
+
+    function initializeFishImageZoom(imageId) {
+      const image = document.getElementById(`fish-image-${imageId}`);
+      if (!image) return;
       let scale = 1;
       const minScale = 0.5;
       const maxScale = 3;
