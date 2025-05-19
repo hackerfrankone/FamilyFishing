@@ -1,1 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Viewer</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https://raw.githubusercontent.com https://hackerfrankone.github.io; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #000;
+      overflow: auto;
+    }
+    .image-container {
+      position: relative;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow: auto;
+      text-align: center;
+    }
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      transition: transform 0.2s ease;
+      transform-origin: center;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .error-message {
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    @media (max-width: 768px) {
+      .image-container {
+        max-width: 95%;
+      }
+      .error-message {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="image-container">
+    <img id="viewer-image" src="" alt="Selected Fish Image">
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const imageUrl = urlParams.get('image');
+      const angler = urlParams.get('angler') || 'Unknown';
+      const length = urlParams.get('length') || '0';
+      const imgElement = document.getElementById('viewer-image');
+      const container = document.querySelector('.image-container');
 
+      // Set the page title
+      document.title = `${angler} ${length}`;
+
+      if (imageUrl) {
+        try {
+          const decodedUrl = decodeURIComponent(imageUrl);
+          console.log('Loading image:', decodedUrl);
+          imgElement.src = decodedUrl;
+          imgElement.onerror = () => {
+            console.error('Image failed to load:', decodedUrl);
+            imgElement.style.display = 'none';
+            const errorText = document.createElement('p');
+            errorText.className = 'error-message';
+            errorText.textContent = 'Failed to load image. Please try again.';
+            container.appendChild(errorText);
+          };
+          imgElement.onload = () => {
+            console.log('Image loaded successfully:', decodedUrl);
+          };
+        } catch (e) {
+          console.error('Error decoding URL:', e);
+          imgElement.style.display = 'none';
+          const errorText = document.createElement('p');
+          errorText.className = 'error-message';
+          errorText.textContent = 'Invalid image URL.';
+          container.appendChild(errorText);
+        }
+      } else {
+        console.warn('No image URL provided');
+        imgElement.style.display = 'none';
+        const noImageText = document.createElement('p');
+        noImageText.className = 'error-message';
+        noImageText.textContent = 'No image provided.';
+        container.appendChild(noImageText);
+      }
+
+      let scale = 1;
+      const minScale = 0.5;
+      const maxScale = 3;
+      const scaleStep = 0.1;
+
+      function updateZoom(newScale) {
+        scale = Math.max(minScale, Math.min(maxScale, newScale));
+        imgElement.style.transform = `scale(${scale})`;
+      }
+
+      imgElement.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        const delta = event.deltaY > 0 ? -scaleStep : scaleStep;
+        updateZoom(scale + delta);
+      });
+
+      imgElement.addEventListener('dblclick', (event) => {
+        event.preventDefault();
+        scale = 1;
+        imgElement.style.transform = 'scale(1)';
+      });
+
+      let initialDistance = null;
+      let initialScale = scale;
+
+      imgElement.addEventListener('touchstart', (event) => {
+        if (event.touches.length === 2) {
+          event.preventDefault();
+          const touch1 = event.touches[0];
+          const touch2 = event.touches[1];
+          initialDistance = Math.hypot(
+            touch1.pageX - touch2.pageX,
+            touch1.pageY - touch2.pageY
+          );
+          initialScale = scale;
+        }
+      });
+
+      imgElement.addEventListener('touchmove', (event) => {
+        if (event.touches.length === 2) {
+          event.preventDefault();
+          const touch1 = event.touches[0];
+          const touch2 = event.touches[1];
+          const currentDistance = Math.hypot(
+            touch1.pageX - touch2.pageX,
+            touch1.pageY - touch2.pageY
+          );
+          if (initialDistance) {
+            const zoomFactor = currentDistance / initialDistance;
+            updateZoom(initialScale * zoomFactor);
+          }
+        }
+      });
+
+      imgElement.addEventListener('touchend', () => {
+        initialDistance = null;
+      });
+    });
+  </script>
+</body>
+</html>
