@@ -243,7 +243,7 @@
       display: flex;
       align-items: center;
       margin-bottom: 0.5rem;
-      justify-content: flex-start; /* Align name to the left when no image */
+      justify-content: flex-start;
     }
     .angler-name {
       display: block;
@@ -268,8 +268,8 @@
       color: #fff;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
       max-width: 180px;
-      position: relative; /* Ensure zoomed images stay within dropdown */
-      overflow: visible; /* Allow zoomed images to expand beyond dropdown */
+      position: relative;
+      overflow: visible;
     }
     .dropdown.show {
       display: block !important;
@@ -400,6 +400,14 @@
       let code = '';
       for (let i = 0; i < 3; i++) code += letters.charAt(Math.floor(random() * letters.length));
       return code;
+    }
+
+    function formatMilitaryDate(dateStr) {
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = monthCodes[date.getMonth()].toLowerCase().substring(0, 3);
+      const year = date.getFullYear();
+      return `${day}${month}${year}`;
     }
 
     async function fetchCurrentTime() {
@@ -593,10 +601,10 @@
           const totalLength = fishList.reduce((sum, fish) => sum + fish.length, 0);
 
           const fishItems = fishList.map((fish, index) => {
-            const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}?v=${Date.now()}` : '';
+            const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.angler.toLowerCase()}_${formatMilitaryDate(fish.date)}.jpeg?v=${Date.now()}` : '';
             console.log(`Angler: ${angler}, Fish Length: ${fish.length}, Image URL: ${imageUrl || 'None'}`);
             const imageHtml = imageUrl
-              ? `<img class="fish-image" id="fish-image-${angler.replace(/[^a-zA-Z0-9]/g, '')}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">`
+              ? `<img class="fish-image" id="fish-image-${angler.replace(/[^a-zA-Z0-9]/g, '')}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="this.style.display='none'; this.nextSibling.style.display='block';" onclick="window.open(this.src, '_blank');" ondblclick="window.open(this.src, '_blank');">`
               : '';
             const noImageHtml = `<span class="no-image-text" style="display: ${imageUrl ? 'none' : 'block'};">No image available</span>`;
             return `
@@ -741,8 +749,7 @@
 
       image.addEventListener('dblclick', (event) => {
         event.preventDefault();
-        scale = 1;
-        image.style.transform = 'scale(1)';
+        window.open(image.src, '_blank');
       });
 
       let initialDistance = null;
@@ -779,6 +786,12 @@
 
       image.addEventListener('touchend', () => {
         initialDistance = null;
+      });
+
+      // Single click to open in new tab
+      image.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.open(image.src, '_blank');
       });
     }
 
