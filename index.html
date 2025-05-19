@@ -220,7 +220,7 @@
       list-style: none;
       padding: 0;
       margin: 0;
-      max-height: 500px;
+      max-height: 500px; /* Increased from 300px to 500px for a taller scrollable area */
       overflow-y: auto;
     }
     .angler-sidebar ul::-webkit-scrollbar {
@@ -591,6 +591,7 @@
         anglerNames.forEach(angler => {
           fishByAngler[angler] = fishData.filter(fish => fish.angler === angler)
             .sort((a, b) => {
+              // Sort by filename date if present, otherwise keep order
               const dateA = a.image ? a.image.match(/(\d{2})(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(\d{4})/i) : null;
               const dateB = b.image ? b.image.match(/(\d{2})(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(\d{4})/i) : null;
               if (dateA && dateB) {
@@ -598,7 +599,7 @@
                 const monthB = monthCodes.findIndex(m => m.toLowerCase().startsWith(dateB[2])) + 1;
                 return new Date(dateB[3], monthB - 1, dateB[1]) - new Date(dateA[3], monthA - 1, dateA[1]);
               }
-              return 0;
+              return 0; // Default to original order if no date pattern
             })
             .slice(0, 5);
         });
@@ -612,7 +613,7 @@
             const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}?v=${Date.now()}` : '';
             console.log(`Angler: ${angler}, Fish Length: ${fish.length}, Image URL: ${imageUrl || 'None'}`);
             const imageHtml = imageUrl
-              ? `<img class="fish-image" id="fish-image-${angler.replace(/[^a-zA-Z0-9]/g, '')}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="console.log('Image load failed for', this.src); this.style.display='none'; this.nextSibling.style.display='block';">`
+              ? `<img class="fish-image" id="fish-image-${angler.replace(/[^a-zA-Z0-9]/g, '')}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="console.log('Image load failed for', this.src); this.style.display='none'; this.nextSibling.style.display='block';" onclick="window.open(this.src, '_blank');" ondblclick="window.open(this.src, '_blank');">`
               : '';
             const noImageHtml = `<span class="no-image-text" style="display: ${imageUrl ? 'none' : 'block'};">No image available</span>`;
             return `
@@ -643,6 +644,7 @@
         }).join('');
         anglerList.innerHTML = anglerHtml || '<li>No anglers registered.</li>';
 
+        // Initialize zoom for all fish images after rendering
         anglerNames.forEach(angler => {
           const safeAnglerId = angler.replace(/[^a-zA-Z0-9]/g, '');
           fishByAngler[angler]?.forEach((fish, index) => {
@@ -756,8 +758,7 @@
 
       image.addEventListener('dblclick', (event) => {
         event.preventDefault();
-        scale = 1;
-        image.style.transform = 'scale(1)';
+        window.open(image.src, '_blank');
       });
 
       let initialDistance = null;
@@ -796,14 +797,10 @@
         initialDistance = null;
       });
 
+      // Single click to open in new tab
       image.addEventListener('click', (event) => {
         event.preventDefault();
-        const imageUrl = encodeURIComponent(image.src);
-        const viewerUrl = `https://hackerfrankone.github.io/FamilyFishing/image-viewer.html?image=${imageUrl}`;
-        console.log(`Opening: ${viewerUrl}`);
-        window.open(viewerUrl, '_blank');
-        // Fallback if image-viewer.html is not found:
-        // window.open(image.src, '_blank');
+        window.open(image.src, '_blank');
       });
     }
 
