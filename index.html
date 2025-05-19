@@ -501,7 +501,7 @@
         document.getElementById("month").textContent = monthCode;
         document.getElementById("month-code").textContent = randomCode;
         document.getElementById("biggest-bass-title").textContent = `${monthCode}'s Biggest Bass`;
-        document.getElementById("leaderboard-image").src =-loadAnglerList`images/current/bass_${monthCode.toLowerCase()}_${year}.png?v=${Date.now()}`;
+        document.getElementById("leaderboard-image").src = `images/current/bass_${monthCode.toLowerCase()}_${year}.png?v=${Date.now()}`;
         document.getElementById("current-winner-name").textContent = `Current Winner: Loading...`;
       } catch (error) {}
       finally {
@@ -799,7 +799,11 @@
       image.addEventListener('click', (event) => {
         event.preventDefault();
         const imageUrl = encodeURIComponent(image.src);
-        window.open(`image-viewer.html?image=${imageUrl}`, '_blank');
+        const viewerUrl = `image-viewer.html?image=${imageUrl}`;
+        console.log(`Opening: ${viewerUrl}`);
+        window.open(viewerUrl, '_blank');
+        // Fallback if image-viewer.html is not found:
+        // window.open(image.src, '_blank');
       });
     }
 
