@@ -410,27 +410,34 @@
     :root {
       --primary-color: #FFA500;
     }
-    .sub-text-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      flex-wrap: wrap;
-    }
-    .sub-text-container .sub-text,
-    .sub-text-container .feedback {
-      margin: 0;
-      font-size: 1rem;
-    }
-    @media (max-width: 768px) {
-      .sub-text-container .sub-text,
-      .sub-text-container .feedback {
-        font-size: 0.9rem;
-      }
-    }
+.sub-text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  flex-wrap: wrap;
+}
+
+.sub-text-container .sub-text {
+  margin: 0;
+  font-size: 1rem;
+  background-color: transparent; /* Removes the darker background */
+}
+
+.sub-text-container .feedback {
+  margin: 0;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .sub-text-container .sub-text,
+  .sub-text-container .feedback {
+    font-size: 0.9rem;
+  }
+}
   </style>
   <script>
     window.dataLayer = window.dataLayer || []; 
