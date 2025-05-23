@@ -71,11 +71,16 @@
       font-weight: bold;
       color: #FFD700;
       white-space: nowrap;
-      background: none;
+      background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
     }
     .tournament-info .sub-text {
       font-size: 1rem;
       margin-top: 0.1rem;
+      background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
     }
     @media (max-width: 768px) {
       .tournament-info {
@@ -97,7 +102,9 @@
       text-align: center;
       color: #FFD700;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      background: none;
+      background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
     }
     .countdown span {
       background: none;
@@ -155,7 +162,6 @@
       -webkit-user-select: none;
       touch-action: pinch-zoom;
     }
-    /* Added styles for winner's fish gallery */
     .winner-fish-gallery {
       display: flex;
       flex-wrap: wrap;
@@ -186,13 +192,19 @@
       font-size: 1.5rem;
       font-family: Arial, Helvetica, sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      display: block;
+      background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
     }
     .current-leaderboard-title {
       margin-top: 0.5rem;
+      display: block; /* Keep as block since it might need full width */
     }
     .current-winner-title {
       margin-top: 0;
+      display: inline-block; /* Changed to inline-block to wrap tightly around text */
+      margin-left: auto;
+      margin-right: auto;
     }
     .current-leaderboard-title span, .current-winner-title span {
       background: none;
@@ -384,7 +396,6 @@
       .dropdown ul {
         grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
       }
-      /* Adjust winner fish gallery for smaller screens */
       .winner-fish-gallery img {
         max-width: 120px;
       }
@@ -468,7 +479,6 @@
       } 
     }
 
-    // Modified loadCurrentWinner to dynamically set the winner based on total inches
     async function loadCurrentWinner(winnerData) { 
       const winnerElement = document.getElementById("current-winner-name"); 
       const winnerGallery = document.getElementById("winner-fish-gallery");
@@ -481,10 +491,8 @@
         const monthCode = monthCodes[monthNumber];
 
         if (winnerData && winnerData.winner && winnerData.fishList) {
-          // Display the winner's name and total inches
           winnerElement.textContent = `Current Winner: ${winnerData.winner} (${winnerData.totalInches}" total)`;
 
-          // Display all fish images of the winner
           const fishImages = winnerData.fishList.map((fish, index) => {
             const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}` : '';
             return imageUrl 
@@ -494,14 +502,12 @@
 
           winnerGallery.innerHTML = fishImages || '<div class="no-image-text">No fish submitted</div>';
 
-          // Initialize zoom for each winner's fish image
           winnerData.fishList.forEach((fish, index) => {
             if (fish.image) {
               initializeFishImageZoom(`winner-fish-${index}`);
             }
           });
 
-          // Update local storage with winner data
           localStorage.setItem('currentWinner', JSON.stringify({ 
             month: `${monthCode} ${year}`, 
             angler: winnerData.winner, 
@@ -620,7 +626,6 @@
       if (!countdownInterval) countdownInterval = setInterval(updateCountdown, 2000); 
     }
 
-    // Modified loadAnglerList to calculate the winner based on total inches
     async function loadAnglerList() { 
       const anglerList = document.getElementById("angler-list"); 
       if (!anglerList) return; 
@@ -665,7 +670,6 @@
             }) 
             .slice(0, 5); 
 
-          // Calculate total inches for this angler
           const totalInches = fishByAngler[angler].reduce((sum, fish) => sum + fish.length, 0);
           if (totalInches > maxTotalInches) {
             maxTotalInches = totalInches;
@@ -674,7 +678,6 @@
           }
         });
 
-        // Update the current winner with the calculated data
         if (currentWinner) {
           await loadCurrentWinner({
             winner: currentWinner,
@@ -735,7 +738,7 @@
       } catch (error) { 
         console.error("Failed to load angler list:", error); 
         anglerList.innerHTML = '<li>Error loading anglers. Please try again later.</li>'; 
-        await loadCurrentWinner(null); // Fallback if loading fails
+        await loadCurrentWinner(null); 
       } 
     }
 
@@ -880,7 +883,6 @@
   </div>
   <div class="leaderboard-container">
     <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Loading...</strong></span></div>
-    <!-- Removed the single leaderboard image and added a gallery for winner's fish -->
     <div id="winner-fish-gallery" class="winner-fish-gallery"></div>
   </div>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
