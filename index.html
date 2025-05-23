@@ -410,6 +410,27 @@
     :root {
       --primary-color: #FFA500;
     }
+    .sub-text-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      flex-wrap: wrap;
+    }
+    .sub-text-container .sub-text,
+    .sub-text-container .feedback {
+      margin: 0;
+      font-size: 1rem;
+    }
+    @media (max-width: 768px) {
+      .sub-text-container .sub-text,
+      .sub-text-container .feedback {
+        font-size: 0.9rem;
+      }
+    }
   </style>
   <script>
     window.dataLayer = window.dataLayer || []; 
@@ -870,8 +891,10 @@
     <div class="tournament-info">
       <p class="main-text">1st Place: $200</p>
       <p class="main-text">Month long | 5 Bass limit | More anglers, More payout</p>
-      <p class="sub-text">Tennessee Lakes Only</p>
-      <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
+      <div class="sub-text-container">
+        <p class="sub-text">Tennessee Lakes Only | </p>
+        <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
+      </div>
       <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
       <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
         <input type="submit" value="Join Tournament $20" class="paypal-button">
@@ -889,4 +912,4 @@
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
 </body>
-</html> 
+</html>
