@@ -28,25 +28,15 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .content-wrapper {
-      transform: scale(1.1);
-      transform-origin: center;
-      width: 90%;
-      max-width: 1200px;
     }
     a { color: #00ffff; text-decoration: none; }
-    .top-bar { text-align: center; margin-bottom: 1rem; }
-    .social-buttons { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-    .facebook-button img, .youtube-button img { width: 50px; height: 50px; border-radius: 50%; transition: filter 0.3s ease; }
+    .top-bar { text-align: center; margin-bottom: 2rem; }
+    .social-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .facebook-button img, .youtube-button img { width: 60px; height: 60px; border-radius: 50%; transition: filter 0.3s ease; }
     .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
     .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
-      width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 10px; font-weight: bold; text-decoration: none; transition: filter 0.3s ease;
+      width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: bold; text-decoration: none; transition: filter 0.3s ease;
     }
     .discord-button { background-color: #5865F2; color: white; }
     .archive-button { background-color: #808080; color: white; }
@@ -58,9 +48,10 @@
     .rules-button:hover { background-color: #ff0000; }
     .tournament-info {
       display: inline-block;
-      padding: 0.3rem 0.8rem;
-      border-radius: 4px;
-      margin: 0.5rem auto;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin: 1rem auto 0;
+      margin-bottom: 0;
       text-align: center;
     }
     .tournament-info p {
@@ -69,42 +60,43 @@
       text-align: center;
     }
     .tournament-info .main-text {
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       font-weight: bold;
       color: #FFD700;
       white-space: nowrap;
-      padding: 0.1rem 0;
+      padding: 0.2rem 0;
     }
     .tournament-info .sub-text {
-      font-size: 0.9rem;
+      font-size: 1rem;
       margin-top: 0.1rem;
-      padding: 0.1rem 0;
+      padding: 0.2rem 0;
     }
     .text-wrapper {
       background-color: rgba(0, 0, 0, 0.6);
-      padding: 0.3rem;
-      border-radius: 3px;
+      padding: 0.5rem;
+      border-radius: 4px;
     }
     @media (max-width: 768px) {
       .tournament-info {
-        padding: 0.2rem 0.5rem;
+        padding: 0.4rem 0.8rem;
       }
       .tournament-info .main-text {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
       }
       .tournament-info .sub-text {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
+        margin-top: 0.2rem;
       }
     }
     .countdown {
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: bold;
       max-width: 600px;
-      margin: 0.1rem auto;
+      margin: 0.2rem auto;
       text-align: center;
       color: #FFD700;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      padding: 0.1rem 0;
+      padding: 0.2rem 0;
     }
     .countdown span {
       background: none;
@@ -114,9 +106,9 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .feedback {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       text-align: center;
-      margin-top: 0.3rem;
+      margin-top: 0.5rem;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .feedback a {
@@ -125,22 +117,22 @@
     .paypal-form {
       display: grid;
       justify-items: center;
-      gap: 0.2rem;
-      margin-top: 0.3rem;
+      gap: 0.3rem;
+      margin-top: 0.5rem;
       margin-bottom: 0;
     }
     .leaderboard-container {
       text-align: center;
-      margin-top: 0.1rem;
+      margin-top: 0.2rem;
       position: relative;
       overflow: visible;
     }
     .leaderboard-container img {
       display: block;
       margin: 0 auto;
-      max-width: 300px;
+      max-width: 350px;
       height: auto;
-      border-radius: 6px;
+      border-radius: 8px;
       transition: transform 0.2s ease;
       transform-origin: center;
       cursor: zoom-in;
@@ -152,21 +144,21 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.3rem;
-      margin-top: 0.5rem;
+      gap: 0.5rem;
+      margin-top: 1rem;
     }
     .winner-fish-gallery img {
-      max-width: 130px;
+      max-width: 150px;
       height: auto;
-      border-radius: 6px;
+      border-radius: 8px;
       transition: transform 0.2s ease;
       cursor: zoom-in;
     }
     .leaderboard-container .no-image-text {
       display: block;
       margin: 0 auto;
-      max-width: 300px;
-      font-size: 1.3rem;
+      max-width: 350px;
+      font-size: 1.5rem;
       font-weight: bold;
       color: #FFD140;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -175,15 +167,15 @@
     .current-leaderboard-title, .current-winner-title {
       color: #FFD700;
       font-weight: bold;
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       font-family: Arial, Helvetica, sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       background-color: rgba(0, 0, 0, 0.6);
-      padding: 0.1rem 0.3rem;
-      border-radius: 3px;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
     }
     .current-leaderboard-title {
-      margin-top: 0.3rem;
+      margin-top: 0.5rem;
       display: block;
     }
     .current-winner-title {
@@ -200,26 +192,26 @@
     }
     .identifier-container {
       position: fixed;
-      top: 0.5rem;
-      left: 0.5rem;
+      top: 1rem;
+      left: 1rem;
       z-index: 1000;
     }
     .identifier-container .month-identifier {
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      margin: 0.1rem 0;
+      margin: 0.2rem 0;
       font-family: Arial, Helvetica, sans-serif;
       font-weight: bold;
       color: #FFFFFF;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
     }
     .angler-sidebar {
       position: fixed;
-      top: 2.5rem;
-      left: 0.5rem;
-      padding: 0.8rem;
-      border-radius: 6px;
-      max-width: 220px;
-      max-height: 450px;
+      top: 3rem;
+      left: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      max-width: 250px;
+      max-height: 500px;
       overflow-y: auto;
       z-index: 1000;
     }
@@ -228,8 +220,8 @@
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      margin: 0 0 0.3rem;
-      font-size: 1rem;
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
     }
     .angler-sidebar ul {
       list-style: none;
@@ -237,15 +229,15 @@
       margin: 0;
     }
     .angler-sidebar ul::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
     }
     .angler-sidebar ul::-webkit-scrollbar-track {
       background: rgba(0, 0, 0, 0.3);
-      border-radius: 3px;
+      border-radius: 4px;
     }
     .angler-sidebar ul::-webkit-scrollbar-thumb {
       background: yellow;
-      border-radius: 3px;
+      border-radius: 4px;
     }
     .angler-sidebar ul::-webkit-scrollbar-thumb:hover {
       background: #FFD140;
@@ -255,7 +247,7 @@
       position: relative;
       display: flex;
       align-items: center;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.5rem;
       justify-content: flex-start;
     }
     .angler-name {
@@ -264,7 +256,7 @@
       font-weight: bold;
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      font-size: 1rem;
+      font-size: 1.2rem;
       transition: color 0.3s ease;
     }
     .angler-name:hover {
@@ -273,14 +265,14 @@
     .dropdown {
       display: none;
       background: rgba(0, 0, 0, 0.8);
-      border-radius: 3px;
-      padding: 0.3rem;
-      margin-top: 0.2rem;
+      border-radius: 4px;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       color: #fff;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-      max-width: 160px;
+      max-width: 180px;
       position: relative;
       overflow: hidden;
     }
@@ -288,19 +280,19 @@
       display: block !important;
     }
     .dropdown p {
-      margin: 0.2rem 0;
+      margin: 0.3rem 0;
     }
     .dropdown ul {
       list-style: none;
       padding: 0;
       margin: 0;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-      gap: 0.2rem;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 0.3rem;
     }
     .dropdown li {
       margin: 0;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -309,14 +301,14 @@
     }
     .fish-length {
       color: #00ffff;
-      font-size: 0.6rem;
-      margin-bottom: 0.1rem;
+      font-size: 0.7rem;
+      margin-bottom: 0.2rem;
     }
     .fish-image {
-      width: 50px;
+      width: 60px;
       height: auto;
-      border-radius: 3px;
-      margin: 0.1rem;
+      border-radius: 4px;
+      margin: 0.2rem;
       border: none;
       outline: none;
       transition: transform 0.2s ease;
@@ -328,24 +320,24 @@
     }
     .no-image-text {
       color: #FFD140;
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       text-align: center;
-      margin: 0.1rem;
-      width: 50px;
+      margin: 0.2rem;
+      width: 60px;
     }
     @media (max-width: 768px) {
       .countdown {
-        font-size: 1.3rem;
+        font-size: 1.5rem;
       }
       .identifier-container {
         position: static;
-        margin: 0.5rem auto;
+        margin: 1rem auto;
         max-width: 100%;
         text-align: center;
       }
       .angler-sidebar {
         position: static;
-        margin: 0.5rem auto;
+        margin: 1rem auto;
         max-width: 100%;
         text-align: center;
       }
@@ -353,10 +345,11 @@
         justify-content: center;
       }
       .identifier-container .month-identifier {
-        font-size: 1rem;
+        font-size: 1.2rem;
+        color: #FFFFFF;
       }
       .paypal-form {
-        margin-top: 0.2rem;
+        margin-top: 0.3rem;
       }
       .leaderboard-container {
         margin-top: 0.1rem;
@@ -365,30 +358,27 @@
         max-width: 100%;
       }
       .fish-image {
-        width: 45px;
+        width: 50px;
       }
       .no-image-text {
-        width: 45px;
-        font-size: 0.5rem;
+        width: 50px;
+        font-size: 0.6rem;
       }
       .fish-length {
-        font-size: 0.5rem;
+        font-size: 0.6rem;
       }
       .dropdown ul {
-        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
       }
       .winner-fish-gallery img {
-        max-width: 100px;
-      }
-      .content-wrapper {
-        transform: scale(1.0);
+        max-width: 120px;
       }
     }
     ins.adsbygoogle {
       display: block;
-      margin: 0.3rem auto;
+      margin: 0.5rem auto;
       text-align: center;
-      min-height: 70px;
+      min-height: 90px;
     }
     :root {
       --primary-color: #FFA500;
@@ -397,30 +387,36 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.5rem;
       flex-wrap: wrap;
     }
     .sub-text-container .sub-text,
     .sub-text-container .feedback {
       margin: 0;
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
     .sub-text-container .sub-text {
       background-color: transparent;
     }
+    @media (max-width: 768px) {
+      .sub-text-container .sub-text,
+      .sub-text-container .feedback {
+        font-size: 0.9rem;
+      }
+    }
     .pp-MQGR2KDA2VZP4 {
       text-align: center;
       border: none;
-      border-radius: 0.2rem;
-      min-width: 10rem;
-      padding: 0 1.5rem;
-      height: 2.2rem;
+      border-radius: 0.25rem;
+      min-width: 11.625rem;
+      padding: 0 2rem;
+      height: 2.625rem;
       font-weight: bold;
       background-color: #FFD140;
       color: #000000;
       font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 0.9rem;
-      line-height: 1.1rem;
+      font-size: 1rem;
+      line-height: 1.25rem;
       cursor: pointer;
     }
   </style>
@@ -762,52 +758,50 @@
   </script>
 </head>
 <body>
-  <div class="content-wrapper">
-    <div class="identifier-container">
-      <p id="monthly-identifier" class="month-identifier"><span id="month"></span> Identifier: <span id="month-code"></span></p>
-    </div>
-    <div class="angler-sidebar">
-      <h3>ANGLERS:</h3>
-      <ul id="angler-list"><li>Loading...</li></ul>
-    </div>
-    <div class="top-bar">
-      <div class="social-buttons">
-        <a href="pages/tackle.html" target="_blank" rel="noopener noreferrer" class="tackle-button" aria-label="Visit our Tackle" tabindex="0" onclick="alert('Coming soon'); return false;">Tackle</a>
-        <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page" tabindex="0">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" width="50" height="50">
-        </a>
-        <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button" aria-label="Visit our YouTube channel" tabindex="0">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube logo">
-        </a>
-        <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button" aria-label="Join our Discord server" tabindex="0">Discord</a>
-        <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button" aria-label="View our archive" tabindex="0">Archive</a>
-        <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-fish-button" aria-label="Submit Fish" tabindex="0">Submit Fish</a>
-        <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button" aria-label="View Rules" tabindex="0">📄 Rules</a>
-      </div>
-      <div class="tournament-info">
-        <div class="text-wrapper">
-          <p class="main-text">1st Place: $200</p>
-          <p class="main-text">Month long | 5 Bass limit | More anglers, More payout</p>
-          <div class="sub-text-container">
-            <p class="sub-text">Tennessee Lakes Only | </p>
-            <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
-          </div>
-          <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
-        </div>
-        <div class="paypal-form">
-          <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.2rem;">
-            <input type="hidden" name="amount" value="25.00">
-            <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="leaderboard-container">
-      <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Loading...</strong></span></div>
-      <div id="winner-fish-gallery" class="winner-fish-gallery"></div>
-    </div>
-    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <div class="identifier-container">
+    <p id="monthly-identifier" class="month-identifier"><span id="month"></span> Identifier: <span id="month-code"></span></p>
   </div>
+  <div class="angler-sidebar">
+    <h3>ANGLERS:</h3>
+    <ul id="angler-list"><li>Loading...</li></ul>
+  </div>
+  <div class="top-bar">
+    <div class="social-buttons">
+      <a href="pages/tackle.html" target="_blank" rel="noopener noreferrer" class="tackle-button" aria-label="Visit our Tackle" tabindex="0" onclick="alert('Coming soon'); return false;">Tackle</a>
+      <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page" tabindex="0">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" width="60" height="60">
+      </a>
+      <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button" aria-label="Visit our YouTube channel" tabindex="0">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube logo">
+      </a>
+      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button" aria-label="Join our Discord server" tabindex="0">Discord</a>
+      <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button" aria-label="View our archive" tabindex="0">Archive</a>
+      <a href="https://www.dropbox.com/request/YwG0NvsfxiLX9Ciiypcy" target="_blank" rel="noopener noreferrer" class="submit-fish-button" aria-label="Submit Fish" tabindex="0">Submit Fish</a>
+      <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button" aria-label="View Rules" tabindex="0">📄 Rules</a>
+    </div>
+    <div class="tournament-info">
+      <div class="text-wrapper">
+        <p class="main-text">1st Place: $200</p>
+        <p class="main-text">Month long | 5 Bass limit | More anglers, More payout</p>
+        <div class="sub-text-container">
+          <p class="sub-text">Tennessee Lakes Only | </p>
+          <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
+        </div>
+        <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
+      </div>
+      <div class="paypal-form">
+        <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+          <input type="hidden" name="amount" value="25.00">
+          <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="leaderboard-container">
+    <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Loading...</strong></span></div>
+    <div id="winner-fish-gallery" class="winner-fish-gallery"></div>
+  </div>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
 </body>
 </html>
