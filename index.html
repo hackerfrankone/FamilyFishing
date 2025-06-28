@@ -428,17 +428,15 @@
 
     function handleImageError(imgElement) {
       const container = imgElement.parentElement;
-      const noImageText = document.createElement('div');
-      noImageText.className = 'no-image-text';
-      noImageText.textContent = 'Family Fishing Fun';
-      container.appendChild(noImageText);
-      imgElement.style.display = 'none';
+      const imageId = imgElement.id;
       imgElement.src = 'https://hackerfrankone.github.io/FamilyFishing/images/current/fallback_bass.png?v=' + Date.now();
-      imgElement.style.display = 'block';
       imgElement.onerror = () => {
-        container.removeChild(imgElement);
-        noImageText.style.display = 'block';
+        const noImageText = document.createElement('div');
+        noImageText.className = 'no-image-text';
+        noImageText.textContent = 'Family Fishing Fun';
+        container.replaceChild(noImageText, imgElement);
       };
+      initializeFishImageZoom(imageId);
     }
 
     const monthCodes = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -515,7 +513,7 @@
 
           winnerData.fishList.forEach((fish, index) => {
             if (fish.image) {
-              initializeFishImageZoom(`winner-fish-${index}`);
+              initializeFishImageZoom(`winner-fish-image-${index}`);
             }
           });
 
@@ -705,14 +703,14 @@
           const fishList = fishByAngler[angler] || [];
           const fishCount = fishList.length;
           const totalLength = fishList.reduce((sum, fish) => sum + fish.length, 0);
+          const safeAnglerId = angler.replace(/[^a-zA-Z0-9]/g, '');
           const fishItems = fishList.map((fish, index) => {
             const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}` : '';
             return imageUrl
-              ? `<img class="fish-image" id="fish-image-${angler.replace(/[^a-zA-Z0-9]/g, '')}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="handleImageError(this);">`
-              : `<span class="no-image-text">No fish submitted</span>`;
+              ? `<li><img class="fish-image" id="fish-image-${safeAnglerId}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="handleImageError(this);"></li>`
+              : `<li><span class="no-image-text">No fish submitted</span></li>`;
           }).join('');
           const placeholders = Array(5 - fishCount).fill('<li><span class="no-image-text">No fish submitted</span></li>').join('');
-          const safeAnglerId = angler.replace(/[^a-zA-Z0-9]/g, '');
           return `
             <li class="angler-item">
               <span class="angler-name" onclick="toggleDropdown('${safeAnglerId}')">${angler}</span>
@@ -725,6 +723,16 @@
           `;
         }).join('');
         anglerList.innerHTML = anglerHtml || '<li>No anglers registered.</li>';
+
+        anglerNames.forEach(angler => {
+          const fishList = fishByAngler[angler] || [];
+          const safeAnglerId = angler.replace(/[^a-zA-Z0-9]/g, '');
+          fishList.forEach((fish, index) => {
+            if (fish.image) {
+              initializeFishImageZoom(`fish-image-${safeAnglerId}-${index}`);
+            }
+          });
+        });
       } catch (error) {
         console.error("Failed to load angler list:", error);
         anglerList.innerHTML = '<li>Error loading anglers. Please try again later.</li>';
@@ -738,11 +746,19 @@
     }
 
     function initializeFishImageZoom(imageId) {
-      const image = document.getElementById(`fish-image-${imageId}`);
+      const image = document.getElementById(imageId);
       if (!image) return;
       image.addEventListener('click', () => {
         const win = window.open('', '_blank');
-        win.document.write(`<img src="${image.src}" style="max-width:100%;">`);
+        win.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head><title>Fish Image</title></head>
+          <body style="margin:0; display:flex; justify-content:center; align-items:center; background:#000;">
+            <img src="${image.src}" style="max-width:100%; max-height:100vh;" alt="Fish image">
+          </body>
+          </html>
+        `);
       });
     }
 
