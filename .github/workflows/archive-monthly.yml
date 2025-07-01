@@ -1,32 +1,132 @@
-name: Archive CSV Monthly
+name: Archive Winner
 
 on:
   schedule:
-    - cron: '0 0 1 * *'  # Runs on the 1st of every month
-  workflow_dispatch:      # Optional: manual trigger
+    - cron: '0 0 1 * *' # Runs at 00:00 UTC on the 1st of every month (6:00 PM MST on the last day of the prior month)
 
 jobs:
   archive:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up archive folder and archive file
-        run: |
-          month=$(date -d "yesterday" +%Y-%m)
-          mkdir -p csv/archive
-          cp csv/submissions.csv csv/archive/archive-$month.csv
-          echo "Archived to csv/archive/archive-$month.csv"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-      - name: Reset current csv/submissions.csv
-        run: |
-          echo "Name,Fish Size,Date" > csv/submissions.csv
+      - name: Install dependencies
+        run: npm install @actions/core @actions/github
 
-      - name: Commit and push
+      - name: Archive winner data and images
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git add csv/archive/*.csv csv/submissions.csv
-          git commit -m "Archive previous month to csv/archive and reset submissions.csv"
-          git push
+          node -e '
+            const core = require("@actions/core");
+            const github = require("@actions/github");
+            const fs = require("fs").promises;
+            const path = require("path");
+
+            async function archiveWinner() {
+              const context = github.context;
+              const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
+              // Simulate fetching currentWinner from localStorage (use a mock file for now)
+              const currentWinner = JSON.parse(fs.readFileSync("currentWinner.json", "utf8") || "{}");
+              const today = new Date();
+              const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+              const lastMonthCode = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][lastMonth.getMonth()];
+              const lastMonthYear = lastMonth.getFullYear();
+              const lastMonthStr = `${lastMonthCode} ${lastMonthYear}`;
+
+              if (currentWinner.month === lastMonthStr) {
+                const winner = currentWinner.angler;
+                const totalInches = currentWinner.totalInches;
+                const fishList = currentWinner.fishList || [];
+
+                // Read existing archive
+                let archiveData = [];
+                try {
+                  const archiveContent = await fs.readFile("images/archive/archive.json", "utf8");
+                  archiveData = JSON.parse(archiveContent || "[]");
+                } catch (error) {
+                  core.warning("No archive.json found, creating new one.");
+                }
+
+                // Add new winner if not already archived
+                if (!archiveData.find(item => item.month === lastMonthStr)) {
+                  archiveData.push({
+                    month: lastMonthStr,
+                    angler: winner,
+                    totalInches: totalInches,
+                    fishList: fishList
+                  });
+                  await fs.writeFile("images/archive/archive.json", JSON.stringify(archiveData, null, 2));
+
+                  // Move images to archive folder
+                  const currentDir = "images/current/";
+                  const archiveDir = "images/archive/";
+                  for (const file of fishList) {
+                    const sourcePath = path.join(currentDir, file);
+                    const destPath = path.join(archiveDir, file);
+                    try {
+                      await fs.access(sourcePath);
+                      await fs.mkdir(archiveDir, { recursive: true });
+                      await fs.copyFile(sourcePath, destPath);
+                      await fs.unlink(sourcePath); // Remove from current after copying
+                      core.info(`Moved ${file} to ${archiveDir}`);
+                    } catch (error) {
+                      core.warning(`Failed to move ${file}: ${error.message}`);
+                    }
+                  }
+
+                  // Commit changes
+                  const commitMessage = `Archive ${lastMonthStr} winner: ${winner}`;
+                  await octokit.rest.repos.createOrUpdateFileContents({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    path: "images/archive/archive.json",
+                    message: commitMessage,
+                    content: Buffer.from(JSON.stringify(archiveData, null, 2)).toString("base64"),
+                    sha: (await octokit.rest.repos.getContent({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      path: "images/archive/archive.json"
+                    })).data.sha || null
+                  });
+
+                  for (const file of fishList) {
+                    await octokit.rest.repos.createOrUpdateFileContents({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      path: `images/archive/${file}`,
+                      message: commitMessage,
+                      content: Buffer.from(await fs.readFile(path.join(archiveDir, file))).toString("base64"),
+                      sha: (await octokit.rest.repos.getContent({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        path: `images/archive/${file}`
+                      })).data.sha || null
+                    });
+                    await octokit.rest.repos.deleteFile({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      path: `images/current/${file}`,
+                      message: `Remove ${file} from current`,
+                      sha: (await octokit.rest.repos.getContent({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        path: `images/current/${file}`
+                      })).data.sha
+                    });
+                  }
+                }
+              } else {
+                core.info("No winner data to archive for last month.");
+              }
+            }
+
+            archiveWinner().catch(error => core.setFailed(error.message));
+          '
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
