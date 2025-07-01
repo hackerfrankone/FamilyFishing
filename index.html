@@ -30,17 +30,46 @@
       padding: 0;
     }
     a { color: #00ffff; text-decoration: none; }
-    .top-bar { text-align: center; margin-bottom: 2rem; }
-    .social-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    .facebook-button img, .youtube-button img { width: 60px; height: 60px; border-radius: 50%; transition: filter 0.3s ease; }
-    .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
+    .top-bar {
+      text-align: center;
+      margin-bottom: 2rem;
+      width: 100%;
+      display: block;
+    }
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .facebook-button img, .youtube-button img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      transition: filter 0.3s ease;
+    }
+    .facebook-button:hover img, .youtube-button:hover img {
+      filter: brightness(150%);
+    }
     .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
-      width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: bold; text-decoration: none; transition: filter 0.3s ease;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: filter 0.3s ease;
     }
     .discord-button { background-color: #5865F2; color: white; }
     .archive-button { background-color: #808080; color: white; }
-    .tackle-button { background-color: #006400; color white; }
+    .tackle-button { background-color: #006400; color: white; }
     .submit-fish-button { background-color: #FFA500; color: white; }
     .rules-button { background-color: #cc0000; color: white; padding: 0; }
     .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
@@ -194,7 +223,7 @@
       font-family: 'Arial', sans-serif;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       margin: 0 0 0.5rem;
-      font-size:1.2rem;
+      font-size: 1.2rem;
     }
     .angler-sidebar ul {
       list-style: none;
@@ -247,7 +276,7 @@
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
       max-width: 180px;
       position: relative;
-     11
+      overflow: hidden;
     }
     .dropdown.show {
       display: block !important;
@@ -463,14 +492,14 @@
 
         if (winnerData && winnerData.winner && winnerData.fishList) {
           winnerElement.textContent = `Current Winner: ${winnerData.winner} (${winnerData.totalInches}" total)`;
-          winnerGallery.innerHTML = '<div class="no-image-text">No fish images available</div>';
+          winnerGallery.innerHTML = '';
         } else {
-          winnerElement.textContent = 'No winner yet';
-          winnerGallery.innerHTML = '<div class="no-image-text">No fish images available</div>';
+          winnerElement.textContent = 'Waiting on angler to submit fish';
+          winnerGallery.innerHTML = '';
         }
       } catch (error) {
-        winnerElement.textContent = 'No winner yet';
-        winnerGallery.innerHTML = '<div class="no-image-text">Error loading winner</div>';
+        winnerElement.textContent = 'Waiting on angler to submit fish';
+        winnerGallery.innerHTML = '';
       }
     }
 
@@ -526,7 +555,7 @@
         if (monthElement) monthElement.textContent = monthCode;
         if (monthCodeElement) monthCodeElement.textContent = randomCode;
         if (biggestBassTitleElement) biggestBassTitleElement.textContent = `${monthCode}'s Biggest Bass`;
-        if (currentWinnerElement) currentWinnerElement.textContent = `Current Winner: Loading...`;
+        if (currentWinnerElement) currentWinnerElement.textContent = `Waiting on angler to submit fish`;
       } catch (error) {
         console.error("Error updating month:", error.message, error.stack);
       } finally {
@@ -648,7 +677,7 @@
     </div>
   </div>
   <div class="leaderboard-container">
-    <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Loading...</strong></span></div>
+    <div class="current-winner-title"><span><strong id="current-winner-name">Waiting on angler to submit fish</strong></span></div>
     <div id="winner-fish-gallery" class="winner-fish-gallery"></div>
   </div>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
