@@ -24,6 +24,8 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      background-attachment: fixed; /* Keeps background fixed during scrolling */
+      min-height: 100vh; /* Ensures background covers full viewport height and expands with content */
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
@@ -135,6 +137,12 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .feedback {
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .feedback-fish {
       font-size: 0.9rem;
       text-align: center;
       margin-top: 0.5rem;
