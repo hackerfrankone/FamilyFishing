@@ -545,15 +545,16 @@
         if (localStorage.getItem('monthYear') !== currentMonthYear) {
           localStorage.setItem('monthYear', currentMonthYear);
           localStorage.setItem('usedCodes', JSON.stringify([])); // Reset used codes for new month
+          let randomCode = generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`));
+          localStorage.setItem('monthCode', randomCode); // Store the code for the month
           await checkAndArchivePreviousWinner(today, monthNumber, year);
         }
-        let randomCode = generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`));
         const monthElement = document.getElementById("month");
         const monthCodeElement = document.getElementById("month-code");
         const biggestBassTitleElement = document.getElementById("biggest-bass-title");
         const currentWinnerElement = document.getElementById("current-winner-name");
         if (monthElement) monthElement.textContent = monthCode;
-        if (monthCodeElement) monthCodeElement.textContent = randomCode;
+        if (monthCodeElement) monthCodeElement.textContent = localStorage.getItem('monthCode') || generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`));
         if (biggestBassTitleElement) biggestBassTitleElement.textContent = `${monthCode}'s Biggest Bass`;
         if (currentWinnerElement) currentWinnerElement.textContent = `Waiting on angler to submit fish`;
       } catch (error) {
