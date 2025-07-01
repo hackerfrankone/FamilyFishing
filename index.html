@@ -542,11 +542,12 @@
         const year = today.getFullYear();
         const monthCode = monthCodes[monthNumber];
         const currentMonthYear = `${year}-${monthNumber}`;
-        if (localStorage.getItem('monthYear') !== currentMonthYear) {
+        let storedMonthCode = localStorage.getItem('monthCode');
+        if (localStorage.getItem('monthYear') !== currentMonthYear || !storedMonthCode) {
           localStorage.setItem('monthYear', currentMonthYear);
           localStorage.setItem('usedCodes', JSON.stringify([])); // Reset used codes for new month
-          const randomCode = generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`));
-          localStorage.setItem('monthCode', randomCode); // Store the code for the month
+          storedMonthCode = generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`));
+          localStorage.setItem('monthCode', storedMonthCode); // Store the code for the month
           await checkAndArchivePreviousWinner(today, monthNumber, year);
         }
         const monthElement = document.getElementById("month");
@@ -554,7 +555,7 @@
         const biggestBassTitleElement = document.getElementById("biggest-bass-title");
         const currentWinnerElement = document.getElementById("current-winner-name");
         if (monthElement) monthElement.textContent = monthCode;
-        if (monthCodeElement) monthCodeElement.textContent = localStorage.getItem('monthCode'); // Use stored code only
+        if (monthCodeElement) monthCodeElement.textContent = storedMonthCode; // Use the stored or newly generated code
         if (biggestBassTitleElement) biggestBassTitleElement.textContent = `${monthCode}'s Biggest Bass`;
         if (currentWinnerElement) currentWinnerElement.textContent = `Waiting on angler to submit fish`;
       } catch (error) {
