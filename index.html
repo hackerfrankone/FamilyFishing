@@ -460,7 +460,7 @@
       const anglerList = document.getElementById("angler-list");
       if (!anglerList) {
         console.error("Angler list element not found");
-        return;
+        return [];
       }
 
       try {
@@ -506,8 +506,8 @@
 
     function normalizeName(name) {
       return name
-        .replace(/_/g, ' ')
-        .replace(/\s+/g, ' ')
+        .replace(/[-_]/g, ' ') // Replace underscores and dashes with spaces
+        .replace(/\s+/g, ' ') // Collapse multiple spaces
         .trim()
         .toLowerCase();
     }
@@ -541,14 +541,15 @@
           .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png)$/i.test(file.name))
           .map(file => {
             // Extract angler name from filename (e.g., "John_Doe_fish1.jpg" -> "John Doe")
-            const match = file.name.match(/^([^_]+(_[^_]+)*)/); // Match until last underscore before suffix
-            const anglerName = match ? match[1].replace(/_/g, ' ') : '';
+            const match = file.name.match(/^(.+?)(?:[-_]\d+|\.\w+|$)/); // Match until suffix or extension
+            const anglerName = match ? match[1].replace(/[-_]/g, ' ') : '';
             return {
               anglerName,
               normalizedName: normalizeName(anglerName),
               fileName: file.name,
               fileId: file.id,
-              path: file.path_lower
+              path: file.path_lower,
+              sharedLink: file.sharedLink
             };
           })
           .filter(file => normalizedAnglerNames.includes(file.normalizedName))
@@ -559,27 +560,12 @@
 
         console.log(`Matched ${matchedFiles.length} fish images:`, matchedFiles);
 
-        // Generate shared links (or assume backend provides them)
-        const fishImages = await Promise.all(matchedFiles.map(async file => {
-          // Backend should return shared link; if not, generate it
-          let sharedLink = file.sharedLink;
-          if (!sharedLink) {
-            // Placeholder: Backend should handle shared link creation
-            console.warn(`No shared link for ${file.fileName}, backend should provide or generate`);
-            sharedLink = `https://www.dropbox.com/s/dummy/${file.fileName}?dl=0`; // Replace with actual API call
-          }
-          return {
-            anglerName: file.matchedAnglerName,
-            imageUrl: sharedLink.replace('?dl=0', '?raw=1') // Ensure direct image URL
-          };
-        }));
-
         // Display images
-        gallery.innerHTML = fishImages.length > 0
-          ? fishImages.map(item => `
+        gallery.innerHTML = matchedFiles.length > 0
+          ? matchedFiles.map(file => `
             <div class="fish-item">
-              <img src="${item.imageUrl}" alt="Fish by ${item.anglerName}" class="fish-image">
-              <p class="fish-angler-name">${item.anglerName}</p>
+              <img src="${file.sharedLink.replace('?dl=0', '?raw=1')}" alt="Fish by ${file.matchedAnglerName}" class="fish-image">
+              <p class="fish-angler-name">${file.matchedAnglerName}</p>
             </div>
           `).join('')
           : '<p>No fish images from registered anglers</p>';
@@ -715,87 +701,6 @@
       }, 30000); // Poll both every 30 seconds
       (adsbygoogle = window.adsbygoogle || []).push({});
     });
-
-    // Client-side Dropbox API (uncomment for testing only, NOT secure)
-    /*
-    async function loadFishGalleryClientSide() {
-      const DROPBOX_TOKEN = 'YOUR_DROPBOX_ACCESS_TOKEN'; // WARNING: Exposing token is insecure!
-      const gallery = document.getElementById("winner-fish-gallery");
-      if (!gallery) {
-        console.error("Fish gallery element not found");
-        return;
-      }
-      try {
-        const anglerNames = await loadAnglerList();
-        if (!anglerNames.length) {
-          console.warn("No anglers in CSV, skipping fish gallery load");
-          gallery.innerHTML = '<p>No registered anglers</p>';
-          return;
-        }
-        const normalizedAnglerNames = anglerNames.map(normalizeName);
-        const response = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${DROPBOX_TOKEN}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            path: '/Apps/YourAppName/YwG0NvsfxiLX9Ciiypcy',
-            recursive: false,
-            include_media_info: true
-          })
-        });
-        if (!response.ok) throw new Error(`Dropbox API error: ${response.status}`);
-        const data = await response.json();
-        const matchedFiles = data.entries
-          .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png)$/i.test(file.name))
-          .map(file => {
-            const match = file.name.match(/^([^_]+(_[^_]+)*)/);
-            const anglerName = match ? match[1].replace(/_/g, ' ') : '';
-            return {
-              anglerName,
-              normalizedName: normalizeName(anglerName),
-              fileName: file.name,
-              fileId: file.id
-            };
-          })
-          .filter(file => normalizedAnglerNames.includes(file.normalizedName))
-          .map(file => ({
-            ...file,
-            matchedAnglerName: anglerNames[normalizedAnglerNames.indexOf(file.normalizedName)]
-          }));
-        const fishImages = await Promise.all(matchedFiles.map(async file => {
-          const linkResponse = await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${DROPBOX_TOKEN}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              path: file.path_lower,
-              settings: { requested_visibility: 'public' }
-            })
-          });
-          const linkData = await linkResponse.json();
-          return {
-            anglerName: file.matchedAnglerName,
-            imageUrl: linkData.url ? linkData.url.replace('?dl=0', '?raw=1') : ''
-          };
-        }));
-        gallery.innerHTML = fishImages.length > 0
-          ? fishImages.map(item => `
-            <div class="fish-item">
-              <img src="${item.imageUrl}" alt="Fish by ${item.anglerName}" class="fish-image">
-              <p class="fish-angler-name">${item.anglerName}</p>
-            </div>
-          `).join('')
-          : '<p>No fish images from registered anglers</p>';
-      } catch (error) {
-        console.error('Error loading fish gallery (client-side):', error.message);
-        gallery.innerHTML = '<p>Failed to load fish images</p>';
-      }
-    }
-    */
   </script>
 </head>
 <body>
