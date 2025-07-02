@@ -17,7 +17,6 @@
   <meta http-equiv="Expires" content="0">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EBHYE2X44"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9237571676231200" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/dropbox@10.34.0/dist/Dropbox-sdk.min.js"></script>
   <style>
     body {
       background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=1');
@@ -25,8 +24,6 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-attachment: fixed;
-      min-height: 100vh;
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
@@ -38,7 +35,6 @@
       margin-bottom: 2rem;
       width: 100%;
       display: block;
-      margin-top: 1rem; /* Adjusted to move icons down as requested */
     }
     .social-buttons {
       display: flex;
@@ -139,12 +135,6 @@
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .feedback {
-      font-size: 0.9rem;
-      text-align: center;
-      margin-top: 0.5rem;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
-    .feedback-fish {
       font-size: 0.9rem;
       text-align: center;
       margin-top: 0.5rem;
@@ -555,9 +545,9 @@
         let storedMonthCode = localStorage.getItem('monthCode');
         if (localStorage.getItem('monthYear') !== currentMonthYear || !storedMonthCode) {
           localStorage.setItem('monthYear', currentMonthYear);
-          localStorage.setItem('usedCodes', JSON.stringify([]));
+          localStorage.setItem('usedCodes', JSON.stringify([])); // Reset used codes for new month
           storedMonthCode = generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`));
-          localStorage.setItem('monthCode', storedMonthCode);
+          localStorage.setItem('monthCode', storedMonthCode); // Store the code for the month
           await checkAndArchivePreviousWinner(today, monthNumber, year);
         }
         const monthElement = document.getElementById("month");
@@ -565,7 +555,7 @@
         const biggestBassTitleElement = document.getElementById("biggest-bass-title");
         const currentWinnerElement = document.getElementById("current-winner-name");
         if (monthElement) monthElement.textContent = monthCode;
-        if (monthCodeElement) monthCodeElement.textContent = storedMonthCode;
+        if (monthCodeElement) monthCodeElement.textContent = storedMonthCode; // Use the stored or newly generated code
         if (biggestBassTitleElement) biggestBassTitleElement.textContent = `${monthCode}'s Biggest Bass`;
         if (currentWinnerElement) currentWinnerElement.textContent = `Waiting on angler to submit fish`;
       } catch (error) {
@@ -628,144 +618,8 @@
       const anglerList = document.getElementById("angler-list");
       if (!anglerList) return;
 
-      anglerList.innerHTML = '<li>No anglers registered</li>';
+      anglerList.innerHTML = '<li>No anglers registered.</li>';
       await loadCurrentWinner(null);
-    }
-
-    let submissions = []; // Store submissions with angler and image data
-
-    // Function to check Dropbox for new images
-    async function checkDropboxForImages() {
-      const dbx = new Dropbox.Dropbox({ accessToken: 'YOUR_ACCESS_TOKEN' });
-      try {
-        const response = await dbx.filesListFolder({ path: '' }); // Folder linked to request
-        const files = response.result.entries;
-        const winnerGallery = document.getElementById('winner-fish-gallery');
-        const anglerList = document.getElementById('angler-list');
-
-        files.forEach(async (file) => {
-          if (file['.tag'] === 'file' && file.name.match(/\.(jpg|jpeg|png)$/i)) {
-            // Check if this file is already processed
-            if (!submissions.some(s => s.imageUrl && s.imageUrl.includes(file.name))) {
-              const linkResponse = await dbx.sharingCreateSharedLinkWithSettings({ path: file.path_lower });
-              const imageUrl = linkResponse.result.url.replace('dl=0', 'raw=1');
-
-              // Extract angler name from filename (assuming format: anglerName_fish.jpg)
-              const anglerMatch = file.name.match(/^(.+?)_/);
-              const anglerName = anglerMatch ? anglerMatch[1] : 'Unknown';
-              submissions.push({ angler: anglerName, length: 0, location: '', imageUrl, verified: false, verifiedLength: null, timestamp: Date.now() });
-
-              // Update UI
-              updateAnglerList();
-              updateWinner();
-            }
-          }
-        });
-      } catch (error) {
-        console.error('Error checking Dropbox:', error);
-      }
-    }
-
-    // Update angler list with images
-    function updateAnglerList() {
-      const anglerList = document.getElementById('angler-list');
-      if (!anglerList) return;
-
-      const anglers = {};
-      submissions.forEach(sub => {
-        if (!anglers[sub.angler]) anglers[sub.angler] = [];
-        anglers[sub.angler].push(sub);
-      });
-
-      anglerList.innerHTML = Object.keys(anglers).length > 0
-        ? Object.keys(anglers).map(angler => `
-          <li class="angler-item">
-            <span class="angler-name" onclick="toggleDropdown('${angler}')">${angler}</span>
-            <div id="dropdown-${angler}" class="dropdown">
-              ${anglers[angler].map((fish, index) => `
-                <div>
-                  <img src="${fish.imageUrl}" width="60" alt="Fish">
-                  <span class="fish-length">${fish.length}\"${fish.verified ? ` (Verified: ${fish.verifiedLength}\")` : ''}</span>
-                  <button onclick="startVerification('${angler}', ${index})">Verify</button>
-                </div>
-              `).join('')}
-            </div>
-          </li>
-        `).join('')
-        : '<li>No anglers registered</li>';
-    }
-
-    // Verification panel functions
-    let currentVerification = null;
-    function startVerification(angler, index) {
-      currentVerification = { angler, index };
-      const submission = submissions.find((s, i) => s.angler === angler && i === index);
-      document.getElementById('verifyAngler').textContent = angler;
-      document.getElementById('verifiedLength').value = submission.verifiedLength || submission.length;
-      document.getElementById('verifiedCheck').checked = submission.verified;
-      document.getElementById('verificationPanel').style.display = 'block';
-    }
-
-    function toggleVerification() {
-      const isVerified = document.getElementById('verifiedCheck').checked;
-      document.getElementById('verifiedLength').disabled = !isVerified;
-    }
-
-    function saveVerification() {
-      if (currentVerification) {
-        const submission = submissions.find((s, i) => s.angler === currentVerification.angler && i === currentVerification.index);
-        submission.verifiedLength = parseFloat(document.getElementById('verifiedLength').value) || submission.length;
-        submission.verified = document.getElementById('verifiedCheck').checked;
-
-        // Enforce 5-fish limit: Keep the 5 longest verified fish
-        const anglerSubmissions = submissions.filter(s => s.angler === currentVerification.angler);
-        const verifiedSubmissions = anglerSubmissions.filter(s => s.verified);
-        if (verifiedSubmissions.length > 5) {
-          // Sort by verified length (descending) and keep top 5
-          const sortedVerified = verifiedSubmissions.sort((a, b) => (b.verifiedLength || 0) - (a.verifiedLength || 0)).slice(0, 5);
-          // Remove excess submissions
-          anglerSubmissions.forEach(sub => {
-            if (sub.verified && !sortedVerified.some(s => s.imageUrl === sub.imageUrl)) {
-              const index = submissions.indexOf(sub);
-              if (index > -1) submissions.splice(index, 1);
-            }
-          });
-        }
-
-        currentVerification = null;
-        document.getElementById('verificationPanel').style.display = 'none';
-        updateAnglerList();
-        updateWinner();
-      }
-    }
-
-    function updateWinner() {
-      const winnerElement = document.getElementById('current-winner-name');
-      const winnerGallery = document.getElementById('winner-fish-gallery');
-
-      const verifiedSubmissions = submissions.filter(s => s.verified);
-      const anglers = {};
-      verifiedSubmissions.forEach(sub => {
-        if (!anglers[sub.angler]) anglers[sub.angler] = [];
-        anglers[sub.angler].push(sub.verifiedLength || sub.length);
-      });
-
-      let winner = { angler: '', totalInches: 0, fishList: [] };
-      for (let angler in anglers) {
-        const lengths = anglers[angler].sort((a, b) => b - a).slice(0, 5); // Top 5
-        const total = lengths.reduce((sum, len) => sum + len, 0);
-        if (total > winner.totalInches) {
-          winner = { angler, totalInches: total, fishList: verifiedSubmissions.filter(s => s.angler === angler) };
-        }
-      }
-
-      if (winner.angler) {
-        winnerElement.textContent = `Current Winner: ${winner.angler} (${winner.totalInches}" total)`;
-        winnerGallery.innerHTML = winner.fishList.map(fish => `<img src="${fish.imageUrl}" width="100">`).join('');
-      } else {
-        winnerElement.textContent = 'Waiting on angler to submit fish';
-        winnerGallery.innerHTML = '';
-      }
     }
 
     function toggleDropdown(id) {
@@ -779,8 +633,6 @@
       initializeCountdown();
       startCountdown();
       loadAnglerList();
-      checkDropboxForImages();
-      setInterval(checkDropboxForImages, 30000); // Check Dropbox every 30 seconds
       setInterval(updateMonth, 48 * 60 * 60 * 1000);
       (adsbygoogle = window.adsbygoogle || []).push({});
     });
@@ -832,13 +684,5 @@
   </div>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
-  <div id="verificationPanel" style="text-align: center; margin-top: 1rem; display: none;">
-    <h3>Verify Submission</h3>
-    <p>Angler: <span id="verifyAngler"></span></p>
-    <input type="number" id="verifiedLength" placeholder="Verified Length (in inches)" step="0.1">
-    <input type="checkbox" id="verifiedCheck" onchange="toggleVerification()">
-    <label for="verifiedCheck">Verified</label>
-    <button onclick="saveVerification()">Save</button>
-  </div>
 </body>
 </html>
