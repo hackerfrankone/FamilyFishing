@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=1">
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=2">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
@@ -332,13 +332,6 @@
       line-height: 1.25rem;
       cursor: pointer;
     }
-    .paypal-form input[type="text"] {
-      padding: 0.5rem;
-      border-radius: 4px;
-      border: none;
-      font-size: 1rem;
-      width: 11.625rem;
-    }
   </style>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -405,29 +398,36 @@
       }
     }
 
-    async function fetchWithRetry(url, maxRetries = 3, timeout = 10000) {
-      for (let i = 0; i < maxRetries; i++) {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), timeout);
-          const response = await fetch(`${url}?cacheBust=${Date.now()}`, {
-            signal: controller.signal,
-            cache: 'no-cache',
-            headers: {
-              'Accept': 'text/csv'
+    async function fetchWithRetry(urls, maxRetries = 5, timeout = 15000) {
+      for (let url of urls) {
+        for (let i = 0; i < maxRetries; i++) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            const response = await fetch(`${url}?cacheBust=${Date.now()}`, {
+              signal: controller.signal,
+              cache: 'no-cache',
+              headers: {
+                'Accept': 'text/csv'
+              }
+            });
+            clearTimeout(timeoutId);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`);
             }
-          });
-          clearTimeout(timeoutId);
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`);
+            console.log(`Successfully fetched ${url}`);
+            return response;
+          } catch (error) {
+            console.error(`Fetch attempt ${i + 1} failed for ${url}: ${error.name} - ${error.message}`);
+            if (i === maxRetries - 1) {
+              console.warn(`All ${maxRetries} attempts failed for ${url}`);
+            } else {
+              await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i))); // Exponential backoff
+            }
           }
-          return response;
-        } catch (error) {
-          console.error(`Fetch attempt ${i + 1} failed for ${url}: ${error.name} - ${error.message}`);
-          if (i === maxRetries - 1) throw new Error(`All ${maxRetries} fetch attempts failed: ${error.message}`);
-          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i))); // Exponential backoff
         }
       }
+      throw new Error(`All fetch attempts failed for all URLs: ${urls.join(', ')}`);
     }
 
     async function loadAnglerList() {
@@ -438,9 +438,12 @@
       }
 
       try {
-        const csvUrl = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv';
-        console.log(`Fetching angler list from ${csvUrl}`);
-        const response = await fetchWithRetry(csvUrl);
+        const urls = [
+          'https://hackerfrankone.github.io/FamilyFishing/CSV/angler_list.csv',
+          'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv'
+        ];
+        console.log(`Attempting to fetch angler list from: ${urls.join(' or ')}`);
+        const response = await fetchWithRetry(urls);
         const text = await response.text();
         console.log(`Received CSV content: ${text}`);
         if (!text.trim()) {
@@ -486,7 +489,7 @@
         const fishList = currentWinnerData.fishList || [];
         let archiveData = [];
         try {
-          const response = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json');
+          const response = await fetchWithRetry(['https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/archive/archive.json']);
           if (response.ok) archiveData = await response.json();
         } catch (error) {
           console.error("Failed to fetch archive data:", error);
@@ -631,7 +634,6 @@
       </div>
       <div class="paypal-form">
         <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
-          <input type="text" name="custom" id="anglerNameInput" placeholder="Enter Angler Name" required />
           <input type="hidden" name="amount" value="25.00">
           <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
         </form>
