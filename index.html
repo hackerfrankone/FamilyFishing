@@ -38,7 +38,7 @@
       margin-bottom: 2rem;
       width: 100%;
       display: block;
-      margin-top: 1rem; /* Adjusted to move icons down as requested */
+      margin-top: 1rem;
     }
     .social-buttons {
       display: flex;
@@ -411,6 +411,13 @@
       line-height: 1.25rem;
       cursor: pointer;
     }
+    .paypal-form input[type="text"] {
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: none;
+      font-size: 1rem;
+      width: 11.625rem;
+    }
   </style>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -628,7 +635,6 @@
       const anglerList = document.getElementById("angler-list");
       if (!anglerList) return;
 
-      // Fetch and parse angler_list.csv
       try {
         const response = await fetch('https://hackerfrankone.github.io/FamilyFishing/CSV/angler_list.csv');
         if (!response.ok) throw new Error('CSV fetch failed');
@@ -641,9 +647,8 @@
           return obj;
         });
 
-        // Initialize submissions with anglers from CSV
         submissions = anglers.map(angler => ({
-          angler: angler.name || angler.angler || Object.values(angler)[0], // Adjust based on CSV structure
+          angler: angler.name || angler.angler || Object.values(angler)[0],
           length: 0,
           location: '',
           imageUrl: '',
@@ -666,36 +671,28 @@
       }
     }
 
-    let submissions = []; // Store submissions with angler and image data
-
-    // Function to check Dropbox for new images
+    let submissions = [];
     async function checkDropboxForImages() {
       const dbx = new Dropbox.Dropbox({ accessToken: 'YOUR_ACCESS_TOKEN' });
       try {
-        const response = await dbx.filesListFolder({ path: '' }); // Folder linked to request
+        const response = await dbx.filesListFolder({ path: '' });
         const files = response.result.entries;
         const winnerGallery = document.getElementById('winner-fish-gallery');
         const anglerList = document.getElementById('angler-list');
 
         files.forEach(async (file) => {
           if (file['.tag'] === 'file' && file.name.match(/\.(jpg|jpeg|png)$/i)) {
-            // Check if this file is already processed
             if (!submissions.some(s => s.imageUrl && s.imageUrl.includes(file.name))) {
               const linkResponse = await dbx.sharingCreateSharedLinkWithSettings({ path: file.path_lower });
               const imageUrl = linkResponse.result.url.replace('dl=0', 'raw=1');
-
-              // Extract angler name from filename (assuming format: anglerName_fish.jpg)
               const anglerMatch = file.name.match(/^(.+?)_/);
               const anglerName = anglerMatch ? anglerMatch[1] : 'Unknown';
-              // Add or update submission
               let submission = submissions.find(s => s.angler === anglerName);
               if (!submission) {
                 submission = { angler: anglerName, length: 0, location: '', imageUrl: '', verified: false, verifiedLength: null, timestamp: Date.now() };
                 submissions.push(submission);
               }
               submission.imageUrl = imageUrl;
-
-              // Update UI
               updateAnglerList();
               updateWinner();
             }
@@ -706,9 +703,8 @@
       }
     }
 
-    // Update angler list with images
     function updateAnglerList() {
-      const anglerList = document.getElementById('angler-list');
+      const anglerList = document.getElementById("angler-list");
       if (!anglerList) return;
 
       const anglers = {};
@@ -735,7 +731,6 @@
         : '<li>No anglers registered</li>';
     }
 
-    // Verification panel functions
     let currentVerification = null;
     function startVerification(angler, index) {
       currentVerification = { angler, index };
@@ -757,13 +752,10 @@
         submission.verifiedLength = parseFloat(document.getElementById('verifiedLength').value) || submission.length;
         submission.verified = document.getElementById('verifiedCheck').checked;
 
-        // Enforce 5-fish limit: Keep the 5 longest verified fish
         const anglerSubmissions = submissions.filter(s => s.angler === currentVerification.angler);
         const verifiedSubmissions = anglerSubmissions.filter(s => s.verified);
         if (verifiedSubmissions.length > 5) {
-          // Sort by verified length (descending) and keep top 5
           const sortedVerified = verifiedSubmissions.sort((a, b) => (b.verifiedLength || 0) - (a.verifiedLength || 0)).slice(0, 5);
-          // Remove excess submissions
           anglerSubmissions.forEach(sub => {
             if (sub.verified && !sortedVerified.some(s => s.imageUrl === sub.imageUrl)) {
               const index = submissions.indexOf(sub);
@@ -792,7 +784,7 @@
 
       let winner = { angler: '', totalInches: 0, fishList: [] };
       for (let angler in anglers) {
-        const lengths = anglers[angler].sort((a, b) => b - a).slice(0, 5); // Top 5
+        const lengths = anglers[angler].sort((a, b) => b - a).slice(0, 5);
         const total = lengths.reduce((sum, len) => sum + len, 0);
         if (total > winner.totalInches) {
           winner = { angler, totalInches: total, fishList: verifiedSubmissions.filter(s => s.angler === angler) };
@@ -818,9 +810,9 @@
       updateMonth();
       initializeCountdown();
       startCountdown();
-      loadAnglerList(); // Load anglers from angler_list.csv
+      loadAnglerList();
       checkDropboxForImages();
-      setInterval(checkDropboxForImages, 30000); // Check Dropbox every 30 seconds
+      setInterval(checkDropboxForImages, 30000);
       setInterval(updateMonth, 48 * 60 * 60 * 1000);
       (adsbygoogle = window.adsbygoogle || []).push({});
     });
@@ -860,6 +852,7 @@
       </div>
       <div class="paypal-form">
         <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+          <input type="text" name="custom" id="anglerNameInput" placeholder="Enter Angler Name" required />
           <input type="hidden" name="amount" value="25.00">
           <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
         </form>
