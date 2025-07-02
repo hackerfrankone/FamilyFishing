@@ -6,7 +6,7 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://www.paypalobjects.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
@@ -27,31 +27,53 @@
       color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 1rem;
-    }
-    @media (max-width: 768px) {
-      body { background-position: center; }
-    }
-    @media (max-width: 480px) {
-      body { background-position: center; }
+      padding: 0;
     }
     a { color: #00ffff; text-decoration: none; }
-    .top-bar { text-align: center; margin-bottom: 2rem; }
-    .social-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    .facebook-button img, .youtube-button img { width: 60px; height: 60px; border-radius: 50%; transition: filter 0.3s ease; box-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
-    .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
-    .discord-button, .donate-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
-      width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: bold; text-decoration: none; transition: filter 0.3s ease; box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    .top-bar {
+      text-align: center;
+      margin-bottom: 2rem;
+      width: 100%;
+      display: block;
+    }
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .facebook-button img, .youtube-button img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      transition: filter 0.3s ease;
+    }
+    .facebook-button:hover img, .youtube-button:hover img {
+      filter: brightness(150%);
+    }
+    .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: filter 0.3s ease;
     }
     .discord-button { background-color: #5865F2; color: white; }
-    .donate-button { background-color: #FFD700; color: white; border: none; cursor: pointer; }
     .archive-button { background-color: #808080; color: white; }
     .tackle-button { background-color: #006400; color: white; }
     .submit-fish-button { background-color: #FFA500; color: white; }
     .rules-button { background-color: #cc0000; color: white; padding: 0; }
     .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
-    .donate-button:hover, .submit-fish-button:hover { filter: brightness(75%); }
+    .submit-fish-button:hover { filter: brightness(75%); }
     .rules-button:hover { background-color: #ff0000; }
     .tournament-info {
       display: inline-block;
@@ -128,52 +150,11 @@
       margin-top: 0.5rem;
       margin-bottom: 0;
     }
-    .paypal-button {
-      background-color: #FFD700;
-      color: #000;
-      font-weight: bold;
-      font-size: 1rem;
-      border: none;
-      border-radius: 6px;
-      padding: 10px 2rem;
-      cursor: pointer;
-      transition: filter 0.3s ease;
-    }
-    .paypal-button:hover {
-      filter: brightness(150%);
-    }
     .leaderboard-container {
       text-align: center;
       margin-top: 0.2rem;
       position: relative;
       overflow: visible;
-    }
-    .leaderboard-container img {
-      display: block;
-      margin: 0 auto;
-      max-width: 350px;
-      height: auto;
-      border-radius: 8px;
-      transition: transform 0.2s ease;
-      transform-origin: center;
-      cursor: zoom-in;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: pinch-zoom;
-    }
-    .winner-fish-gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-    .winner-fish-gallery img {
-      max-width: 150px;
-      height: auto;
-      border-radius: 8px;
-      transition: transform 0.2s ease;
-      cursor: zoom-in;
     }
     .leaderboard-container .no-image-text {
       display: block;
@@ -325,20 +306,6 @@
       font-size: 0.7rem;
       margin-bottom: 0.2rem;
     }
-    .fish-image {
-      width: 60px;
-      height: auto;
-      border-radius: 4px;
-      margin: 0.2rem;
-      border: none;
-      outline: none;
-      transition: transform 0.2s ease;
-      transform-origin: center;
-      cursor: zoom-in;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: pinch-zoom;
-    }
     .no-image-text {
       color: #FFD140;
       font-size: 0.7rem;
@@ -372,18 +339,11 @@
       .paypal-form {
         margin-top: 0.3rem;
       }
-      .paypal-button {
-        font-size: 0.9rem;
-        padding: 8px 1.5rem;
-      }
       .leaderboard-container {
         margin-top: 0.1rem;
       }
       .dropdown {
         max-width: 100%;
-      }
-      .fish-image {
-        width: 50px;
       }
       .no-image-text {
         width: 50px;
@@ -394,9 +354,6 @@
       }
       .dropdown ul {
         grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-      }
-      .winner-fish-gallery img {
-        max-width: 120px;
       }
     }
     ins.adsbygoogle {
@@ -429,27 +386,27 @@
         font-size: 0.9rem;
       }
     }
+    .pp-MQGR2KDA2VZP4 {
+      text-align: center;
+      border: none;
+      border-radius: 0.25rem;
+      min-width: 11.625rem;
+      padding: 0 2rem;
+      height: 2.625rem;
+      font-weight: bold;
+      background-color: #FFD140;
+      color: #000000;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.25rem;
+      cursor: pointer;
+    }
   </style>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-6EBHYE2X44', { 'anonymize_ip': true });
-
-    function handleImageError(imgElement) {
-      const container = imgElement.parentElement;
-      const noImageText = document.createElement('div');
-      noImageText.className = 'no-image-text';
-      noImageText.textContent = 'Family Fishing Fun';
-      container.appendChild(noImageText);
-      imgElement.style.display = 'none';
-      imgElement.src = 'https://hackerfrankone.github.io/FamilyFishing/images/current/fallback_bass.png?v=' + Date.now();
-      imgElement.style.display = 'block';
-      imgElement.onerror = () => {
-        container.removeChild(imgElement);
-        noImageText.style.display = 'block';
-      };
-    }
 
     const monthCodes = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -462,11 +419,33 @@
       };
     }
 
-    function generateSeededCode(seed, useSeed = true) {
-      const random = useSeed ? mulberry32(seed) : Math.random;
+    function generateSeededCode(seed) {
+      const usedCodes = JSON.parse(localStorage.getItem('usedCodes') || '[]');
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let code = '';
-      for (let i = 0; i < 3; i++) code += letters.charAt(Math.floor(random() * letters.length));
+      let code;
+      const random = mulberry32(seed);
+      let attempts = 0;
+      const maxAttempts = 100;
+      do {
+        code = '';
+        for (let i = 0; i < 3; i++) {
+          code += letters.charAt(Math.floor(random() * letters.length));
+        }
+        attempts++;
+      } while (usedCodes.includes(code) && attempts < maxAttempts);
+      if (attempts >= maxAttempts) {
+        console.warn("Could not generate unique code after max attempts, falling back to random code.");
+        do {
+          code = '';
+          for (let i = 0; i < 3; i++) {
+            code += letters.charAt(Math.floor(Math.random() * letters.length));
+          }
+        } while (usedCodes.includes(code));
+      }
+      if (code !== 'AAA') {
+        usedCodes.push(code);
+        localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
+      }
       return code;
     }
 
@@ -483,7 +462,7 @@
         localStorage.setItem('serverTimeTimestamp', Date.now().toString());
         return serverTime;
       } catch (error) {
-        console.error("Failed to fetch server time, using local time:", error);
+        console.error("Failed to fetch server time, falling back to local time:", error);
         return new Date();
       }
     }
@@ -513,35 +492,14 @@
 
         if (winnerData && winnerData.winner && winnerData.fishList) {
           winnerElement.textContent = `Current Winner: ${winnerData.winner} (${winnerData.totalInches}" total)`;
-
-          const fishImages = winnerData.fishList.map((fish, index) => {
-            const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}` : '';
-            return imageUrl
-              ? `<img id="winner-fish-image-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${winnerData.winner}" onerror="handleImageError(this);">`
-              : `<div class="no-image-text">No fish image</div>`;
-          }).join('');
-
-          winnerGallery.innerHTML = fishImages || '<div class="no-image-text">No fish submitted</div>';
-
-          winnerData.fishList.forEach((fish, index) => {
-            if (fish.image) {
-              initializeFishImageZoom(`winner-fish-${index}`);
-            }
-          });
-
-          localStorage.setItem('currentWinner', JSON.stringify({
-            month: `${monthCode} ${year}`,
-            angler: winnerData.winner,
-            totalInches: winnerData.totalInches,
-            fishList: winnerData.fishList
-          }));
+          winnerGallery.innerHTML = '';
         } else {
-          winnerElement.textContent = '';
-          winnerGallery.innerHTML = '<div class="no-image-text">Waiting on angler to submit fish</div>';
+          winnerElement.textContent = 'Waiting on angler to submit fish';
+          winnerGallery.innerHTML = '';
         }
       } catch (error) {
-        winnerElement.textContent = 'No winner yet';
-        winnerGallery.innerHTML = '<div class="no-image-text">Error loading winner</div>';
+        winnerElement.textContent = 'Waiting on angler to submit fish';
+        winnerGallery.innerHTML = '';
       }
     }
 
@@ -584,17 +542,25 @@
         const year = today.getFullYear();
         const monthCode = monthCodes[monthNumber];
         const currentMonthYear = `${year}-${monthNumber}`;
-        if (localStorage.getItem('monthYear') !== currentMonthYear) {
+        let storedMonthCode = localStorage.getItem('monthCode');
+        if (localStorage.getItem('monthYear') !== currentMonthYear || !storedMonthCode) {
           localStorage.setItem('monthYear', currentMonthYear);
+          localStorage.setItem('usedCodes', JSON.stringify([])); // Reset used codes for new month
+          storedMonthCode = generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`));
+          localStorage.setItem('monthCode', storedMonthCode); // Store the code for the month
           await checkAndArchivePreviousWinner(today, monthNumber, year);
         }
-        let randomCode = year === 2025 && monthNumber === 4 ? 'QEF' : year === 2025 && monthNumber === 3 ? 'IKY' : year > 2025 || (year === 2025 && monthNumber >= 4) ? generateSeededCode(parseInt(`${year}${monthNumber.toString().padStart(2, '0')}`, true)) : generateSeededCode(0, false);
-        document.getElementById("month").textContent = monthCode;
-        document.getElementById("month-code").textContent = randomCode;
-        document.getElementById("biggest-bass-title").textContent = `${monthCode}'s Biggest Bass`;
-        document.getElementById("current-winner-name").textContent = `Current Winner: Loading...`;
-      } catch (error) {}
-      finally {
+        const monthElement = document.getElementById("month");
+        const monthCodeElement = document.getElementById("month-code");
+        const biggestBassTitleElement = document.getElementById("biggest-bass-title");
+        const currentWinnerElement = document.getElementById("current-winner-name");
+        if (monthElement) monthElement.textContent = monthCode;
+        if (monthCodeElement) monthCodeElement.textContent = storedMonthCode; // Use the stored or newly generated code
+        if (biggestBassTitleElement) biggestBassTitleElement.textContent = `${monthCode}'s Biggest Bass`;
+        if (currentWinnerElement) currentWinnerElement.textContent = `Waiting on angler to submit fish`;
+      } catch (error) {
+        console.error("Error updating month:", error.message, error.stack);
+      } finally {
         isUpdatingMonth = false;
       }
     }
@@ -602,18 +568,12 @@
     let serverTimeOffset = 0;
     let countdownInterval = null;
     async function initializeCountdown() {
-      console.log("Initializing countdown...");
       try {
         const serverTime = await fetchCurrentTime();
         serverTimeOffset = serverTime.getTime() - Date.now();
-        console.log("Server time fetched, offset:", serverTimeOffset);
         updateCountdown();
       } catch (error) {
         console.error("Error fetching server time:", error);
-        if (countdownInterval) {
-          clearInterval(countdownInterval);
-          countdownInterval = null;
-        }
         updateCountdown();
       }
     }
@@ -621,15 +581,14 @@
     function updateCountdown() {
       const timerElement = document.getElementById("countdown-timer");
       const countdownElement = document.getElementById("countdown");
-      if (!timerElement || !countdownElement) {
-        console.error("Countdown elements not found");
-        return;
-      }
+      if (!timerElement || !countdownElement) return;
+
       const now = new Date(Date.now() + serverTimeOffset);
       const year = now.getFullYear();
       const month = now.getMonth();
       const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
       const timeDiff = target - now;
+
       if (timeDiff <= 0) {
         updateMonth();
         timerElement.textContent = "Tournament ended!";
@@ -640,12 +599,12 @@
         }
         return;
       }
+
       const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
       timerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-      console.log("Countdown updated:", timerElement.textContent);
       if (days <= 7) countdownElement.classList.add('countdown-red');
       else countdownElement.classList.remove('countdown-red');
     }
@@ -653,232 +612,22 @@
     function startCountdown() {
       if (countdownInterval) clearInterval(countdownInterval);
       countdownInterval = setInterval(updateCountdown, 2000);
-      console.log("Countdown interval started");
     }
 
     async function loadAnglerList() {
       const anglerList = document.getElementById("angler-list");
-      if (!anglerList) {
-        console.error("Angler list element not found");
-        return;
-      }
-      anglerList.innerHTML = "<li>Loading...</li>";
-      try {
-        const anglerResponse = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv?cachebust=' + new Date().getTime());
-        const anglerText = await anglerResponse.text();
-        console.log("Angler list raw text:", anglerText);
-        if (!anglerText || anglerText.trim() === '') {
-          console.warn("Angler list is empty");
-          anglerList.innerHTML = '<li>No anglers registered.</li>';
-          await loadCurrentWinner(null);
-          return;
-        }
+      if (!anglerList) return;
 
-        const anglerNames = anglerText.split('\n').filter(line => line.trim()).slice(1).map(line => line.split(',')[0]?.trim()).filter(name => name);
-        console.log("Parsed angler names:", anglerNames);
-        if (anglerNames.length === 0) {
-          console.warn("No valid angler names found");
-          anglerList.innerHTML = '<li>No anglers registered.</li>';
-          await loadCurrentWinner(null);
-          return;
-        }
-
-        let fishData = [];
-        try {
-          const fishResponse = await fetchWithRetry('https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/fish_submissions.csv?cachebust=' + new Date().getTime());
-          const fishText = await fishResponse.text();
-          console.log("Fish submissions raw text:", fishText);
-          fishData = fishText.split('\n').filter(line => line.trim()).slice(1).map(line => {
-            const [angler, length, image] = line.split(',');
-            return {
-              angler: angler?.trim(),
-              length: parseFloat(length) || 0,
-              image: image?.trim() || ''
-            };
-          }).filter(entry => entry.angler && entry.length > 0 && entry.image);
-          console.log("Parsed fish data:", fishData);
-        } catch (fishError) {
-          console.warn('No fish submissions found:', fishError);
-        }
-
-        const fishByAngler = {};
-        let maxTotalInches = 0;
-        let currentWinner = null;
-        let winnerFishList = [];
-
-        anglerNames.forEach(angler => {
-          fishByAngler[angler] = fishData.filter(fish => fish.angler === angler)
-            .sort((a, b) => {
-              const dateA = a.image ? a.image.match(/(\d{2})(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(\d{4})/i) : null;
-              const dateB = b.image ? b.image.match(/(\d{2})(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(\d{4})/i) : null;
-              if (dateA && dateB) {
-                const monthA = monthCodes.findIndex(m => m.toLowerCase().startsWith(dateA[2])) + 1;
-                const monthB = monthCodes.findIndex(m => m.toLowerCase().startsWith(dateB[2])) + 1;
-                return new Date(dateB[3], monthB - 1, dateB[1]) - new Date(dateA[3], monthA - 1, dateA[1]);
-              }
-              return 0;
-            })
-            .slice(0, 5);
-          const totalInches = fishByAngler[angler].reduce((sum, fish) => sum + fish.length, 0);
-          if (totalInches > maxTotalInches) {
-            maxTotalInches = totalInches;
-            currentWinner = angler;
-            winnerFishList = fishByAngler[angler];
-          }
-        });
-
-        console.log("Current winner:", currentWinner, "Total inches:", maxTotalInches, "Fish list:", winnerFishList);
-
-        if (currentWinner) {
-          await loadCurrentWinner({
-            winner: currentWinner,
-            totalInches: maxTotalInches.toFixed(2),
-            fishList: winnerFishList
-          });
-        } else {
-          await loadCurrentWinner(null);
-        }
-
-        const anglerHtml = anglerNames.map(angler => {
-          const fishList = fishByAngler[angler] || [];
-          const fishCount = fishList.length;
-          const totalLength = fishList.reduce((sum, fish) => sum + fish.length, 0);
-          const fishItems = fishList.map((fish, index) => {
-            const imageUrl = fish.image ? `https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/images/submissions/${fish.image}` : '';
-            const imageHtml = imageUrl
-              ? `<img class="fish-image" id="fish-image-${angler.replace(/[^a-zA-Z0-9]/g, '')}-${index}" src="${imageUrl}" alt="${fish.length} inch bass by ${angler}" onerror="console.log('Image load failed for', this.src); this.style.display='none'; this.nextSibling.style.display='block';">`
-              : '';
-            const noImageHtml = `<span class="no-image-text" style="display: ${imageUrl ? 'none' : 'block'};">No fish submitted</span>`;
-            return `
-              <li>
-                <span class="fish-length">${fish.length} inches</span>
-                ${imageHtml}${noImageHtml}
-              </li>
-            `;
-          }).join('');
-          const placeholders = Array.from({ length: 5 - fishCount }, () => `
-            <li>
-              <span class="no-image-text">No fish submitted</span>
-            </li>
-          `).join('');
-          const safeAnglerId = angler.replace(/[^a-zA-Z0-9]/g, '');
-          return `
-            <li class="angler-item">
-              <div>
-                <span class="angler-name" onclick="toggleDropdown('${safeAnglerId}')" aria-expanded="false" aria-controls="dropdown-${safeAnglerId}">${angler}</span>
-                <div class="dropdown" id="dropdown-${safeAnglerId}">
-                  <p>Fish Submitted: ${fishCount}</p>
-                  <ul>${fishItems}${placeholders}</ul>
-                  <p>Total: ${totalLength} inches</p>
-                </div>
-              </div>
-            </li>
-          `;
-        }).join('');
-        anglerList.innerHTML = anglerHtml || '<li>No anglers registered.</li>';
-
-        anglerNames.forEach(angler => {
-          const safeAnglerId = angler.replace(/[^a-zA-Z0-9]/g, '');
-          fishByAngler[angler]?.forEach((fish, index) => {
-            if (fish.image) {
-              initializeFishImageZoom(`${safeAnglerId}-${index}`);
-            }
-          });
-        });
-      } catch (error) {
-        console.error("Failed to load angler list:", error);
-        anglerList.innerHTML = '<li>Error loading anglers. Please try again later.</li>';
-        await loadCurrentWinner(null);
-      }
+      anglerList.innerHTML = '<li>No anglers registered.</li>';
+      await loadCurrentWinner(null);
     }
 
     function toggleDropdown(id) {
       const dropdown = document.getElementById(`dropdown-${id}`);
-      const trigger = document.querySelector(`[aria-controls="dropdown-${id}"]`);
-      if (dropdown && trigger) {
-        const isHidden = !dropdown.classList.contains('show');
-        document.querySelectorAll('.dropdown.show').forEach(d => d.classList.remove('show'));
-        document.querySelectorAll('[aria-expanded="true"]').forEach(t => t.setAttribute('aria-expanded', 'false'));
-        if (isHidden) {
-          dropdown.classList.add('show');
-          trigger.setAttribute('aria-expanded', 'true');
-        }
-      }
+      if (dropdown) dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
-    function initializeFishImageZoom(imageId) {
-      const image = document.getElementById(`fish-image-${imageId}`) || document.getElementById(`winner-fish-image-${imageId.split('-')[2]}`);
-      if (!image) return;
-      let scale = 1;
-      const minScale = 0.5;
-      const maxScale = 3;
-      const scaleStep = 0.1;
-
-      function updateZoom(newScale) {
-        scale = Math.max(minScale, Math.min(maxScale, newScale));
-        image.style.transform = `scale(${scale})`;
-      }
-
-      image.addEventListener('wheel', (event) => {
-        event.preventDefault();
-        const delta = event.deltaY > 0 ? -scaleStep : scaleStep;
-        updateZoom(scale + delta);
-      });
-
-      image.addEventListener('dblclick', (event) => {
-        event.preventDefault();
-        scale = 1;
-        image.style.transform = 'scale(1)';
-      });
-
-      let initialDistance = null;
-      let initialScale = scale;
-
-      image.addEventListener('touchstart', (event) => {
-        if (event.touches.length === 2) {
-          event.preventDefault();
-          const touch1 = event.touches[0];
-          const touch2 = event.touches[1];
-          initialDistance = Math.hypot(
-            touch1.pageX - touch2.pageX,
-            touch1.pageY - touch2.pageY
-          );
-          initialScale = scale;
-        }
-      });
-
-      image.addEventListener('touchmove', (event) => {
-        if (event.touches.length === 2) {
-          event.preventDefault();
-          const touch1 = event.touches[0];
-          const touch2 = event.touches[1];
-          const currentDistance = Math.hypot(
-            touch1.pageX - touch2.pageX,
-            touch1.pageY - touch2.pageY
-          );
-          if (initialDistance) {
-            const zoomFactor = currentDistance / initialDistance;
-            updateZoom(initialScale * zoomFactor);
-          }
-        }
-      });
-
-      image.addEventListener('touchend', () => {
-        initialDistance = null;
-      });
-
-      image.addEventListener('click', (event) => {
-        event.preventDefault();
-        const anglerName = image.closest('.angler-item')?.querySelector('.angler-name')?.textContent || image.alt.split('by ')[1];
-        const fishLength = image.closest('li')?.querySelector('.fish-length')?.textContent.replace(' inches', '') || image.alt.match(/(\d+\.?\d*) inch/)?.[1];
-        const cleanImageUrl = image.src.split('?v=')[0];
-        const imageUrl = encodeURIComponent(cleanImageUrl);
-        const viewerUrl = `https://hackerfrankone.github.io/FamilyFishing/image-viewer.html?image=${imageUrl}&angler=${encodeURIComponent(anglerName)}&length=${encodeURIComponent(fishLength)}`;
-        window.open(viewerUrl, '_blank');
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
       window.dataLayer.push({event: 'pageview'});
       updateMonth();
       initializeCountdown();
@@ -899,11 +648,6 @@
   </div>
   <div class="top-bar">
     <div class="social-buttons">
-      <form action="https://www.paypal.com/donate" method="post" target="_blank" rel="noopener">
-        <input type="hidden" name="marketplace" value="US">
-        <input type="hidden" name="hosted_button_id" value="AVS6RRJQXPTDS">
-        <button type="submit" class="donate-button" tabindex="0">Donate</button>
-      </form>
       <a href="pages/tackle.html" target="_blank" rel="noopener noreferrer" class="tackle-button" aria-label="Visit our Tackle" tabindex="0" onclick="alert('Coming soon'); return false;">Tackle</a>
       <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button" aria-label="Visit our Facebook page" tabindex="0">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" width="60" height="60">
@@ -918,25 +662,24 @@
     </div>
     <div class="tournament-info">
       <div class="text-wrapper">
-        <p class="main-text">1st Place: $200</p>
-        <p class="main-text">Month long | 5 Bass limit | More anglers, More payout</p>
+        <p class="main-text">1st Place: 100% Payout</p>
+        <p class="main-text">Month long | 5 Bass limit | More anglers = More payout</p>
         <div class="sub-text-container">
           <p class="sub-text">Tennessee Lakes Only | </p>
           <p class="feedback">Feedback or questions: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
         </div>
         <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
       </div>
-      <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" rel="noopener" class="paypal-form">
-        <input type="submit" value="Join Tournament $20" class="paypal-button">
-        <input type="hidden" name="item_name" value="Tournament Entry">
-        <input type="hidden" name="notify_url" value="https://paypal-webhook.familyfishingfun2025.workers.dev">
-        <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="Accepted payment methods">
-        <section style="font-size: 0.75rem;">Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="PayPal logo" style="height:0.875rem; vertical-align:middle;"></section>
-      </form>
+      <div class="paypal-form">
+        <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+          <input type="hidden" name="amount" value="25.00">
+          <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
+        </form>
+      </div>
     </div>
   </div>
   <div class="leaderboard-container">
-    <div class="current-winner-title"><span><strong id="current-winner-name">Current Winner: Loading...</strong></span></div>
+    <div class="current-winner-title"><span><strong id="current-winner-name">Waiting on angler to submit fish</strong></span></div>
     <div id="winner-fish-gallery" class="winner-fish-gallery"></div>
   </div>
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9237571676231200" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
