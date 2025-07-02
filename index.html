@@ -652,8 +652,8 @@
 
               // Extract angler name from filename (assuming format: anglerName_fish.jpg)
               const anglerMatch = file.name.match(/^(.+?)_/);
-              const anglerName = anglerMatch ? anglerMatch[1] : 'Unknown'; // Default to 'Unknown' if no match
-              submissions.push({ angler: anglerName, length: 0, location: '', imageUrl, verified: false, verifiedLength: null });
+              const anglerName = anglerMatch ? anglerMatch[1] : 'Unknown';
+              submissions.push({ angler: anglerName, length: 0, location: '', imageUrl, verified: false, verifiedLength: null, timestamp: Date.now() });
 
               // Update UI
               updateAnglerList();
@@ -713,9 +713,25 @@
 
     function saveVerification() {
       if (currentVerification) {
-        const submission = submissions.find((s, i) => s.angler === angler && i === currentVerification.index);
+        const submission = submissions.find((s, i) => s.angler === currentVerification.angler && i === currentVerification.index);
         submission.verifiedLength = parseFloat(document.getElementById('verifiedLength').value) || submission.length;
         submission.verified = document.getElementById('verifiedCheck').checked;
+
+        // Enforce 5-fish limit: Keep the 5 longest verified fish
+        const anglerSubmissions = submissions.filter(s => s.angler === currentVerification.angler);
+        const verifiedSubmissions = anglerSubmissions.filter(s => s.verified);
+        if (verifiedSubmissions.length > 5) {
+          // Sort by verified length (descending) and keep top 5
+          const sortedVerified = verifiedSubmissions.sort((a, b) => (b.verifiedLength || 0) - (a.verifiedLength || 0)).slice(0, 5);
+          // Remove excess submissions
+          anglerSubmissions.forEach(sub => {
+            if (sub.verified && !sortedVerified.some(s => s.imageUrl === sub.imageUrl)) {
+              const index = submissions.indexOf(sub);
+              if (index > -1) submissions.splice(index, 1);
+            }
+          });
+        }
+
         currentVerification = null;
         document.getElementById('verificationPanel').style.display = 'none';
         updateAnglerList();
@@ -736,7 +752,7 @@
 
       let winner = { angler: '', totalInches: 0, fishList: [] };
       for (let angler in anglers) {
-        const lengths = anglers[angler].sort((a, b) => b - a).slice(0, 5);
+        const lengths = anglers[angler].sort((a, b) => b - a).slice(0, 5); // Top 5
         const total = lengths.reduce((sum, len) => sum + len, 0);
         if (total > winner.totalInches) {
           winner = { angler, totalInches: total, fishList: verifiedSubmissions.filter(s => s.angler === angler) };
