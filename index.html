@@ -6,7 +6,7 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=2">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.dropbox.com https://*.dropboxusercontent.com data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.dropbox.com https://*.dropboxapi.com https://your-backend.vercel.app; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
@@ -257,6 +257,29 @@
     .angler-name:hover {
       color: #FFD140;
     }
+    .winner-fish-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .fish-image {
+      max-width: 200px;
+      height: auto;
+      border-radius: 8px;
+      border: 2px solid #FFD700;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .fish-item {
+      text-align: center;
+    }
+    .fish-angler-name {
+      color: #FFD700;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
     @media (max-width: 768px) {
       .countdown {
         font-size: 1.5rem;
@@ -285,6 +308,9 @@
       }
       .leaderboard-container {
         margin-top: 0.1rem;
+      }
+      .fish-image {
+        max-width: 150px;
       }
     }
     ins.adsbygoogle {
@@ -408,7 +434,7 @@
               signal: controller.signal,
               cache: 'no-cache',
               headers: {
-                'Accept': 'text/csv'
+                'Accept': 'text/csv,application/json'
               }
             });
             clearTimeout(timeoutId);
@@ -449,14 +475,14 @@
         if (!text.trim()) {
           console.warn("CSV is empty");
           anglerList.innerHTML = '<li>No anglers registered</li>';
-          return;
+          return [];
         }
         const rows = text.trim().split('\n').map(row => row.split(',').map(cell => cell.trim()));
         const headers = rows[0];
         if (!headers || headers[0].toLowerCase() !== 'name') {
           console.error(`Invalid CSV format: Expected header "name", got "${headers ? headers[0] : 'undefined'}"`);
           anglerList.innerHTML = '<li>Error loading anglers</li>';
-          return;
+          return [];
         }
         const anglers = rows.slice(1).map(row => ({
           name: row[0] || ''
@@ -470,9 +496,96 @@
             </li>
           `).join('')
           : '<li>No anglers registered</li>';
+        return anglers.map(angler => angler.name);
       } catch (error) {
         console.error('Error loading angler list from CSV:', error.message);
         anglerList.innerHTML = '<li>Failed to load anglers</li>';
+        return [];
+      }
+    }
+
+    function normalizeName(name) {
+      return name
+        .replace(/_/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    async function loadFishGallery() {
+      const gallery = document.getElementById("winner-fish-gallery");
+      if (!gallery) {
+        console.error("Fish gallery element not found");
+        return;
+      }
+
+      try {
+        // Fetch angler names from CSV
+        const anglerNames = await loadAnglerList();
+        if (!anglerNames.length) {
+          console.warn("No anglers in CSV, skipping fish gallery load");
+          gallery.innerHTML = '<p>No registered anglers</p>';
+          return;
+        }
+        const normalizedAnglerNames = anglerNames.map(normalizeName);
+
+        // Fetch Dropbox file metadata from backend proxy
+        const backendUrl = 'https://your-backend.vercel.app/api/dropbox-files';
+        console.log(`Fetching Dropbox files from: ${backendUrl}`);
+        const response = await fetchWithRetry([backendUrl]);
+        const files = await response.json();
+        console.log(`Received Dropbox files:`, files);
+
+        // Filter and match files
+        const matchedFiles = files
+          .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png)$/i.test(file.name))
+          .map(file => {
+            // Extract angler name from filename (e.g., "John_Doe_fish1.jpg" -> "John Doe")
+            const match = file.name.match(/^([^_]+(_[^_]+)*)/); // Match until last underscore before suffix
+            const anglerName = match ? match[1].replace(/_/g, ' ') : '';
+            return {
+              anglerName,
+              normalizedName: normalizeName(anglerName),
+              fileName: file.name,
+              fileId: file.id,
+              path: file.path_lower
+            };
+          })
+          .filter(file => normalizedAnglerNames.includes(file.normalizedName))
+          .map(file => ({
+            ...file,
+            matchedAnglerName: anglerNames[normalizedAnglerNames.indexOf(file.normalizedName)]
+          }));
+
+        console.log(`Matched ${matchedFiles.length} fish images:`, matchedFiles);
+
+        // Generate shared links (or assume backend provides them)
+        const fishImages = await Promise.all(matchedFiles.map(async file => {
+          // Backend should return shared link; if not, generate it
+          let sharedLink = file.sharedLink;
+          if (!sharedLink) {
+            // Placeholder: Backend should handle shared link creation
+            console.warn(`No shared link for ${file.fileName}, backend should provide or generate`);
+            sharedLink = `https://www.dropbox.com/s/dummy/${file.fileName}?dl=0`; // Replace with actual API call
+          }
+          return {
+            anglerName: file.matchedAnglerName,
+            imageUrl: sharedLink.replace('?dl=0', '?raw=1') // Ensure direct image URL
+          };
+        }));
+
+        // Display images
+        gallery.innerHTML = fishImages.length > 0
+          ? fishImages.map(item => `
+            <div class="fish-item">
+              <img src="${item.imageUrl}" alt="Fish by ${item.anglerName}" class="fish-image">
+              <p class="fish-angler-name">${item.anglerName}</p>
+            </div>
+          `).join('')
+          : '<p>No fish images from registered anglers</p>';
+      } catch (error) {
+        console.error('Error loading fish gallery:', error.message);
+        gallery.innerHTML = '<p>Failed to load fish images</p>';
       }
     }
 
@@ -595,9 +708,94 @@
       initializeCountdown();
       startCountdown();
       loadAnglerList();
-      setInterval(loadAnglerList, 30000); // Poll angler list every 30 seconds
+      loadFishGallery();
+      setInterval(() => {
+        loadAnglerList();
+        loadFishGallery();
+      }, 30000); // Poll both every 30 seconds
       (adsbygoogle = window.adsbygoogle || []).push({});
     });
+
+    // Client-side Dropbox API (uncomment for testing only, NOT secure)
+    /*
+    async function loadFishGalleryClientSide() {
+      const DROPBOX_TOKEN = 'YOUR_DROPBOX_ACCESS_TOKEN'; // WARNING: Exposing token is insecure!
+      const gallery = document.getElementById("winner-fish-gallery");
+      if (!gallery) {
+        console.error("Fish gallery element not found");
+        return;
+      }
+      try {
+        const anglerNames = await loadAnglerList();
+        if (!anglerNames.length) {
+          console.warn("No anglers in CSV, skipping fish gallery load");
+          gallery.innerHTML = '<p>No registered anglers</p>';
+          return;
+        }
+        const normalizedAnglerNames = anglerNames.map(normalizeName);
+        const response = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${DROPBOX_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            path: '/Apps/YourAppName/YwG0NvsfxiLX9Ciiypcy',
+            recursive: false,
+            include_media_info: true
+          })
+        });
+        if (!response.ok) throw new Error(`Dropbox API error: ${response.status}`);
+        const data = await response.json();
+        const matchedFiles = data.entries
+          .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png)$/i.test(file.name))
+          .map(file => {
+            const match = file.name.match(/^([^_]+(_[^_]+)*)/);
+            const anglerName = match ? match[1].replace(/_/g, ' ') : '';
+            return {
+              anglerName,
+              normalizedName: normalizeName(anglerName),
+              fileName: file.name,
+              fileId: file.id
+            };
+          })
+          .filter(file => normalizedAnglerNames.includes(file.normalizedName))
+          .map(file => ({
+            ...file,
+            matchedAnglerName: anglerNames[normalizedAnglerNames.indexOf(file.normalizedName)]
+          }));
+        const fishImages = await Promise.all(matchedFiles.map(async file => {
+          const linkResponse = await fetch('https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${DROPBOX_TOKEN}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              path: file.path_lower,
+              settings: { requested_visibility: 'public' }
+            })
+          });
+          const linkData = await linkResponse.json();
+          return {
+            anglerName: file.matchedAnglerName,
+            imageUrl: linkData.url ? linkData.url.replace('?dl=0', '?raw=1') : ''
+          };
+        }));
+        gallery.innerHTML = fishImages.length > 0
+          ? fishImages.map(item => `
+            <div class="fish-item">
+              <img src="${item.imageUrl}" alt="Fish by ${item.anglerName}" class="fish-image">
+              <p class="fish-angler-name">${item.anglerName}</p>
+            </div>
+          `).join('')
+          : '<p>No fish images from registered anglers</p>';
+      } catch (error) {
+        console.error('Error loading fish gallery (client-side):', error.message);
+        gallery.innerHTML = '<p>Failed to load fish images</p>';
+      }
+    }
+    */
   </script>
 </head>
 <body>
