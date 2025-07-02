@@ -6,7 +6,7 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=2">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.dropbox.com https://*.dropboxusercontent.com data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.dropbox.com https://*.dropboxapi.com https://your-backend.vercel.app; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.dropbox.com https://*.dropboxusercontent.com data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.dropbox.com https://*.dropboxapi.com https://family-fishing-backend.vercel.app; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
@@ -480,8 +480,8 @@
 
       try {
         const urls = [
-          'https://hackerfrankone.github.io/FamilyFishing/CSV/angler_list.csv',
-          'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv'
+          'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv',
+          'https://family-fishing-backend.vercel.app/api/fetch-csv'
         ];
         console.log(`Attempting to fetch angler list from: ${urls.join(' or ')}`);
         const response = await fetchWithRetry(urls);
@@ -523,17 +523,18 @@
 
         return anglers.map(angler => angler.name);
       } catch (error) {
-        console.error('Error loading angler list from CSV:', error.message);
-        anglerList.innerHTML = '<li>Failed to load anglers</li>';
+        console.error('Error loading angler list from CSV:', error.message, error.stack);
+        anglerList.innerHTML = '<li>Failed to load anglers: ' + error.message + '</li>';
         return [];
       }
     }
 
     function normalizeName(name) {
       return name
-        .replace(/[-_]/g, ' ') // Replace underscores and dashes with spaces
-        .replace(/\s+/g, ' ') // Collapse multiple spaces
-        .replace(/[-_\d+].*$/, '') // Remove suffixes (e.g., _fish1, -2025)
+        .replace(/^IMG_\d+\s+/, '') // Remove IMG_#### prefix
+        .replace(/[-_]/g, ' ') // Replace underscores and dashes
+        .replace(/\s+/g, ' ') // Collapse spaces
+        .replace(/(\d{4}|fish\d+|\d+).*$/i, '') // Remove suffixes like 2025, fish1
         .trim()
         .toLowerCase();
     }
@@ -557,7 +558,7 @@
         console.log(`Normalized angler names:`, normalizedAnglerNames);
 
         // Fetch Dropbox file metadata from backend proxy
-        const backendUrl = 'https://your-backend.vercel.app/api/dropbox-files';
+        const backendUrl = 'https://family-fishing-backend.vercel.app/api/dropbox-files';
         console.log(`Fetching Dropbox files from: ${backendUrl}`);
         const response = await fetchWithRetry([backendUrl]);
         const files = await response.json();
@@ -568,11 +569,11 @@
         anglerNames.forEach(name => anglerPhotos[name] = []);
 
         files
-          .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png|heic|webp)$/i.test(file.name))
+          .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png|heic|webp|gif|bmp)$/i.test(file.name))
           .forEach(file => {
-            // Extract angler name from filename (e.g., "Frank_Ellison_fish1.jpg" -> "Frank Ellison")
-            const match = file.name.match(/^(.+?)(?:[-_\d+].*|\.\w+)$/); // Match until suffix or extension
-            const anglerName = match ? match[1].replace(/[-_]/g, ' ') : '';
+            // Extract angler name from filename (e.g., "IMG_1509 Frank Ellison.png" -> "Frank Ellison")
+            const match = file.name.match(/^(.+?)(?:\.\w+)$/);
+            const anglerName = match ? match[1].replace(/^IMG_\d+\s+/, '').replace(/[-_]/g, ' ') : '';
             const normalizedName = normalizeName(anglerName);
             console.log(`Processing file: ${file.name}, extracted name: ${anglerName}, normalized: ${normalizedName}`);
             const matchedAngler = anglerNames.find(name => normalizeName(name) === normalizedName);
@@ -581,6 +582,8 @@
                 imageUrl: file.sharedLink.replace('?dl=0', '?raw=1'),
                 fileName: file.name
               });
+            } else if (!matchedAngler) {
+              console.warn(`No matching angler for file: ${file.name}, normalized: ${normalizedName}`);
             }
           });
 
@@ -611,8 +614,8 @@
           `).join('')
           : '<p>No fish images from registered anglers</p>';
       } catch (error) {
-        console.error('Error loading fish gallery:', error.message);
-        gallery.innerHTML = '<p>Failed to load fish images</p>';
+        console.error('Error loading fish gallery:', error.message, error.stack);
+        gallery.innerHTML = '<p>Failed to load fish images: ' + error.message + '</p>';
       }
     }
 
