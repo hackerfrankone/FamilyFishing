@@ -241,7 +241,7 @@
       cursor: pointer;
       position: relative;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       margin-bottom: 0.5rem;
       justify-content: flex-start;
     }
@@ -257,6 +257,22 @@
     .angler-name:hover {
       color: #FFD140;
     }
+    .angler-photos {
+      display: none;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .angler-photos.show {
+      display: flex;
+    }
+    .fish-image {
+      max-width: 100px;
+      height: auto;
+      border-radius: 8px;
+      border: 2px solid #FFD700;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
     .winner-fish-gallery {
       display: flex;
       flex-wrap: wrap;
@@ -264,12 +280,8 @@
       gap: 1rem;
       margin-top: 1rem;
     }
-    .fish-image {
+    .winner-fish-gallery .fish-image {
       max-width: 200px;
-      height: auto;
-      border-radius: 8px;
-      border: 2px solid #FFD700;
-      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     .fish-item {
       text-align: center;
@@ -309,8 +321,11 @@
       .leaderboard-container {
         margin-top: 0.1rem;
       }
-      .fish-image {
+      .winner-fish-gallery .fish-image {
         max-width: 150px;
+      }
+      .angler-photos .fish-image {
+        max-width: 80px;
       }
     }
     ins.adsbygoogle {
@@ -491,11 +506,21 @@
         console.log(`Parsed ${anglers.length} anglers:`, anglers);
         anglerList.innerHTML = anglers.length > 0
           ? anglers.map(angler => `
-            <li class="angler-item">
+            <li class="angler-item" data-angler="${angler.name}">
               <span class="angler-name">${angler.name}</span>
+              <div class="angler-photos" id="photos-${angler.name.replace(/\s+/g, '-')}" data-angler="${angler.name}"></div>
             </li>
           `).join('')
           : '<li>No anglers registered</li>';
+
+        // Add click listeners for toggling photos
+        document.querySelectorAll('.angler-name').forEach(nameElement => {
+          nameElement.addEventListener('click', () => {
+            const photosDiv = nameElement.parentElement.querySelector('.angler-photos');
+            photosDiv.classList.toggle('show');
+          });
+        });
+
         return anglers.map(angler => angler.name);
       } catch (error) {
         console.error('Error loading angler list from CSV:', error.message);
@@ -508,6 +533,7 @@
       return name
         .replace(/[-_]/g, ' ') // Replace underscores and dashes with spaces
         .replace(/\s+/g, ' ') // Collapse multiple spaces
+        .replace(/\d{4}.*$/, '') // Remove year or suffixes
         .trim()
         .toLowerCase();
     }
@@ -536,36 +562,49 @@
         const files = await response.json();
         console.log(`Received Dropbox files:`, files);
 
-        // Filter and match files
-        const matchedFiles = files
+        // Group files by angler
+        const anglerPhotos = {};
+        anglerNames.forEach(name => anglerPhotos[name] = []);
+
+        files
           .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png)$/i.test(file.name))
-          .map(file => {
+          .forEach(file => {
             // Extract angler name from filename (e.g., "John_Doe_fish1.jpg" -> "John Doe")
             const match = file.name.match(/^(.+?)(?:[-_]\d+|\.\w+|$)/); // Match until suffix or extension
             const anglerName = match ? match[1].replace(/[-_]/g, ' ') : '';
-            return {
-              anglerName,
-              normalizedName: normalizeName(anglerName),
-              fileName: file.name,
-              fileId: file.id,
-              path: file.path_lower,
-              sharedLink: file.sharedLink
-            };
-          })
-          .filter(file => normalizedAnglerNames.includes(file.normalizedName))
-          .map(file => ({
-            ...file,
-            matchedAnglerName: anglerNames[normalizedAnglerNames.indexOf(file.normalizedName)]
-          }));
+            const normalizedName = normalizeName(anglerName);
+            const matchedAngler = anglerNames.find(name => normalizeName(name) === normalizedName);
+            if (matchedAngler && anglerPhotos[matchedAngler].length < 5) {
+              anglerPhotos[matchedAngler].push({
+                imageUrl: file.sharedLink.replace('?dl=0', '?raw=1'),
+                fileName: file.name
+              });
+            }
+          });
 
-        console.log(`Matched ${matchedFiles.length} fish images:`, matchedFiles);
+        console.log(`Grouped photos by angler:`, anglerPhotos);
 
-        // Display images
-        gallery.innerHTML = matchedFiles.length > 0
-          ? matchedFiles.map(file => `
+        // Update angler sidebar photos
+        anglerNames.forEach(name => {
+          const photosDiv = document.getElementById(`photos-${name.replace(/\s+/g, '-')}`);
+          if (photosDiv) {
+            photosDiv.innerHTML = anglerPhotos[name].length > 0
+              ? anglerPhotos[name].map(photo => `
+                <img src="${photo.imageUrl}" alt="Fish by ${name}" class="fish-image">
+              `).join('')
+              : '<p>No photos</p>';
+          }
+        });
+
+        // Update main gallery (optional: show all photos or top photos)
+        const allPhotos = Object.entries(anglerPhotos).flatMap(([name, photos]) =>
+          photos.map(photo => ({ anglerName: name, imageUrl: photo.imageUrl }))
+        );
+        gallery.innerHTML = allPhotos.length > 0
+          ? allPhotos.map(item => `
             <div class="fish-item">
-              <img src="${file.sharedLink.replace('?dl=0', '?raw=1')}" alt="Fish by ${file.matchedAnglerName}" class="fish-image">
-              <p class="fish-angler-name">${file.matchedAnglerName}</p>
+              <img src="${item.imageUrl}" alt="Fish by ${item.anglerName}" class="fish-image">
+              <p class="fish-angler-name">${item.anglerName}</p>
             </div>
           `).join('')
           : '<p>No fish images from registered anglers</p>';
