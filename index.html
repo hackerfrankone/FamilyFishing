@@ -533,7 +533,7 @@
       return name
         .replace(/[-_]/g, ' ') // Replace underscores and dashes with spaces
         .replace(/\s+/g, ' ') // Collapse multiple spaces
-        .replace(/\d{4}.*$/, '') // Remove year or suffixes
+        .replace(/[-_\d+].*$/, '') // Remove suffixes (e.g., _fish1, -2025)
         .trim()
         .toLowerCase();
     }
@@ -554,25 +554,27 @@
           return;
         }
         const normalizedAnglerNames = anglerNames.map(normalizeName);
+        console.log(`Normalized angler names:`, normalizedAnglerNames);
 
         // Fetch Dropbox file metadata from backend proxy
         const backendUrl = 'https://your-backend.vercel.app/api/dropbox-files';
         console.log(`Fetching Dropbox files from: ${backendUrl}`);
         const response = await fetchWithRetry([backendUrl]);
         const files = await response.json();
-        console.log(`Received Dropbox files:`, files);
+        console.log(`Received Dropbox files:`, files.map(f => f.name));
 
         // Group files by angler
         const anglerPhotos = {};
         anglerNames.forEach(name => anglerPhotos[name] = []);
 
         files
-          .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png)$/i.test(file.name))
+          .filter(file => file['.tag'] === 'file' && /\.(jpg|jpeg|png|heic|webp)$/i.test(file.name))
           .forEach(file => {
-            // Extract angler name from filename (e.g., "John_Doe_fish1.jpg" -> "John Doe")
-            const match = file.name.match(/^(.+?)(?:[-_]\d+|\.\w+|$)/); // Match until suffix or extension
+            // Extract angler name from filename (e.g., "Frank_Ellison_fish1.jpg" -> "Frank Ellison")
+            const match = file.name.match(/^(.+?)(?:[-_\d+].*|\.\w+)$/); // Match until suffix or extension
             const anglerName = match ? match[1].replace(/[-_]/g, ' ') : '';
             const normalizedName = normalizeName(anglerName);
+            console.log(`Processing file: ${file.name}, extracted name: ${anglerName}, normalized: ${normalizedName}`);
             const matchedAngler = anglerNames.find(name => normalizeName(name) === normalizedName);
             if (matchedAngler && anglerPhotos[matchedAngler].length < 5) {
               anglerPhotos[matchedAngler].push({
@@ -590,20 +592,20 @@
           if (photosDiv) {
             photosDiv.innerHTML = anglerPhotos[name].length > 0
               ? anglerPhotos[name].map(photo => `
-                <img src="${photo.imageUrl}" alt="Fish by ${name}" class="fish-image">
+                <img src="${photo.imageUrl}" alt="Fish by ${name}" class="fish-image" onerror="this.parentElement.innerHTML='<p>Failed to load image: ${photo.fileName}</p>'">
               `).join('')
               : '<p>No photos</p>';
           }
         });
 
-        // Update main gallery (optional: show all photos or top photos)
+        // Update main gallery
         const allPhotos = Object.entries(anglerPhotos).flatMap(([name, photos]) =>
           photos.map(photo => ({ anglerName: name, imageUrl: photo.imageUrl }))
         );
         gallery.innerHTML = allPhotos.length > 0
           ? allPhotos.map(item => `
             <div class="fish-item">
-              <img src="${item.imageUrl}" alt="Fish by ${item.anglerName}" class="fish-image">
+              <img src="${item.imageUrl}" alt="Fish by ${item.anglerName}" class="fish-image" onerror="this.parentElement.innerHTML='<p>Failed to load image for ${item.anglerName}</p>'">
               <p class="fish-angler-name">${item.anglerName}</p>
             </div>
           `).join('')
@@ -737,7 +739,7 @@
       setInterval(() => {
         loadAnglerList();
         loadFishGallery();
-      }, 30000); // Poll both every 30 seconds
+      }, 30000); // Poll every 30 seconds
       (adsbygoogle = window.adsbygoogle || []).push({});
     });
   </script>
