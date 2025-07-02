@@ -536,8 +536,8 @@
             fishList: winnerData.fishList
           }));
         } else {
-          winnerElement.textContent = 'No winner yet';
-          winnerGallery.innerHTML = '<div class="no-image-text">No fish submitted</div>';
+          winnerElement.textContent = '';
+          winnerGallery.innerHTML = '<div class="no-image-text">Waiting on angler to submit fish</div>';
         }
       } catch (error) {
         winnerElement.textContent = 'No winner yet';
