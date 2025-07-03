@@ -657,16 +657,16 @@
         </div>
         <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
       </div>
-      <div class="paypal-form">
-        <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
-          <input type="hidden" name="amount" value="25.00">
-          <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
-        </form>
-        <form id="uploadForm" enctype="multipart/form-data">
-          <input type="file" name="image" accept="image/*">
-          <button type="submit">Upload Fish Photo</button>
-        </form>
-      </div>
+<div class="paypal-form">
+  <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+    <input type="hidden" name="amount" value="25.00">
+    <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
+  </form>
+  <form id="uploadForm" method="POST" enctype="multipart/form-data" action="https://imageupload.familyfishingfun2025.workers.dev">
+    <input type="file" name="image" accept="image/*">
+    <button type="submit">Upload Fish Photo</button>
+  </form>
+</div>
     </div>
   </div>
   <div class="leaderboard-container">
