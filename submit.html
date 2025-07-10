@@ -4,205 +4,51 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Submit Your Catch</title>
-  <link rel="stylesheet" href="style.css?v=1.2" />
-  <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: url('images/background.png') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-    }
-
-    form {
-      background: rgba(0, 0, 0, 0.8);
-      padding: 2rem;
-      max-width: 500px;
-      margin: 5vh auto;
-      border-radius: 16px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
-    }
-
-    h2 {
-      margin-top: 0;
-      text-align: center;
-    }
-
-    label {
-      display: block;
-      margin-top: 1em;
-    }
-
-    input[type="text"],
-    input[type="file"],
-    select {
-      width: 100%;
-      padding: 0.6em;
-      margin-top: 0.5em;
-      border-radius: 8px;
-      border: none;
-      font-size: 1em;
-    }
-
-    button {
-      margin-top: 1.5em;
-      width: 100%;
-      padding: 0.75em;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      font-size: 1.1em;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    button:hover {
-      background-color: #218838;
-    }
-
-    .geobox {
-      background: #222;
-      padding: 1em;
-      margin-top: 1.5em;
-      border-radius: 10px;
-    }
-
-    .name-warning {
-      color: #ff6666;
-      font-weight: bold;
-      margin-bottom: 0.75em;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <form id="fishForm" enctype="multipart/form-data">
-    <h2> Submit Your Catch</h2>
+  <div class="form-container">
+    <h1>Submit Your Fish</h1>
+    <form id="fishForm">
+      <label for="angler">Angler Name (must match registration):</label>
+      <input type="text" name="angler" id="angler" required />
 
-    <div class="name-warning">Name must match angler list</div>
+      <label for="fishImage">Upload Fish Image:</label>
+      <input type="file" name="fishImage" id="fishImage" accept="image/*" required />
 
-    <label>
-      Angler Name:
-      <input type="text" name="name" id="anglerName" required />
-    </label>
-
-    <label>
-      How many fish are you submitting? (max 5):
-      <select name="fishCount" id="fishCountSelect" required>
-        <option value="">Select...</option>
-        <option value="1">1 Fish</option>
-        <option value="2">2 Fish</option>
-        <option value="3">3 Fish</option>
-        <option value="4">4 Fish</option>
-        <option value="5">5 Fish</option>
-      </select>
-    </label>
-
-    <div id="fishInputs"></div>
-
-    <div class="geobox">
-      <p><strong>Do you allow location access to verify your State?</strong></p>
-      <p><em>This is required to submit.</em></p>
-    </div>
-
-    <button type="submit"> Submit</button>
-  </form>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="status"></div>
+  </div>
 
   <script>
-    const fishInputsDiv = document.getElementById("fishInputs");
-    const fishCountSelect = document.getElementById("fishCountSelect");
-    const form = document.getElementById("fishForm");
-    let validAnglers = [];
-
-    // Dynamically create fish photo inputs
-    fishCountSelect.addEventListener("change", () => {
-      const count = parseInt(fishCountSelect.value);
-      fishInputsDiv.innerHTML = "";
-      for (let i = 1; i <= count; i++) {
-        const label = document.createElement("label");
-        label.innerHTML = `Fish Photo ${i}:<input type="file" name="fishPhoto${i}" accept="image/*" required />`;
-        fishInputsDiv.appendChild(label);
-      }
-    });
-
-    // Load angler names from CSV
-    async function loadAnglerList() {
-      try {
-        const res = await fetch("https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv");
-        const text = await res.text();
-        validAnglers = text
-          .split("\n")
-          .map(name => name.trim().toLowerCase())
-          .filter(name => name);
-      } catch (err) {
-        alert("Failed to load angler list.");
-        console.error(err);
-      }
-    }
-
-    // Run on load
-    loadAnglerList();
-
-    form.addEventListener("submit", async (e) => {
+    document.getElementById("fishForm").addEventListener("submit", async function(e) {
       e.preventDefault();
 
-      const name = document.getElementById("anglerName").value.trim().toLowerCase();
+      const form = e.target;
+      const status = document.getElementById("status");
 
-      if (!validAnglers.includes(name)) {
-        alert("Angler name not found in the list. Please check spelling.");
-        return;
-      }
+      const formData = new FormData();
+      formData.append("angler", form.angler.value);
+      formData.append("fishImage", form.fishImage.files[0]);
 
-      if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your browser.");
-        return;
-      }
+      try {
+        const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
+          method: "POST",
+          body: formData,
+        });
 
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
+        const data = await res.json();
 
-        // Tennessee approx box
-        if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
-          alert("You must be in Tennessee waters to submit.");
-          return;
+        if (!res.ok) {
+          status.textContent = "❌ " + (data.error || "Upload failed.");
+        } else {
+          status.textContent = "✅ " + data.message;
         }
 
-        const formData = new FormData(form);
-        const fishCount = parseInt(formData.get("fishCount"));
-
-        for (let i = 1; i <= fishCount; i++) {
-          const file = formData.get(`fishPhoto${i}`);
-          if (file && file.name) {
-            const uploadData = new FormData();
-            uploadData.append("file", file, file.name);
-            uploadData.append("name", formData.get("name"));
-            uploadData.append("fishCount", fishCount);
-
-            const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
-              method: "POST",
-              body: uploadData,
-            });
-
-            if (!res.ok) {
-              const errorText = await res.text();
-              alert(`Upload failed: ${errorText}`);
-              return;
-            }
-          }
-        }
-
-        alert(" Uploaded successfully! Thank you for your submission.");
-        form.reset();
-        fishInputsDiv.innerHTML = "";
-
-      }, () => {
-        alert("Location permission denied. Cannot submit.");
-      });
+      } catch (err) {
+        status.textContent = "❌ Error: " + err.message;
+      }
     });
   </script>
 </body>
