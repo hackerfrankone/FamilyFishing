@@ -121,7 +121,7 @@
       color: #000;
       font-family: "Helvetica Neue", Arial, sans-serif;
       font-size: 1rem;
-      cursor: pointer;
+      cursorkings/pointer;
     }
     .identifier-container {
       position: fixed;
@@ -137,7 +137,7 @@
     }
     .angler-sidebar {
       position: fixed;
-      top: 4rem; /* Increased from 3rem to move it down */
+      top: 4rem;
       left: 1rem;
       padding: 1rem;
       border-radius: 8px;
@@ -211,15 +211,15 @@
       font-size: 0.8rem;
     }
     @media (max-width: 768px) {
+      .top-bar { margin: 0.5rem 0; }
+      .social-buttons { gap: 0.5rem; }
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button { width: 50px; height: 50px; font-size: 10px; }
+      .tournament-info { padding: 0.3rem 0.8rem; }
+      .main-text { font-size: 1.2rem; }
+      .sub-text, .feedback { font-size: 0.8rem; }
       .countdown { font-size: 1.5rem; }
-      .identifier-container, .angler-sidebar {
-        position: static;
-        margin: 1rem auto;
-        max-width: 100%;
-        text-align: center;
-      }
-      .angler-item { align-items: center; }
-      .month-identifier { font-size: 1.2rem; }
+      .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
+      .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align center; }
       .angler-images img, .angler-images .placeholder { max-width: 50px; height: 25px; font-size: 0.7rem; }
     }
   </style>
@@ -260,7 +260,6 @@
         if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
         const text = await response.text();
         if (!text.trim()) throw new Error('Empty CSV');
-        console.log(`Fetched angler list: ${text}`);
         return text.trim().split('\n').slice(1).map(row => row.split(',')[0].trim()).filter(name => name);
       } catch (error) {
         console.error(`Failed to fetch angler list: ${error.message}`);
@@ -270,13 +269,12 @@
 
     async function fetchAnglerImages(anglerName) {
       try {
-        const response = await fetch(`https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(anglerName)}`, { cache: 'no-cache' });
+        const response = await fetch(`https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(anglerName.toLowerCase())}`, { cache: 'no-cache' });
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
         const data = await response.json();
-        console.log(`Fetched images for ${anglerName}: ${JSON.stringify(data.images)}`);
         return data.images || [];
       } catch (error) {
         console.error(`Failed to fetch images for ${anglerName}: ${error.message}`);
@@ -310,7 +308,6 @@
         : '<li>No anglers registered</li>';
 
       document.querySelectorAll('.angler-name').forEach(nameElement => {
-        console.log(`Binding click event for ${nameElement.dataset.name}`);
         nameElement.addEventListener('click', async () => {
           const name = decodeURIComponent(nameElement.dataset.name);
           const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
