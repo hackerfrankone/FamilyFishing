@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/x-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.ico?v=3">
-  <link rel="apple-touch-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.png?v=3">
+  <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3">
+  <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://raw.githubusercontent.com https://upload.wikimedia.org https://imagedelivery.net data:; connect-src 'self' https://raw.githubusercontent.com https://www.familyfishing.fun https://worldtimeapi.org https://fish-submit.familyfishingfun2025.workers.dev; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
@@ -256,7 +256,7 @@
     async function fetchAnglerList() {
       const url = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv';
       try {
-        const response = await fetch(`${url}?cacheBust=${Date.now()}`, { cache: 'no-cache' });
+        const response = await fetch(`${url}?cacheBust=${Date.now()}`);
         if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
         const text = await response.text();
         if (!text.trim()) throw new Error('Empty CSV');
