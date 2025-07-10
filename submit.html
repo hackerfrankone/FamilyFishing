@@ -86,7 +86,7 @@
     <div class="name-warning">Name must match angler name exactly.</div>
 
     <label for="anglerName">Angler Name (must match registration):</label>
-    <input type="text" id="anglerName" name="name" required autocomplete="off" />
+    <input type="text" id="anglerName" name="anglerName" required autocomplete="off" />
 
     <label for="fishCountSelect">How many fish are you submitting? (max 5):</label>
     <select name="fishCount" id="fishCountSelect" required>
@@ -120,7 +120,7 @@
       fishInputsDiv.innerHTML = "";
       for (let i = 1; i <= count; i++) {
         const label = document.createElement("label");
-        label.innerHTML = `Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required />`;
+        label.innerHTML = `Fish Photo ${i}: <input type="file" name="photo" accept="image/*" required />`;
         fishInputsDiv.appendChild(label);
       }
     });
@@ -140,7 +140,7 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
-        // Define Tennessee water boundaries roughly
+        // Rough TN waters boundaries
         if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
           statusMessage.style.color = "red";
           statusMessage.textContent = "You must be in Tennessee waters to submit.";
@@ -149,29 +149,33 @@
 
         statusMessage.textContent = "Location verified. Uploading images...";
 
-        const formData = new FormData(fishForm);
-        const fishCount = parseInt(formData.get("fishCount"));
-        const name = formData.get("name").trim();
-
-        if (!name) {
+        const anglerName = fishForm.anglerName.value.trim();
+        if (!anglerName) {
           statusMessage.style.color = "red";
           statusMessage.textContent = "Please enter your angler name.";
           return;
         }
 
-        // Upload images one by one to your worker endpoint
-        for (let i = 1; i <= fishCount; i++) {
-          const file = formData.get(`fishPhoto${i}`);
-          if (!file || !file.name) {
+        const files = fishInputsDiv.querySelectorAll('input[type="file"]');
+        if (files.length === 0) {
+          statusMessage.style.color = "red";
+          statusMessage.textContent = "Please select at least one fish photo.";
+          return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+          const fileInput = files[i];
+          const file = fileInput.files[0];
+
+          if (!file) {
             statusMessage.style.color = "red";
-            statusMessage.textContent = `Missing photo for fish ${i}`;
+            statusMessage.textContent = `Missing photo for fish ${i + 1}`;
             return;
           }
 
           const uploadData = new FormData();
-          uploadData.append("file", file, file.name);
-          uploadData.append("name", name);
-          uploadData.append("fishCount", fishCount); // Optional if you want to send count per upload
+          uploadData.append("anglerName", anglerName);
+          uploadData.append("photo", file, file.name);
 
           try {
             const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
@@ -183,10 +187,9 @@
               const errorText = await response.text();
               throw new Error(errorText || "Upload failed");
             }
-
           } catch (error) {
             statusMessage.style.color = "red";
-            statusMessage.textContent = `Error uploading fish ${i}: ${error.message}`;
+            statusMessage.textContent = `Error uploading fish ${i + 1}: ${error.message}`;
             return;
           }
         }
