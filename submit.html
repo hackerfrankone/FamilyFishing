@@ -2,52 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Submit Your Catch</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Submit Angler Name</title>
 </head>
 <body>
-  <div class="form-container">
-    <h1>Submit Your Fish</h1>
-    <form id="fishForm">
-      <label for="angler">Angler Name (must match registration):</label>
-      <input type="text" name="angler" id="angler" required />
+  <form id="submitForm">
+    <label>
+      Angler Name (must match registration):
+      <input type="text" name="name" required />
+    </label>
+    <button type="submit">Submit</button>
+  </form>
 
-      <label for="fishImage">Upload Fish Image:</label>
-      <input type="file" name="fishImage" id="fishImage" accept="image/*" required />
-
-      <button type="submit">Submit</button>
-    </form>
-    <div id="status"></div>
-  </div>
+  <pre id="result"></pre>
 
   <script>
-    document.getElementById("fishForm").addEventListener("submit", async function(e) {
+    const form = document.getElementById("submitForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const form = e.target;
-      const status = document.getElementById("status");
+      const formData = new FormData(form);
+      const name = formData.get("name").trim();
 
-      const formData = new FormData();
-      formData.append("angler", form.angler.value);
-      formData.append("fishImage", form.fishImage.files[0]);
+      if (!name) {
+        result.textContent = "Please enter your angler name.";
+        return;
+      }
 
       try {
         const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name }),
         });
 
         const data = await res.json();
 
         if (!res.ok) {
-          status.textContent = "❌ " + (data.error || "Upload failed.");
-        } else {
-          status.textContent = "✅ " + data.message;
+          result.textContent = "❌ Error: " + (data.error || "Unknown error");
+          return;
         }
 
+        result.textContent = "✅ Success: " + (data.message || "Angler verified!");
       } catch (err) {
-        status.textContent = "❌ Error: " + err.message;
+        result.textContent = "❌ Error: Failed to fetch - " + err.message;
       }
     });
   </script>
