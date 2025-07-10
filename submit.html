@@ -4,14 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Submit Your Catch</title>
-  <link rel="stylesheet" href="/FamilyFishing/style.css?v=1.1" />
-  <link rel="icon" type="image/jpeg" href="/FamilyFishing/images/favicon.jpg" />
+  <link rel="stylesheet" href="style.css?v=1.1" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
 
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: url('/FamilyFishing/images/background.png') no-repeat center center fixed;
+      background: url('images/background.png') no-repeat center center fixed;
       background-size: cover;
       font-family: sans-serif;
       color: white;
@@ -71,6 +72,7 @@
 <body>
   <form id="fishForm" enctype="multipart/form-data">
     <h2>Submit Your Catch</h2>
+
     <div class="name-warning">Name must match angler name exactly.</div>
 
     <label>
@@ -114,7 +116,7 @@
       }
     });
 
-    document.getElementById("fishForm").addEventListener("submit", (e) => {
+    document.getElementById("fishForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
       if (!navigator.geolocation) {
@@ -126,7 +128,6 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
-        // Tennessee region check
         if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
           alert("You must be in Tennessee waters to submit.");
           return;
@@ -135,25 +136,29 @@
         const form = document.getElementById("fishForm");
         const formData = new FormData(form);
 
-        try {
-          const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
-            method: "POST",
-            body: formData,
-          });
+        const fishCount = parseInt(formData.get("fishCount"));
+        const name = formData.get("name");
 
-          const text = await res.text();
-          if (!res.ok) {
-            alert("Upload failed: " + text);
-            return;
+        for (let i = 1; i <= fishCount; i++) {
+          const file = formData.get(`fishPhoto${i}`);
+          if (file && file.name) {
+            const uploadData = new FormData();
+            uploadData.append("file", file, file.name);
+            uploadData.append("name", name);
+
+            const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
+              method: "POST",
+              body: uploadData,
+            });
+
+            if (!res.ok) {
+              alert(`Upload failed: ${await res.text()}`);
+              return;
+            }
           }
-
-          const result = JSON.parse(text);
-          alert("Uploaded successfully! 🎣");
-          console.log(result);
-        } catch (err) {
-          console.error(err);
-          alert("Network error during upload.");
         }
+
+        alert("Uploaded successfully! Thank you for your submission.");
       }, () => {
         alert("Location permission denied. Cannot submit.");
       });
