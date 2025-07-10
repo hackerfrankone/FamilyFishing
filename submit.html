@@ -58,6 +58,12 @@
       margin-top: 1em;
       border-radius: 8px;
     }
+
+    #statusMessage {
+      margin-top: 1em;
+      font-weight: bold;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -89,11 +95,13 @@
     </div>
 
     <button type="submit">Submit</button>
+    <div id="statusMessage"></div>
   </form>
 
   <script>
     const fishInputsDiv = document.getElementById("fishInputs");
     const fishCountSelect = document.getElementById("fishCountSelect");
+    const statusMessage = document.getElementById("statusMessage");
 
     fishCountSelect.addEventListener("change", () => {
       const count = parseInt(fishCountSelect.value);
@@ -107,9 +115,10 @@
 
     document.getElementById("fishForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      statusMessage.textContent = "";
 
       if (!navigator.geolocation) {
-        alert("Geolocation not supported by your browser.");
+        statusMessage.textContent = "Geolocation not supported by your browser.";
         return;
       }
 
@@ -118,38 +127,44 @@
         const lon = pos.coords.longitude;
 
         if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
-          alert("You must be in Tennessee waters to submit.");
+          statusMessage.textContent = "You must be in Tennessee waters to submit.";
           return;
         }
 
         const form = document.getElementById("fishForm");
         const formData = new FormData(form);
-
         const fishCount = parseInt(formData.get("fishCount"));
         const name = formData.get("name");
 
-        for (let i = 1; i <= fishCount; i++) {
-          const file = formData.get(`fishPhoto${i}`);
-          if (file && file.name) {
-            const uploadData = new FormData();
-            uploadData.append("file", file, file.name);
-            uploadData.append("name", name);
+        try {
+          for (let i = 1; i <= fishCount; i++) {
+            const file = formData.get(`fishPhoto${i}`);
+            if (file && file.name) {
+              const uploadData = new FormData();
+              uploadData.append("file", file, file.name);
+              uploadData.append("name", name);
 
-            const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
-              method: "POST",
-              body: uploadData,
-            });
+              const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
+                method: "POST",
+                body: uploadData,
+              });
 
-            if (!res.ok) {
-              alert(`Failed to upload Fish ${i}: ${await res.text()}`);
-              return;
+              if (!res.ok) {
+                throw new Error(`Failed to upload Fish ${i}: ${await res.text()}`);
+              }
             }
           }
-        }
 
-        alert("Your fish were submitted and uploaded to Cloudflare Images!");
+          statusMessage.style.color = "lightgreen";
+          statusMessage.textContent = "✅ Uploaded successfully!";
+          form.reset();
+          fishInputsDiv.innerHTML = "";
+        } catch (err) {
+          statusMessage.style.color = "salmon";
+          statusMessage.textContent = `❌ Error: ${err.message}`;
+        }
       }, () => {
-        alert("Location permission denied. Cannot submit.");
+        statusMessage.textContent = "Location permission denied. Cannot submit.";
       });
     });
   </script>
