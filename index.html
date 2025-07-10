@@ -63,7 +63,7 @@
     .tackle-button { background-color: #006400; color: white; }
     .submit-fish-button { background-color: #FFA500; color: white; }
     .rules-button { background-color: #cc0000; color: white; }
-    .discord-button:hover, .archive-button:hover, . অ্যাট্রিবিউট: filter; brightness(150%); }
+    .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
     .submit-fish-button:hover { filter: brightness(75%); }
     .rules-button:hover { background-color: #ff0000; }
     .tournament-info {
@@ -145,7 +145,7 @@
       max-height: 500px;
       overflow-y: auto;
       z-index: 1000;
-   pn
+    }
     .angler-sidebar h3 {
       color: yellow;
       font-weight: bold;
@@ -219,7 +219,7 @@
       .sub-text, .feedback { font-size: 0.8rem; }
       .countdown { font-size: 1.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
-      .identifier-container, .angler-sidebar { position: static; margin: 1remhb auto; max-width: 100%; text-align: center; }
+      .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
       .angler-images img, .angler-images .placeholder { max-width: 50px; height: 25px; font-size: 0.7rem; }
     }
   </style>
@@ -271,8 +271,9 @@
     async function fetchAnglerImages(anglerName, retryCount = 3, delayMs = 1000) {
       for (let attempt = 1; attempt <= retryCount; attempt++) {
         try {
-          const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(anglerName.toLowerCase())}`;
-          console.log(`Attempt ${attempt}: Fetching images for angler: ${anglerName} (lowercase: ${anglerName.toLowerCase()}) from ${url}`);
+          const normalizedName = anglerName.trim().toLowerCase();
+          const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(normalizedName)}`;
+          console.log(`Attempt ${attempt}: Fetching images for angler: ${anglerName} (normalized: ${normalizedName}) from ${url}`);
           const response = await fetch(url, { cache: 'no-cache', method: 'GET' });
           if (!response.ok) {
             const errorText = await response.text();
