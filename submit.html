@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Submit Your Catch</title>
-  <link rel="stylesheet" href="style.css?v=1.1" />
   <style>
     body {
       margin: 0;
@@ -59,12 +58,10 @@
       border-radius: 8px;
     }
 
-    .notice {
-      color: #ff4d4d;
-      font-size: 0.9rem;
+    .warning {
+      color: red;
       font-weight: bold;
-      margin-bottom: -0.5em;
-      margin-top: 1em;
+      margin-top: 0.25em;
     }
   </style>
 </head>
@@ -72,9 +69,8 @@
   <form id="fishForm" enctype="multipart/form-data">
     <h2>Submit Your Catch</h2>
 
-    <div class="notice">* Name must match angler name exactly *</div>
     <label>
-      Angler Name:
+      Angler Name: <span class="warning">Must match angler name exactly</span>
       <input type="text" name="name" required />
     </label>
 
@@ -93,7 +89,7 @@
     <div id="fishInputs"></div>
 
     <div class="geobox">
-      <p><strong>Do you allow location access to verify Tennessee?</strong></p>
+      <p><strong>Do you allow location access to verify State?</strong></p>
       <p><em>This is required to submit.</em></p>
     </div>
 
@@ -109,7 +105,7 @@
       fishInputsDiv.innerHTML = "";
       for (let i = 1; i <= count; i++) {
         const label = document.createElement("label");
-        label.innerHTML = `Fish Photo ${i}:<input type="file" name="fishPhoto${i}" accept="image/*" required />`;
+        label.innerHTML = `Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required />`;
         fishInputsDiv.appendChild(label);
       }
     });
@@ -126,46 +122,36 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
-        // ✅ Tennessee boundary check (hard-coded)
+        // Tennessee waters bounds check
         if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
-          alert("❌ You must be in Tennessee to submit.");
+          alert("You must be in Tennessee waters to submit.");
           return;
         }
 
         const form = document.getElementById("fishForm");
         const formData = new FormData(form);
-        const fishCount = parseInt(formData.get("fishCount"));
-        const name = formData.get("name");
 
         try {
-          for (let i = 1; i <= fishCount; i++) {
-            const file = formData.get(`fishPhoto${i}`);
-            if (file && file.name) {
-              const uploadData = new FormData();
-              uploadData.append("file", file, file.name);
-              uploadData.append("name", name);
+          const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
+            method: "POST",
+            body: formData,
+          });
 
-              const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
-                method: "POST",
-                body: uploadData,
-              });
-
-              if (!res.ok) {
-                const error = await res.text();
-                alert(`❌ Upload failed for Fish ${i}: ${error}`);
-                return;
-              }
-            }
+          if (!response.ok) {
+            const errMsg = await response.text();
+            alert(`Upload failed: ${errMsg}`);
+            return;
           }
 
-          alert("✅ Uploaded successfully!");
+          const data = await response.json();
+          alert("Uploaded successfully! Thank you for your submission.");
           form.reset();
           fishInputsDiv.innerHTML = "";
         } catch (err) {
-          alert("❌ Upload failed. Please try again.");
+          alert(`Error submitting form: ${err.message}`);
         }
       }, () => {
-        alert("❌ Location permission denied. Cannot submit.");
+        alert("Location permission denied. Cannot submit.");
       });
     });
   </script>
