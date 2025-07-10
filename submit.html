@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Submit Your Catch</title>
-  <link rel="stylesheet" href="style.css?v=1.1" />
-  <!-- Favicon -->
+  <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
 
   <style>
@@ -55,13 +54,6 @@
       background-color: #218838;
     }
 
-    .geobox {
-      background: #333;
-      padding: 1em;
-      margin-top: 1em;
-      border-radius: 8px;
-    }
-
     .name-warning {
       color: red;
       font-weight: bold;
@@ -94,11 +86,6 @@
 
     <div id="fishInputs"></div>
 
-    <div class="geobox">
-      <p><strong>Do you allow location access to verify State?</strong></p>
-      <p><em>This is required to submit.</em></p>
-    </div>
-
     <button type="submit">Submit</button>
   </form>
 
@@ -128,6 +115,7 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
+        // Example bounding box for Tennessee (approx.)
         if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
           alert("You must be in Tennessee waters to submit.");
           return;
@@ -136,29 +124,26 @@
         const form = document.getElementById("fishForm");
         const formData = new FormData(form);
 
-        const fishCount = parseInt(formData.get("fishCount"));
-        const name = formData.get("name");
+        try {
+          const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
+            method: "POST",
+            body: formData,
+          });
 
-        for (let i = 1; i <= fishCount; i++) {
-          const file = formData.get(`fishPhoto${i}`);
-          if (file && file.name) {
-            const uploadData = new FormData();
-            uploadData.append("file", file, file.name);
-            uploadData.append("name", name);
+          const result = await response.json();
 
-            const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
-              method: "POST",
-              body: uploadData,
-            });
-
-            if (!res.ok) {
-              alert(`Upload failed: ${await res.text()}`);
-              return;
-            }
+          if (!response.ok) {
+            alert(`Upload failed: ${result.message || response.statusText}`);
+            console.error(result);
+            return;
           }
-        }
 
-        alert("Uploaded successfully! Thank you for your submission.");
+          alert("Upload successful!");
+          console.log("Server response:", result);
+        } catch (err) {
+          alert("Error submitting form. Check console.");
+          console.error(err);
+        }
       }, () => {
         alert("Location permission denied. Cannot submit.");
       });
