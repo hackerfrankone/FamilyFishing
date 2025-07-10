@@ -4,115 +4,90 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Submit Your Catch</title>
-  <link rel="icon" href="images/favicon.jpg" type="image/jpeg" />
-
+  <link rel="stylesheet" href="style.css?v=1.2" />
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
   <style>
-    :root {
-      --primary: #28a745;
-      --primary-dark: #218838;
-      --bg-dark: rgba(0, 0, 0, 0.75);
-      --font: 'Segoe UI', sans-serif;
-      --card-radius: 16px;
-    }
-
     body {
       margin: 0;
       padding: 0;
-      font-family: var(--font);
       background: url('images/background.png') no-repeat center center fixed;
       background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
       color: white;
     }
 
     form {
-      background: var(--bg-dark);
+      background: rgba(0, 0, 0, 0.8);
       padding: 2rem;
-      max-width: 600px;
+      max-width: 500px;
       margin: 5vh auto;
-      border-radius: var(--card-radius);
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      border-radius: 16px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
     }
 
     h2 {
       margin-top: 0;
       text-align: center;
-      font-size: 1.8rem;
     }
 
     label {
       display: block;
       margin-top: 1em;
-      font-weight: bold;
     }
 
     input[type="text"],
     input[type="file"],
     select {
       width: 100%;
-      padding: 0.5em;
+      padding: 0.6em;
       margin-top: 0.5em;
       border-radius: 8px;
       border: none;
       font-size: 1em;
     }
 
-    input[type="file"] {
-      background-color: white;
-      color: black;
-    }
-
     button {
       margin-top: 1.5em;
-      padding: 0.75em 1.5em;
-      border: none;
-      background-color: var(--primary);
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.1em;
       width: 100%;
+      padding: 0.75em;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
 
     button:hover {
-      background-color: var(--primary-dark);
+      background-color: #218838;
     }
 
     .geobox {
-      background: #444;
+      background: #222;
       padding: 1em;
       margin-top: 1.5em;
-      border-radius: var(--card-radius);
+      border-radius: 10px;
     }
 
     .name-warning {
-      color: #ffc107;
+      color: #ff6666;
       font-weight: bold;
       margin-bottom: 0.75em;
       text-align: center;
-    }
-
-    .photo-label {
-      margin-bottom: 0.5em;
-    }
-
-    @media (max-width: 640px) {
-      form {
-        margin: 2vh 1em;
-      }
     }
   </style>
 </head>
 <body>
   <form id="fishForm" enctype="multipart/form-data">
-    <h2> Submit Your Catch</h2>
+    <h2>🎣 Submit Your Catch</h2>
 
-    <div class="name-warning">
-      Angler name must match the official list exactly.
-    </div>
+    <div class="name-warning">Name must match angler list exactly.</div>
 
     <label>
       Angler Name:
-      <input type="text" name="name" required />
+      <input type="text" name="name" id="anglerName" required />
     </label>
 
     <label>
@@ -130,43 +105,60 @@
     <div id="fishInputs"></div>
 
     <div class="geobox">
-      <label>
-        <input type="checkbox" id="locationConsent" required />
-        I allow location access to verify I am in Tennessee waters.
-      </label>
-      <small><em>This is required to submit your catch.</em></small>
+      <p><strong>Do you allow location access to verify your State?</strong></p>
+      <p><em>This is required to submit.</em></p>
     </div>
 
-    <button type="submit"> Submit Catch</button>
+    <button type="submit">📤 Submit</button>
   </form>
 
   <script>
     const fishInputsDiv = document.getElementById("fishInputs");
     const fishCountSelect = document.getElementById("fishCountSelect");
+    const form = document.getElementById("fishForm");
+    let validAnglers = [];
 
+    // Dynamically create fish photo inputs
     fishCountSelect.addEventListener("change", () => {
       const count = parseInt(fishCountSelect.value);
       fishInputsDiv.innerHTML = "";
       for (let i = 1; i <= count; i++) {
         const label = document.createElement("label");
-        label.innerHTML = `
-          <span class="photo-label">Fish Photo ${i}:</span>
-          <input type="file" name="fishPhoto${i}" accept="image/*" required />
-        `;
+        label.innerHTML = `Fish Photo ${i}:<input type="file" name="fishPhoto${i}" accept="image/*" required />`;
         fishInputsDiv.appendChild(label);
       }
     });
 
-    document.getElementById("fishForm").addEventListener("submit", async (e) => {
+    // Load angler names from CSV
+    async function loadAnglerList() {
+      try {
+        const res = await fetch("https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv");
+        const text = await res.text();
+        validAnglers = text
+          .split("\n")
+          .map(name => name.trim().toLowerCase())
+          .filter(name => name);
+      } catch (err) {
+        alert("Failed to load angler list.");
+        console.error(err);
+      }
+    }
+
+    // Run on load
+    loadAnglerList();
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      if (!document.getElementById("locationConsent").checked) {
-        alert("You must allow location access to continue.");
+      const name = document.getElementById("anglerName").value.trim().toLowerCase();
+
+      if (!validAnglers.includes(name)) {
+        alert("Angler name not found in the list. Please check spelling.");
         return;
       }
 
       if (!navigator.geolocation) {
-        alert("Geolocation not supported by your browser.");
+        alert("Geolocation is not supported by your browser.");
         return;
       }
 
@@ -174,49 +166,40 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
+        // Tennessee approx box
         if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
           alert("You must be in Tennessee waters to submit.");
           return;
         }
 
-        const form = document.getElementById("fishForm");
         const formData = new FormData(form);
-
         const fishCount = parseInt(formData.get("fishCount"));
-        const name = formData.get("name");
 
         for (let i = 1; i <= fishCount; i++) {
           const file = formData.get(`fishPhoto${i}`);
           if (file && file.name) {
             const uploadData = new FormData();
             uploadData.append("file", file, file.name);
-            uploadData.append("name", name);
+            uploadData.append("name", formData.get("name"));
             uploadData.append("fishCount", fishCount);
 
-            try {
-              const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
-                method: "POST",
-                body: uploadData,
-              });
+            const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
+              method: "POST",
+              body: uploadData,
+            });
 
-              const data = await res.json();
-              if (!res.ok || data.error || (data.submissions && data.submissions[0].error)) {
-                console.error("Upload Error:", data);
-                alert("Upload failed. Please check your name or image.");
-                return;
-              }
-
-            } catch (err) {
-              console.error("Network error:", err);
-              alert("Failed to upload. Please try again.");
+            if (!res.ok) {
+              const errorText = await res.text();
+              alert(`Upload failed: ${errorText}`);
               return;
             }
           }
         }
 
-        alert("✅ Upload successful! Thank you for your submission.");
+        alert("🎉 Uploaded successfully! Thank you for your submission.");
         form.reset();
         fishInputsDiv.innerHTML = "";
+
       }, () => {
         alert("Location permission denied. Cannot submit.");
       });
