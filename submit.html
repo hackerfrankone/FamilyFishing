@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Your Catch</title>
+  <link rel="stylesheet" href="style.css?v=1.1" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('images/background.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: sans-serif;
+      color: white;
+    }
+
+    form {
+      background: rgba(0, 0, 0, 0.75);
+      padding: 2rem;
+      max-width: 500px;
+      margin: 5vh auto;
+      border-radius: 12px;
+    }
+
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      margin-top: 1em;
+      padding: 0.75em 1.5em;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .geobox {
+      background: #333;
+      padding: 1em;
+      margin-top: 1em;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <form id="fishForm" enctype="multipart/form-data">
+    <h2>Submit Your Catch</h2>
+
+    <label>
+      Angler Name:
+      <input type="text" name="name" required />
+    </label>
+
+    <label>
+      How many fish are you submitting? (max 5):
+      <select name="fishCount" id="fishCountSelect" required>
+        <option value="">Select...</option>
+        <option value="1">1 Fish</option>
+        <option value="2">2 Fish</option>
+        <option value="3">3 Fish</option>
+        <option value="4">4 Fish</option>
+        <option value="5">5 Fish</option>
+      </select>
+    </label>
+
+    <div id="fishInputs"></div>
+
+    <div class="geobox">
+      <p><strong>Do you allow location access to verify Tennessee waters?</strong></p>
+      <p><em>This is required to submit.</em></p>
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const fishInputsDiv = document.getElementById("fishInputs");
+    const fishCountSelect = document.getElementById("fishCountSelect");
+
+    fishCountSelect.addEventListener("change", () => {
+      const count = parseInt(fishCountSelect.value);
+      fishInputsDiv.innerHTML = "";
+      for (let i = 1; i <= count; i++) {
+        const label = document.createElement("label");
+        label.innerHTML = `Fish Photo ${i}:<input type="file" name="fishPhoto${i}" accept="image/*" required />`;
+        fishInputsDiv.appendChild(label);
+      }
+    });
+
+    document.getElementById("fishForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!navigator.geolocation) {
+        alert("Geolocation not supported by your browser.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
+          alert("You must be in Tennessee waters to submit.");
+          return;
+        }
+
+        const form = document.getElementById("fishForm");
+        const formData = new FormData(form);
+
+        const fishCount = parseInt(formData.get("fishCount"));
+        const name = formData.get("name");
+
+        for (let i = 1; i <= fishCount; i++) {
+          const file = formData.get(`fishPhoto${i}`);
+          if (file && file.name) {
+            const uploadData = new FormData();
+            uploadData.append("file", file, file.name);
+            uploadData.append("name", name);
+
+            const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
+              method: "POST",
+              body: uploadData,
+            });
+
+            if (!res.ok) {
+              alert(`Failed to upload Fish ${i}: ${await res.text()}`);
+              return;
+            }
+          }
+        }
+
+        alert("Your fish were submitted and uploaded to Cloudflare Images!");
+      }, () => {
+        alert("Location permission denied. Cannot submit.");
+      });
+    });
+  </script>
+</body>
+</html>
