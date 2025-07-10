@@ -9,7 +9,7 @@
   <link rel="icon" type="image/x-icon" href="images/favicon.ico?v=3">
   <link rel="apple-touch-icon" href="images/favicon.png?v=3">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://raw.githubusercontent.com https://upload.wikimedia.org https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://imagedelivery.net data:; connect-src 'self' https://worldtimeapi.org https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com https://adservice.google.* https://securepubads.g.doubleclick.net https://www.googleadservices.com https://*.google.com https://*.googlesyndication.com https://fish-submit.familyfishingfun2025.workers.dev; frame-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; child-src 'self' https://tpc.googlesyndication.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.doubleclick.net; worker-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; media-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; font-src 'self' https://fonts.gstatic.com https://*.googlesyndication.com; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
@@ -244,9 +244,9 @@
       cursor: pointer;
       position: relative;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
       margin-bottom: 0.5rem;
-      justify-content: flex-start;
     }
     .angler-name {
       display: block;
@@ -259,6 +259,44 @@
     }
     .angler-name:hover {
       color: #FFD140;
+    }
+    .angler-images {
+      display: none;
+      margin-top: 0.5rem;
+      max-width: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 0.5rem;
+      border-radius: 4px;
+    }
+    .angler-images.active {
+      display: block;
+    }
+    .angler-images ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .angler-images li {
+      margin: 0.2rem 0;
+      color: white;
+      font-size: 1rem;
+    }
+    .angler-images img {
+      max-width: 200px;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .angler-images .placeholder {
+      max-width: 200px;
+      height: 100px;
+      background: #333;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-style: italic;
     }
     @media (max-width: 768px) {
       .countdown {
@@ -277,7 +315,7 @@
         text-align: center;
       }
       .angler-item {
-        justify-content: center;
+        align-items: center;
       }
       .identifier-container .month-identifier {
         font-size: 1.2rem;
@@ -288,6 +326,9 @@
       }
       .leaderboard-container {
         margin-top: 0.1rem;
+      }
+      .angler-images img, .angler-images .placeholder {
+        max-width: 150px;
       }
     }
     ins.adsbygoogle {
@@ -425,12 +466,28 @@
             if (i === maxRetries - 1) {
               console.warn(`All ${maxRetries} attempts failed for ${url}`);
             } else {
-              await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i))); // Exponential backoff
+              await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
             }
           }
         }
       }
       throw new Error(`All fetch attempts failed for all URLs: ${urls.join(', ')}`);
+    }
+
+    async function fetchAnglerImages(anglerName) {
+      try {
+        const response = await fetch(`https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(anglerName)}`, {
+          cache: 'no-cache'
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to fetch images for ${anglerName}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        return data.images || [];
+      } catch (error) {
+        console.error(`Error fetching images for ${anglerName}:`, error.message);
+        return [];
+      }
     }
 
     async function loadAnglerList() {
@@ -470,9 +527,53 @@
           ? anglers.map(angler => `
             <li class="angler-item">
               <span class="angler-name">${angler.name}</span>
+              <div class="angler-images" id="images-${angler.name.replace(/\s+/g, '-')}" style="display: none;">
+                <ul>
+                  <li id="bass-1-${angler.name.replace(/\s+/g, '-')}" class="placeholder">Bass 1: No submission</li>
+                  <li id="bass-2-${angler.name.replace(/\s+/g, '-')}" class="placeholder">Bass 2: No submission</li>
+                  <li id="bass-3-${angler.name.replace(/\s+/g, '-')}" class="placeholder">Bass 3: No submission</li>
+                  <li id="bass-4-${angler.name.replace(/\s+/g, '-')}" class="placeholder">Bass 4: No submission</li>
+                  <li id="bass-5-${angler.name.replace(/\s+/g, '-')}" class="placeholder">Bass 5: No submission</li>
+                </ul>
+              </div>
             </li>
           `).join('')
           : '<li>No anglers registered</li>';
+
+        // Add click event listeners to toggle images
+        anglers.forEach(angler => {
+          const anglerNameElement = document.querySelector(`#angler-list .angler-name:not(.bound)[textContent="${angler.name}"]`);
+          if (anglerNameElement) {
+            anglerNameElement.classList.add('bound');
+            anglerNameElement.addEventListener('click', async () => {
+              const imageContainer = document.getElementById(`images-${angler.name.replace(/\s+/g, '-')}`);
+              if (!imageContainer) return;
+
+              // Toggle visibility
+              const isActive = imageContainer.classList.contains('active');
+              document.querySelectorAll('.angler-images.active').forEach(container => {
+                container.classList.remove('active');
+              });
+              if (!isActive) {
+                imageContainer.classList.add('active');
+                // Fetch images if not already loaded
+                const loaded = imageContainer.dataset.loaded;
+                if (!loaded) {
+                  const images = await fetchAnglerImages(angler.name);
+                  for (let i = 1; i <= 5; i++) {
+                    const bassElement = document.getElementById(`bass-${i}-${angler.name.replace(/\s+/g, '-')}`);
+                    if (images[i - 1]) {
+                      bassElement.innerHTML = `<img src="${images[i - 1]}" alt="Bass ${i} submitted by ${angler.name}" loading="lazy">`;
+                      bassElement.classList.remove('placeholder');
+                    }
+                  }
+                  imageContainer.dataset.loaded = 'true';
+                }
+              }
+            });
+          }
+        });
+
         return anglers.map(angler => angler.name);
       } catch (error) {
         console.error('Error loading angler list from CSV:', error.message);
@@ -600,7 +701,7 @@
       initializeCountdown();
       startCountdown();
       loadAnglerList();
-      setInterval(loadAnglerList, 30000); // Poll angler list every 30 seconds
+      setInterval(loadAnglerList, 30000);
       (adsbygoogle = window.adsbygoogle || []).push({});
     });
   </script>
