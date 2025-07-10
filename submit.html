@@ -1,23 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://imagedelivery.net data:; connect-src 'self' https://fish-submit.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
-  <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="X-Frame-Options" content="DENY">
-  <meta http-equiv="Referrer-Policy" content="no-referrer">
-  <meta http-equiv="Permissions-Policy" content="geolocation=(self), microphone=(), camera=()">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Submit Your Catch</title>
-  <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico?v=1">
-  <link rel="icon" type="image/jpeg" href="images/favicon.jpg?v=4">
-  <link rel="icon" type="image/x-icon" href="images/favicon.ico?v=3">
-  <link rel="apple-touch-icon" href="images/favicon.png?v=3">
+  <link rel="stylesheet" href="style.css?v=1.1" />
   <style>
     body {
       margin: 0;
@@ -27,6 +14,7 @@
       font-family: sans-serif;
       color: white;
     }
+
     form {
       background: rgba(0, 0, 0, 0.75);
       padding: 2rem;
@@ -34,10 +22,12 @@
       margin: 5vh auto;
       border-radius: 12px;
     }
+
     label {
       display: block;
       margin-top: 1em;
     }
+
     input[type="text"],
     input[type="file"],
     select {
@@ -47,6 +37,7 @@
       border-radius: 5px;
       border: none;
     }
+
     button {
       margin-top: 1em;
       padding: 0.75em 1.5em;
@@ -56,29 +47,37 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #218838;
     }
+
     .geobox {
       background: #333;
       padding: 1em;
       margin-top: 1em;
       border-radius: 8px;
     }
-    #statusMessage {
-      margin-top: 1em;
+
+    .notice {
+      color: #ff4d4d;
+      font-size: 0.9rem;
       font-weight: bold;
-      color: white;
+      margin-bottom: -0.5em;
+      margin-top: 1em;
     }
   </style>
 </head>
 <body>
   <form id="fishForm" enctype="multipart/form-data">
     <h2>Submit Your Catch</h2>
+
+    <div class="notice">* Name must match angler name exactly *</div>
     <label>
       Angler Name:
       <input type="text" name="name" required />
     </label>
+
     <label>
       How many fish are you submitting? (max 5):
       <select name="fishCount" id="fishCountSelect" required>
@@ -90,18 +89,20 @@
         <option value="5">5 Fish</option>
       </select>
     </label>
+
     <div id="fishInputs"></div>
+
     <div class="geobox">
-      <p><strong>Do you allow location access to verify Tennessee waters?</strong></p>
+      <p><strong>Do you allow location access to verify Tennessee?</strong></p>
       <p><em>This is required to submit.</em></p>
     </div>
+
     <button type="submit">Submit</button>
-    <div id="statusMessage"></div>
   </form>
+
   <script>
     const fishInputsDiv = document.getElementById("fishInputs");
     const fishCountSelect = document.getElementById("fishCountSelect");
-    const statusMessage = document.getElementById("statusMessage");
 
     fishCountSelect.addEventListener("change", () => {
       const count = parseInt(fishCountSelect.value);
@@ -115,10 +116,9 @@
 
     document.getElementById("fishForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      statusMessage.textContent = "";
 
       if (!navigator.geolocation) {
-        statusMessage.textContent = "Geolocation not supported by your browser.";
+        alert("Geolocation not supported by your browser.");
         return;
       }
 
@@ -126,8 +126,9 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
+        // ✅ Tennessee boundary check (hard-coded)
         if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
-          statusMessage.textContent = "You must be in Tennessee waters to submit.";
+          alert("❌ You must be in Tennessee to submit.");
           return;
         }
 
@@ -144,27 +145,27 @@
               uploadData.append("file", file, file.name);
               uploadData.append("name", name);
 
-              const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
+              const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev", {
                 method: "POST",
-                body: uploadData
+                body: uploadData,
               });
 
               if (!res.ok) {
-                throw new Error(`Failed to upload Fish ${i}: ${await res.text()}`);
+                const error = await res.text();
+                alert(`❌ Upload failed for Fish ${i}: ${error}`);
+                return;
               }
             }
           }
 
-          statusMessage.style.color = "lightgreen";
-          statusMessage.textContent = "✅ Uploaded successfully!";
+          alert("✅ Uploaded successfully!");
           form.reset();
           fishInputsDiv.innerHTML = "";
         } catch (err) {
-          statusMessage.style.color = "salmon";
-          statusMessage.textContent = `❌ Error: ${err.message}`;
+          alert("❌ Upload failed. Please try again.");
         }
       }, () => {
-        statusMessage.textContent = "Location permission denied. Cannot submit.";
+        alert("❌ Location permission denied. Cannot submit.");
       });
     });
   </script>
