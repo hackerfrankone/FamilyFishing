@@ -121,7 +121,7 @@
       color: #000;
       font-family: "Helvetica Neue", Arial, sans-serif;
       font-size: 1rem;
-      cursorkings/pointer;
+      cursor: pointer;
     }
     .identifier-container {
       position: fixed;
@@ -219,7 +219,7 @@
       .sub-text, .feedback { font-size: 0.8rem; }
       .countdown { font-size: 1.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
-      .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align center; }
+      .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
       .angler-images img, .angler-images .placeholder { max-width: 50px; height: 25px; font-size: 0.7rem; }
     }
   </style>
@@ -260,6 +260,7 @@
         if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
         const text = await response.text();
         if (!text.trim()) throw new Error('Empty CSV');
+        console.log("Fetched angler list:", text);
         return text.trim().split('\n').slice(1).map(row => row.split(',')[0].trim()).filter(name => name);
       } catch (error) {
         console.error(`Failed to fetch angler list: ${error.message}`);
@@ -269,12 +270,14 @@
 
     async function fetchAnglerImages(anglerName) {
       try {
+        console.log(`Fetching images for angler: ${anglerName} (lowercase: ${anglerName.toLowerCase()})`);
         const response = await fetch(`https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(anglerName.toLowerCase())}`, { cache: 'no-cache' });
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
         const data = await response.json();
+        console.log(`Images received for ${anglerName}:`, data.images);
         return data.images || [];
       } catch (error) {
         console.error(`Failed to fetch images for ${anglerName}: ${error.message}`);
@@ -290,6 +293,7 @@
       }
 
       const anglers = await fetchAnglerList();
+      console.log("Anglers loaded:", anglers);
       anglerList.innerHTML = anglers.length
         ? anglers.map(name => `
           <li class="angler-item">
@@ -310,6 +314,7 @@
       document.querySelectorAll('.angler-name').forEach(nameElement => {
         nameElement.addEventListener('click', async () => {
           const name = decodeURIComponent(nameElement.dataset.name);
+          console.log(`Clicked angler: ${name}`);
           const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
           const isActive = imageContainer.classList.contains('active');
           document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
@@ -317,11 +322,15 @@
             imageContainer.classList.add('active');
             if (!imageContainer.dataset.loaded) {
               const images = await fetchAnglerImages(name);
+              console.log(`Rendering ${images.length} images for ${name}`);
               for (let i = 1; i <= 5; i++) {
                 const bassElement = document.getElementById(`bass-${i}-${encodeURIComponent(name)}`);
                 if (images[i - 1]) {
                   bassElement.innerHTML = `<img src="${images[i - 1]}" alt="Bass ${i} by ${name}" loading="lazy">`;
                   bassElement.classList.remove('placeholder');
+                } else {
+                  bassElement.innerHTML = `Bass ${i}`;
+                  bassElement.classList.add('placeholder');
                 }
               }
               imageContainer.dataset.loaded = 'true';
@@ -366,6 +375,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      console.log("Initializing page...");
       loadAnglerList();
       setInterval(loadAnglerList, 30000);
       initTournament();
