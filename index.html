@@ -1,3 +1,4 @@
+frankellison@franks-MacBook-Air FFF % cat index.html 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,7 +138,7 @@
     }
     .angler-sidebar {
       position: fixed;
-      top: 4rem; /* Increased from 3rem to move it down */
+      top: 4rem;
       left: 1rem;
       padding: 1rem;
       border-radius: 8px;
@@ -197,6 +198,7 @@
       height: auto;
       border-radius: 4px;
       box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
     }
     .angler-images .placeholder {
       max-width: 100px;
@@ -210,17 +212,29 @@
       font-style: italic;
       font-size: 0.8rem;
     }
+    .angler-images .error {
+      max-width: 100px;
+      height: 50px;
+      background: #600;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-style: italic;
+      font-size: 0.8rem;
+    }
     @media (max-width: 768px) {
+      .top-bar { margin: 0.5rem 0; }
+      .social-buttons { gap: 0.5rem; }
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button { width: 50px; height: 50px; font-size: 10px; }
+      .tournament-info { padding: 0.3rem 0.8rem; }
+      .main-text { font-size: 1.2rem; }
+      .sub-text, .feedback { font-size: 0.8rem; }
       .countdown { font-size: 1.5rem; }
-      .identifier-container, .angler-sidebar {
-        position: static;
-        margin: 1rem auto;
-        max-width: 100%;
-        text-align: center;
-      }
-      .angler-item { align-items: center; }
-      .month-identifier { font-size: 1.2rem; }
-      .angler-images img, .angler-images .placeholder { max-width: 50px; height: 25px; font-size: 0.7rem; }
+      .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
+      .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
+      .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 50px; height: 25px; font-size: 0.7rem; }
     }
   </style>
   <script>
@@ -256,11 +270,11 @@
     async function fetchAnglerList() {
       const url = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv';
       try {
-        const response = await fetch(`${url}?cacheBust=${Date.now()}`);
+        const response = await fetch(`${url}?cacheBust=${Date.now()}`, { cache: 'no-cache' });
         if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
         const text = await response.text();
         if (!text.trim()) throw new Error('Empty CSV');
-        console.log(`Fetched angler list: ${text}`);
+        console.log("Fetched angler list:", text);
         return text.trim().split('\n').slice(1).map(row => row.split(',')[0].trim()).filter(name => name);
       } catch (error) {
         console.error(`Failed to fetch angler list: ${error.message}`);
@@ -268,21 +282,38 @@
       }
     }
 
-    async function fetchAnglerImages(anglerName) {
-      try {
-        const response = await fetch(`https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(anglerName)}`, { cache: 'no-cache' });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-        const data = await response.json();
-        console.log(`Fetched images for ${anglerName}: ${JSON.stringify(data.images)}`);
-        return data.images || [];
-      } catch (error) {
-        console.error(`Failed to fetch images for ${anglerName}: ${error.message}`);
+async function fetchAnglerImages(name) {
+  const url = `https://your-worker-url.com/images?name=${encodeURIComponent(name)}&ts=${Date.now()}`;
+  const retryCount = 3;
+  const delayMs = 500;
+
+  for (let attempt = 1; attempt <= retryCount; attempt++) {
+    try {
+      const response = await fetch(url, { cache: 'no-cache', method: 'GET' });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log(`Images received for ${name}:`, data.images);
+
+      return (data.images || []).filter(url =>
+        typeof url === "string" && url.startsWith("https://imagedelivery.net/")
+      );
+
+    } catch (error) {
+      console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
+      if (attempt < retryCount) {
+        console.log(`Retrying in ${delayMs}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      } else {
+        console.error(`All attempts failed for ${name}: ${error.message}`);
         return [];
       }
     }
+  }
+}
 
     async function loadAnglerList() {
       const anglerList = document.getElementById('angler-list');
@@ -292,17 +323,18 @@
       }
 
       const anglers = await fetchAnglerList();
+      console.log("Anglers loaded:", anglers);
       anglerList.innerHTML = anglers.length
         ? anglers.map(name => `
           <li class="angler-item">
             <span class="angler-name" data-name="${encodeURIComponent(name)}">${name}</span>
             <div class="angler-images" id="images-${encodeURIComponent(name)}">
               <ul>
-                <li id="bass-1-${encodeURIComponent(name)}" class="placeholder">Bass 1</li>
-                <li id="bass-2-${encodeURIComponent(name)}" class="placeholder">Bass 2</li>
-                <li id="bass-3-${encodeURIComponent(name)}" class="placeholder">Bass 3</li>
-                <li id="bass-4-${encodeURIComponent(name)}" class="placeholder">Bass 4</li>
-                <li id="bass-5-${encodeURIComponent(name)}" class="placeholder">Bass 5</li>
+                <li id="bass-spot-1-${encodeURIComponent(name)}" class="placeholder">Bass Spot 1</li>
+                <li id="bass-spot-2-${encodeURIComponent(name)}" class="placeholder">Bass Spot 2</li>
+                <li id="bass-spot-3-${encodeURIComponent(name)}" class="placeholder">Bass Spot 3</li>
+                <li id="bass-spot-4-${encodeURIComponent(name)}" class="placeholder">Bass Spot 4</li>
+                <li id="bass-spot-5-${encodeURIComponent(name)}" class="placeholder">Bass Spot 5</li>
               </ul>
             </div>
           </li>
@@ -310,25 +342,49 @@
         : '<li>No anglers registered</li>';
 
       document.querySelectorAll('.angler-name').forEach(nameElement => {
-        console.log(`Binding click event for ${nameElement.dataset.name}`);
         nameElement.addEventListener('click', async () => {
           const name = decodeURIComponent(nameElement.dataset.name);
+          console.log(`Clicked angler: ${name}`);
           const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
           const isActive = imageContainer.classList.contains('active');
           document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
           if (!isActive) {
             imageContainer.classList.add('active');
-            if (!imageContainer.dataset.loaded) {
-              const images = await fetchAnglerImages(name);
-              for (let i = 1; i <= 5; i++) {
-                const bassElement = document.getElementById(`bass-${i}-${encodeURIComponent(name)}`);
-                if (images[i - 1]) {
-                  bassElement.innerHTML = `<img src="${images[i - 1]}" alt="Bass ${i} by ${name}" loading="lazy">`;
-                  bassElement.classList.remove('placeholder');
-                }
-              }
-              imageContainer.dataset.loaded = 'true';
+            const images = await fetchAnglerImages(name);
+            console.log(`Rendering ${images.length} images for ${name}:`, images);
+            // Reset all bass spots to placeholders
+            for (let i = 1; i <= 5; i++) {
+              const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
+              bassElement.innerHTML = `Bass Spot ${i}`;
+              bassElement.classList.add('placeholder');
+              bassElement.classList.remove('error');
             }
+            // Assign images to correct spots
+            images.forEach((image, index) => {
+              const spot = index + 1;
+              const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
+              if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
+                console.log(`Assigning image ${spot} for ${name}: ${image}`);
+bassElement.textContent = ""; // Clear placeholder text
+
+const img = document.createElement("img");
+img.src = image;
+img.alt = `Bass Spot ${spot} by ${name}`;
+img.loading = "lazy";
+
+img.onerror = () => {
+  console.error(`Failed to load image ${image} for ${name}`);
+  bassElement.textContent = `No image for Bass Spot ${spot}`;
+  bassElement.classList.add('error');
+};
+
+bassElement.appendChild(img);
+bassElement.classList.remove('placeholder');
+              } else {
+                console.log(`Invalid or missing image for Bass Spot ${spot} for ${name}:`, image);
+              }
+            });
+            imageContainer.dataset.loaded = 'true';
           }
         });
       });
@@ -369,6 +425,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      console.log("Initializing page...");
       loadAnglerList();
       setInterval(loadAnglerList, 30000);
       initTournament();
@@ -402,7 +459,7 @@
       <p class="main-text">Month long | 5 Bass limit | More anglers = More payout</p>
       <div class="sub-text-container">
         <p class="sub-text">Tennessee Lakes Only</p>
-        <p class="feedback">Feedback: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
+        <p class="feedback">| Feedback: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
       </div>
       <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
       <div class="paypal-form">
