@@ -216,7 +216,7 @@
       font-size: 0.8rem;
     }
     .angler-images .error {
-      max-width: 100px;
+      max-width: 200px;
       height: 50px;
       background: #600;
       border-radius: 4px;
@@ -226,6 +226,7 @@
       color: #fff;
       font-style: italic;
       font-size: 0.8rem;
+      word-break: break-all;
     }
     .angler-images .length {
       margin-top: 0.2rem;
@@ -307,7 +308,7 @@
           }
 
           const data = await response.json();
-          console.log(`Images received for ${name}:`, data.images);
+          console.log(`Images received for ${name}:`, JSON.stringify(data.images, null, 2)); // Log detailed response
           return (data.images || []).filter(item => typeof item === 'object' && item.url && item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number');
         } catch (error) {
           console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
@@ -367,8 +368,10 @@
               imageContainer.innerHTML = '<p>No images found.</p>';
             } else {
               imageContainer.innerHTML = images.map(item => `
-                <img src="${item.url}" alt="${name} photo" style="max-width: 200px; margin: 5px;">
-                <span class="length">${item.length} inches</span>
+                <div>
+                  <img src="${item.url}" alt="${name} photo" style="max-width: 200px; margin: 5px;" crossorigin="anonymous" onerror="this.parentElement.innerHTML = '<div class=error>Failed to load image. URL: ${item.url}<br>Please contact support if this persists.</div>'; console.error('Image load failed for ${item.url}');">
+                  <span class="length">${item.length} inches</span>
+                </div>
               `).join('');
             }
           }
