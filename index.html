@@ -358,8 +358,21 @@
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
                 console.log(`Assigning image ${spot} for ${name}: ${image}`);
-                bassElement.innerHTML = `<img src="${image}" alt="Bass Spot ${spot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=error>No image for Bass Spot ${spot}</div>'; this.parentNode.classList.add('error'); console.error('Failed to load image ${image} for ${name}');">`;
-                bassElement.classList.remove('placeholder');
+bassElement.textContent = ""; // Clear placeholder text
+
+const img = document.createElement("img");
+img.src = image;
+img.alt = `Bass Spot ${spot} by ${name}`;
+img.loading = "lazy";
+
+img.onerror = () => {
+  console.error(`Failed to load image ${image} for ${name}`);
+  bassElement.textContent = `No image for Bass Spot ${spot}`;
+  bassElement.classList.add('error');
+};
+
+bassElement.appendChild(img);
+bassElement.classList.remove('placeholder');
               } else {
                 console.log(`Invalid or missing image for Bass Spot ${spot} for ${name}:`, image);
               }
