@@ -58,7 +58,7 @@
       text-decoration: none;
       transition: filter 0.3s ease;
     }
-    .discord-button { background-color: #5865F2; color white; }
+    .discord-button { background-color: #5865F2; color: white; }
     .archive-button { background-color: #808080; color: white; }
     .tackle-button { background-color: #006400; color: white; }
     .submit-fish-button { background-color: #FFA500; color: white; }
@@ -256,7 +256,7 @@
 
     async function fetchCurrentTime() {
       try {
-        const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC?cb=${Date.now()}', { cache: 'no-cache' });
+        const response = await fetch(`https://worldtimeapi.org/api/timezone/Etc/UTC?cb=${Date.now()}`, { cache: 'no-cache' });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         return new Date(data.utc_datetime);
