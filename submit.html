@@ -17,7 +17,7 @@
     }
     form {
       background: rgba(0, 0, 0, 0.75);
-      max-width: 500px;
+      max-width: 600px;
       margin: 5vh auto;
       padding: 2rem;
       border-radius: 12px;
@@ -53,12 +53,6 @@
     button:hover {
       background-color: #218838;
     }
-    .name-warning {
-      color: #ff6666;
-      font-weight: bold;
-      margin-bottom: 0.75em;
-      text-align: center;
-    }
     .geobox {
       background: #222;
       padding: 1em;
@@ -69,9 +63,18 @@
       text-align: center;
       border: 1px solid #444;
     }
-    #fishInputs label {
+    .fish-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
       margin-top: 1em;
-      font-weight: normal;
+    }
+    .length-display {
+      min-width: 100px;
+      text-align: right;
+      color: lightgreen;
+      font-weight: bold;
     }
     #statusMessage {
       margin-top: 1em;
@@ -83,7 +86,6 @@
 <body>
   <form id="fishForm" enctype="multipart/form-data" novalidate>
     <h2>Submit Your Catch</h2>
-    <div class="name-warning">Name must match angler name exactly (e.g., "Frank Ellison").</div>
 
     <label for="anglerName">Angler Name (must match registration):</label>
     <input type="text" id="anglerName" name="name" required autocomplete="off" />
@@ -105,7 +107,6 @@
     </div>
 
     <button type="submit">Submit</button>
-
     <div id="statusMessage"></div>
   </form>
 
@@ -119,28 +120,23 @@
       const count = parseInt(fishCountSelect.value);
       fishInputsDiv.innerHTML = "";
       for (let i = 1; i <= count; i++) {
-        const wrapper = document.createElement("div");
-        wrapper.style.marginBottom = "1.5em";
+        const row = document.createElement("div");
+        row.className = "fish-row";
 
-        const label = document.createElement("label");
-        label.innerHTML = `Fish Photo ${i}:`;
-        wrapper.appendChild(label);
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.name = `fishPhoto${i}`;
+        fileInput.accept = "image/*";
+        fileInput.required = true;
 
-        const input = document.createElement("input");
-        input.type = "file";
-        input.name = `fishPhoto${i}`;
-        input.accept = "image/*";
-        input.required = true;
-        wrapper.appendChild(input);
+        const lengthSpan = document.createElement("div");
+        lengthSpan.className = "length-display";
+        lengthSpan.id = `lengthDisplay${i}`;
+        lengthSpan.textContent = "Length: —";
 
-        const lengthDisplay = document.createElement("div");
-        lengthDisplay.id = `lengthDisplay${i}`;
-        lengthDisplay.style.marginTop = "0.5em";
-        lengthDisplay.style.color = "lightgreen";
-        lengthDisplay.textContent = "";
-        wrapper.appendChild(lengthDisplay);
-
-        fishInputsDiv.appendChild(wrapper);
+        row.appendChild(fileInput);
+        row.appendChild(lengthSpan);
+        fishInputsDiv.appendChild(row);
       }
     });
 
@@ -201,12 +197,10 @@
             }
 
             const jsonResp = await response.json();
-            console.log(`Upload response for fish ${i}:`, jsonResp);
-
             const length = jsonResp.length;
             const lengthDiv = document.getElementById(`lengthDisplay${i}`);
             if (lengthDiv) {
-              lengthDiv.textContent = `Length: ${length ? length.toFixed(2) : "N/A"} inches`;
+              lengthDiv.textContent = `Length: ${length ? length.toFixed(2) : "N/A"} in`;
             }
 
           } catch (error) {
