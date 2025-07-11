@@ -30,8 +30,7 @@
     }
     input[type="text"],
     input[type="file"],
-    select,
-    input[type="number"] {
+    select {
       width: 100%;
       padding: 0.5em;
       margin-top: 0.5em;
@@ -84,13 +83,20 @@
 <body>
   <form id="fishForm" enctype="multipart/form-data" novalidate>
     <h2>Submit Your Catch</h2>
-    <div class="name-warning">Name must match your angler name exactly.</div>
+    <div class="name-warning">Name must match angler name exactly (e.g., "Frank Ellison").</div>
 
     <label for="anglerName">Angler Name (must match registration):</label>
     <input type="text" id="anglerName" name="name" required autocomplete="off" />
 
-    <label for="fishCountSelect">How many fish are you submitting?</label>
-    <input type="number" id="fishCountSelect" name="fishCount" min="1" required placeholder="Enter number of fish" />
+    <label for="fishCountSelect">How many fish are you submitting? (max 5):</label>
+    <select name="fishCount" id="fishCountSelect" required>
+      <option value="">Select...</option>
+      <option value="1">1 Fish</option>
+      <option value="2">2 Fish</option>
+      <option value="3">3 Fish</option>
+      <option value="4">4 Fish</option>
+      <option value="5">5 Fish</option>
+    </select>
 
     <div id="fishInputs"></div>
 
@@ -105,19 +111,36 @@
 
   <script>
     const fishInputsDiv = document.getElementById("fishInputs");
-    const fishCountInput = document.getElementById("fishCountSelect");
+    const fishCountSelect = document.getElementById("fishCountSelect");
     const fishForm = document.getElementById("fishForm");
     const statusMessage = document.getElementById("statusMessage");
 
-    fishCountInput.addEventListener("input", () => {
-      const count = parseInt(fishCountInput.value);
+    fishCountSelect.addEventListener("change", () => {
+      const count = parseInt(fishCountSelect.value);
       fishInputsDiv.innerHTML = "";
-      if (count > 0 && count <= 100) { // just a sanity limit
-        for (let i = 1; i <= count; i++) {
-          const label = document.createElement("label");
-          label.innerHTML = `Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required />`;
-          fishInputsDiv.appendChild(label);
-        }
+      for (let i = 1; i <= count; i++) {
+        const wrapper = document.createElement("div");
+        wrapper.style.marginBottom = "1.5em";
+
+        const label = document.createElement("label");
+        label.innerHTML = `Fish Photo ${i}:`;
+        wrapper.appendChild(label);
+
+        const input = document.createElement("input");
+        input.type = "file";
+        input.name = `fishPhoto${i}`;
+        input.accept = "image/*";
+        input.required = true;
+        wrapper.appendChild(input);
+
+        const lengthDisplay = document.createElement("div");
+        lengthDisplay.id = `lengthDisplay${i}`;
+        lengthDisplay.style.marginTop = "0.5em";
+        lengthDisplay.style.color = "lightgreen";
+        lengthDisplay.textContent = "";
+        wrapper.appendChild(lengthDisplay);
+
+        fishInputsDiv.appendChild(wrapper);
       }
     });
 
@@ -136,7 +159,6 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
-        // Tennessee water boundaries roughly
         if (lat < 35.0 || lat > 36.7 || lon < -90.3 || lon > -81.7) {
           statusMessage.style.color = "red";
           statusMessage.textContent = "You must be in Tennessee waters to submit.";
@@ -148,21 +170,12 @@
         const formData = new FormData(fishForm);
         const fishCount = parseInt(formData.get("fishCount"));
         const name = formData.get("name")?.trim();
-        console.log(`Submitting ${fishCount} fish for angler: ${name}`);
-
         if (!name) {
           statusMessage.style.color = "red";
           statusMessage.textContent = "Please enter your angler name.";
           return;
         }
 
-        if (!fishCount || fishCount < 1) {
-          statusMessage.style.color = "red";
-          statusMessage.textContent = "Please enter a valid number of fish to submit.";
-          return;
-        }
-
-        // Upload images one by one to worker endpoint
         for (let i = 1; i <= fishCount; i++) {
           const file = formData.get(`fishPhoto${i}`);
           if (!file || !file.name) {
@@ -189,6 +202,13 @@
 
             const jsonResp = await response.json();
             console.log(`Upload response for fish ${i}:`, jsonResp);
+
+            const length = jsonResp.length;
+            const lengthDiv = document.getElementById(`lengthDisplay${i}`);
+            if (lengthDiv) {
+              lengthDiv.textContent = `Length: ${length ? length.toFixed(2) : "N/A"} inches`;
+            }
+
           } catch (error) {
             console.error(`Error uploading fish ${i}:`, error.message);
             statusMessage.style.color = "red";
