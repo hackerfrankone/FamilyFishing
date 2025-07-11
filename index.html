@@ -307,7 +307,7 @@
 
           const data = await response.json();
           console.log(`Images received for ${name}:`, data.images);
-          return (data.images || []).filter(item => typeof item === 'object' && item.url && item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number');
+          return (data.images || []).filter(item => typeof item === 'object' && item.url && item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number').map(item => item.url);
         } catch (error) {
           console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
           if (attempt < retryCount) {
@@ -350,60 +350,23 @@
       document.querySelectorAll('.angler-name').forEach(nameElement => {
         nameElement.addEventListener('click', async () => {
           const name = decodeURIComponent(nameElement.dataset.name);
-          console.log(`Clicked angler: ${name}`);
           const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
           const isActive = imageContainer.classList.contains('active');
+
+          // Hide all active image containers
           document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
+
           if (!isActive) {
             imageContainer.classList.add('active');
+            imageContainer.innerHTML = '<p>Loading images...</p>';
+
             const images = await fetchAnglerImages(name);
-            console.log(`Rendering ${images.length} images for ${name}:`, images);
-            // Reset all bass spots to placeholders
-            for (let i = 1; i <= 5; i++) {
-              const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
-              if (!bassElement) {
-                console.error(`Bass Spot ${i} element not found for ${name}`);
-                continue;
-              }
-              bassElement.innerHTML = `Bass Spot ${i}: No fish`;
-              bassElement.classList.add('placeholder');
-              bassElement.classList.remove('error');
+
+            if (!images || images.length === 0) {
+              imageContainer.innerHTML = '<p>No images found.</p>';
+            } else {
+              imageContainer.innerHTML = images.map(url => `<img src="${url}" alt="${name} photo" style="max-width: 200px; margin: 5px;">`).join('');
             }
-            // Assign images and lengths to correct spots
-            images.forEach((item, index) => {
-              const spot = index + 1;
-              const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
-              if (!bassElement) {
-                console.error(`Bass Spot ${spot} element not found for ${name}`);
-                return;
-              }
-              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${item.url}, Length: ${item.length}`);
-              if (item.url && typeof item.url === 'string' && item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number') {
-                console.log(`Assigning image ${spot} for ${name}: ${item.url}, ${item.length} inches`);
-                bassElement.textContent = "";
-                const img = document.createElement("img");
-                img.src = item.url;
-                img.alt = `Bass Spot ${spot} by ${name}`;
-                img.loading = "lazy";
-                img.onerror = () => {
-                  console.error(`Failed to load image ${item.url} for ${name}`);
-                  bassElement.textContent = `No image for Bass Spot ${spot}`;
-                  bassElement.classList.add('error');
-                  bassElement.classList.remove('placeholder');
-                };
-                bassElement.appendChild(img);
-                const lengthSpan = document.createElement("span");
-                lengthSpan.className = "length";
-                lengthSpan.textContent = `${item.length} inches`;
-                bassElement.appendChild(lengthSpan);
-                bassElement.classList.remove('placeholder');
-              } else {
-                console.log(`Skipping invalid image for Bass Spot ${spot}: ${item.url}`);
-                bassElement.textContent = `Bass Spot ${spot}: No fish`;
-                bassElement.classList.add('placeholder');
-              }
-            });
-            imageContainer.dataset.loaded = 'true';
           }
         });
       });
