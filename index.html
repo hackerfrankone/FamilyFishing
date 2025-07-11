@@ -289,7 +289,7 @@
       for (let attempt = 1; attempt <= retryCount; attempt++) {
         try {
           const normalizedName = anglerName.trim().toLowerCase();
-          const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(normalizedName)}`;
+          const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(normalizedName)}&cacheBust=${Date.now()}`;
           console.log(`Attempt ${attempt}: Fetching images for angler: ${anglerName} (normalized: ${normalizedName}) from ${url}`);
           const response = await fetch(url, { cache: 'no-cache', method: 'GET' });
           if (!response.ok) {
@@ -347,29 +347,27 @@
           document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
           if (!isActive) {
             imageContainer.classList.add('active');
-            if (!imageContainer.dataset.loaded) {
-              const images = await fetchAnglerImages(name);
-              console.log(`Rendering ${images.length} images for ${name}:`, images);
-              // Reset all bass slots to placeholders
-              for (let i = 1; i <= 5; i++) {
-                const bassElement = document.getElementById(`bass-${i}-${encodeURIComponent(name)}`);
-                bassElement.innerHTML = `Bass ${i}`;
-                bassElement.classList.add('placeholder');
-              }
-              // Assign images to correct slots
-              images.forEach((image, index) => {
-                const slot = index + 1;
-                const bassElement = document.getElementById(`bass-${slot}-${encodeURIComponent(name)}`);
-                if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
-                  console.log(`Assigning image ${slot} for ${name}: ${image}`);
-                  bassElement.innerHTML = `<a href="${image}" target="_blank"><img src="${image}" alt="Bass ${slot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=error>No image for Bass ${slot}</div>'; console.error('Failed to load image ${image} for ${name}');"></a>`;
-                  bassElement.classList.remove('placeholder');
-                } else {
-                  console.log(`Invalid or missing image for Bass ${slot} for ${name}:`, image);
-                }
-              });
-              imageContainer.dataset.loaded = 'true';
+            const images = await fetchAnglerImages(name);
+            console.log(`Rendering ${images.length} images for ${name}:`, images);
+            // Reset all bass slots to placeholders
+            for (let i = 1; i <= 5; i++) {
+              const bassElement = document.getElementById(`bass-${i}-${encodeURIComponent(name)}`);
+              bassElement.innerHTML = `Bass ${i}`;
+              bassElement.classList.add('placeholder');
             }
+            // Assign images to correct slots
+            images.forEach((image, index) => {
+              const slot = index + 1;
+              const bassElement = document.getElementById(`bass-${slot}-${encodeURIComponent(name)}`);
+              if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
+                console.log(`Assigning image ${slot} for ${name}: ${image}`);
+                bassElement.innerHTML = `<a href="${image}" target="_blank"><img src="${image}" alt="Bass ${slot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=error>No image for Bass ${slot}</div>'; console.error('Failed to load image ${image} for ${name}');"></a>`;
+                bassElement.classList.remove('placeholder');
+              } else {
+                console.log(`Invalid or missing image for Bass ${slot} for ${name}:`, image);
+              }
+            });
+            imageContainer.dataset.loaded = 'true';
           }
         });
       });
