@@ -215,6 +215,18 @@
       font-style: italic;
       font-size: 0.8rem;
     }
+    .angler-images .error {
+      max-width: 100px;
+      height: 50px;
+      background: #600;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-style: italic;
+      font-size: 0.8rem;
+    }
     @media (max-width: 768px) {
       .top-bar { margin: 0.5rem 0; }
       .social-buttons { gap: 0.5rem; }
@@ -225,7 +237,7 @@
       .countdown { font-size: 1.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
       .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
-      .angler-images img, .angler-images .placeholder { max-width: 50px; height: 25px; font-size: 0.7rem; }
+      .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 50px; height: 25px; font-size: 0.7rem; }
     }
   </style>
   <script>
@@ -286,7 +298,7 @@
           }
           const data = await response.json();
           console.log(`Images received for ${anglerName}:`, data.images);
-          return data.images || [];
+          return (data.images || []).filter(url => typeof url === "string" && url.startsWith("https://imagedelivery.net/"));
         } catch (error) {
           console.error(`Attempt ${attempt} failed for ${anglerName}: ${error.message}`);
           if (attempt < retryCount) {
@@ -348,12 +360,12 @@
               images.forEach((image, index) => {
                 const slot = index + 1;
                 const bassElement = document.getElementById(`bass-${slot}-${encodeURIComponent(name)}`);
-                if (image && typeof image === 'string') {
+                if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
                   console.log(`Assigning image ${slot} for ${name}: ${image}`);
-                  bassElement.innerHTML = `<a href="${image}" target="_blank"><img src="${image}" alt="Bass ${slot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='Failed to load Bass ${slot}'; console.error('Failed to load image ${image} for ${name}');"></a>`;
+                  bassElement.innerHTML = `<a href="${image}" target="_blank"><img src="${image}" alt="Bass ${slot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=error>No image for Bass ${slot}</div>'; console.error('Failed to load image ${image} for ${name}');"></a>`;
                   bassElement.classList.remove('placeholder');
                 } else {
-                  console.log(`No valid image for Bass ${slot} for ${name}`);
+                  console.log(`Invalid or missing image for Bass ${slot} for ${name}:`, image);
                 }
               });
               imageContainer.dataset.loaded = 'true';
