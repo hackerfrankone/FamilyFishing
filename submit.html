@@ -2,184 +2,182 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Family Fishing Submission</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Submit Your Catch</title>
+  <link rel="stylesheet" href="style.css?v=1.1" />
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
   <style>
     body {
-      font-family: sans-serif;
-      padding: 2rem;
-      background: url('/images/background.png') no-repeat center center fixed;
+      margin: 0;
+      padding: 0;
+      background: url('images/background.png') no-repeat center center fixed;
       background-size: cover;
+      font-family: Arial, sans-serif;
+      color: white;
     }
-
-    h1 {
-      margin-bottom: 1rem;
-      color: #000;
-    }
-
     form {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      background: rgba(0, 0, 0, 0.75);
       max-width: 500px;
-      margin: auto;
+      margin: 5vh auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #000;
     }
-
-    .fish-entry {
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 1rem;
-    }
-
-    .fish-entry:last-child {
-      border: none;
-    }
-
     label {
       display: block;
-      margin: 0.5rem 0 0.25rem;
-      color: #000;
+      margin-top: 1em;
+      font-weight: bold;
     }
-
     input[type="text"],
-    input[type="number"],
-    input[type="file"] {
+    input[type="file"],
+    select,
+    input[type="number"] {
       width: 100%;
-      padding: 0.5rem;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      background: #0077cc;
-      color: white;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      border-radius: 5px;
       border: none;
-      border-radius: 4px;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 1.5em;
+      width: 100%;
+      padding: 0.75em;
+      background-color: #28a745;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1em;
       cursor: pointer;
-      margin-right: 10px;
+      transition: background-color 0.3s ease;
+      color: white;
     }
-
     button:hover {
-      background: #005fa3;
+      background-color: #218838;
     }
-
-    #response {
-      margin-top: 2rem;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 1rem;
+    .name-warning {
+      color: #ff6666;
+      font-weight: bold;
+      margin-bottom: 0.75em;
+      text-align: center;
+    }
+    .geobox {
+      background: #222;
+      padding: 1em;
+      margin-top: 1.5em;
       border-radius: 8px;
-      max-width: 500px;
-      margin: 1rem auto 0 auto;
+      font-style: italic;
+      font-size: 0.9em;
+      text-align: center;
+      border: 1px solid #444;
     }
-
-    img {
-      max-width: 100px;
-      margin: 0.5rem;
+    #fishInputs label {
+      margin-top: 1em;
+      font-weight: normal;
+    }
+    #statusMessage {
+      margin-top: 1em;
+      font-weight: bold;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+  <form id="fishForm" enctype="multipart/form-data" novalidate>
+    <h2>Submit Your Catch</h2>
+    <div class="name-warning">Name must match your angler name exactly.</div>
 
-  <h1>Submit Your Fish</h1>
+    <label for="anglerName">Angler Name (must match registration):</label>
+    <input type="text" id="anglerName" name="name" required autocomplete="off" />
 
-  <form id="fishForm">
-    <label for="name">Angler Name:</label>
-    <input type="text" id="name" name="name" required>
+    <label for="fishCountSelect">How many fish are you submitting?</label>
+    <input type="number" id="fishCountSelect" name="fishCount" min="1" required placeholder="Enter number of fish" />
 
-    <div id="fishContainer">
-      <!-- Fish inputs added by JS -->
-    </div>
+    <div id="fishInputs"></div>
 
-    <button type="button" onclick="addFish()">+ Add Another Fish</button>
     <button type="submit">Submit</button>
+
+    <div id="statusMessage"></div>
   </form>
 
-  <div id="response"></div>
-
   <script>
-    let fishCount = 0;
-    const maxFishPerUpload = 5;
+    const fishInputsDiv = document.getElementById("fishInputs");
+    const fishCountInput = document.getElementById("fishCountSelect");
+    const fishForm = document.getElementById("fishForm");
+    const statusMessage = document.getElementById("statusMessage");
 
-    function addFish() {
-      if (fishCount >= maxFishPerUpload) {
-        alert("You can upload a maximum of 5 fish at a time.");
-        return;
+    fishCountInput.addEventListener("input", () => {
+      const count = parseInt(fishCountInput.value);
+      fishInputsDiv.innerHTML = "";
+      if (count > 0 && count <= 100) { // just a sanity limit
+        for (let i = 1; i <= count; i++) {
+          const label = document.createElement("label");
+          label.innerHTML = `Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required />`;
+          fishInputsDiv.appendChild(label);
+        }
       }
+    });
 
-      fishCount++;
-      const container = document.getElementById("fishContainer");
-
-      const fishDiv = document.createElement("div");
-      fishDiv.className = "fish-entry";
-      fishDiv.innerHTML = `
-        <label for="fishPhoto${fishCount}">Fish ${fishCount} Photo:</label>
-        <input type="file" name="fishPhoto${fishCount}" accept="image/*" required>
-
-        <label for="fishLength${fishCount}">Fish ${fishCount} Length (inches):</label>
-        <input type="number" name="fishLength${fishCount}" step="0.01" min="0" required>
-      `;
-
-      container.appendChild(fishDiv);
-    }
-
-    // Add one fish input by default
-    window.onload = addFish;
-
-    document.getElementById("fishForm").addEventListener("submit", async function (e) {
+    fishForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const name = document.getElementById("name").value.trim();
+      statusMessage.style.color = "white";
+      statusMessage.textContent = "Uploading images...";
+
+      const formData = new FormData(fishForm);
+      const fishCount = parseInt(formData.get("fishCount"));
+      const name = formData.get("name")?.trim();
+
       if (!name) {
-        alert("Please enter your name.");
+        statusMessage.style.color = "red";
+        statusMessage.textContent = "Please enter your angler name.";
         return;
       }
 
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("fishCount", fishCount);
+      if (!fishCount || fishCount < 1) {
+        statusMessage.style.color = "red";
+        statusMessage.textContent = "Please enter a valid number of fish to submit.";
+        return;
+      }
 
       for (let i = 1; i <= fishCount; i++) {
-        const photo = document.querySelector(`input[name="fishPhoto${i}"]`).files[0];
-        const length = document.querySelector(`input[name="fishLength${i}"]`).value;
-
-        if (!photo || !length) {
-          alert(`Please complete all info for fish ${i}`);
+        const file = formData.get(`fishPhoto${i}`);
+        if (!file || !file.name) {
+          statusMessage.style.color = "red";
+          statusMessage.textContent = `Missing photo for fish ${i}`;
           return;
         }
 
-        formData.append(`fishPhoto${i}`, photo);
-        formData.append(`fishLength${i}`, length);
-      }
+        const uploadData = new FormData();
+        uploadData.append("fishPhoto" + i, file, file.name);
+        uploadData.append("name", name);
+        uploadData.append("fishCount", fishCount.toString());
 
-      try {
-        const res = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
-          method: "POST",
-          body: formData,
-        });
+        try {
+          const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
+            method: "POST",
+            body: uploadData,
+          });
 
-        const data = await res.json();
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+          }
 
-        const responseDiv = document.getElementById("response");
-        if (data.success) {
-          responseDiv.innerHTML = `
-            <h2>Upload successful!</h2>
-            <p>${data.message}</p>
-            <div>
-              ${data.imageUrls.map(url => `<img src="${url}" alt="Fish Photo">`).join('')}
-            </div>
-          `;
-        } else {
-          responseDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+          const jsonResp = await response.json();
+          console.log(`Upload response for fish ${i}:`, jsonResp);
+        } catch (error) {
+          console.error(`Error uploading fish ${i}:`, error.message);
+          statusMessage.style.color = "red";
+          statusMessage.textContent = `Error uploading fish ${i}: ${error.message}`;
+          return;
         }
-      } catch (err) {
-        console.error("Upload error:", err);
-        document.getElementById("response").innerHTML =
-          `<p style="color: red;">An error occurred during upload.</p>`;
       }
+
+      statusMessage.style.color = "lightgreen";
+      statusMessage.textContent = `Successfully uploaded ${fishCount} fish image(s)!`;
+      fishForm.reset();
+      fishInputsDiv.innerHTML = "";
     });
   </script>
-
 </body>
 </html>
