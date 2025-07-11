@@ -7,6 +7,8 @@
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3">
   <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://raw.githubusercontent.com https://upload.wikimedia.org https://imagedelivery.net data:; connect-src 'self' https://raw.githubusercontent.com https://www.familyfishing.fun https://worldtimeapi.org https://fish-submit.familyfishingfun2025.workers.dev; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -199,7 +201,7 @@
       box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
       pointer-events: none;
     }
-    .angler-images .placeholder {
+    .blank-container {
       max-width: 100px;
       height: 50px;
       background: #333;
@@ -233,7 +235,7 @@
       .countdown { font-size: 1.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
       .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
-      .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 50px; height: 25px; font-size: 0.7rem; }
+      .angler-images img, .blank-container, .angler-images .error { max-width: 50px; height: 25px; font-size: 0.7rem; }
     }
   </style>
   <script>
@@ -327,13 +329,7 @@
           <li class="angler-item">
             <span class="angler-name" data-name="${encodeURIComponent(name)}">${name}</span>
             <div class="angler-images" id="images-${encodeURIComponent(name)}">
-              <ul>
-                <li id="bass-spot-1-${encodeURIComponent(name)}" class="placeholder">Bass Spot 1</li>
-                <li id="bass-spot-2-${encodeURIComponent(name)}" class="placeholder">Bass Spot 2</li>
-                <li id="bass-spot-3-${encodeURIComponent(name)}" class="placeholder">Bass Spot 3</li>
-                <li id="bass-spot-4-${encodeURIComponent(name)}" class="placeholder">Bass Spot 4</li>
-                <li id="bass-spot-5-${encodeURIComponent(name)}" class="placeholder">Bass Spot 5</li>
-              </ul>
+              <ul></ul> <!-- Start with empty ul -->
             </div>
           </li>
         `).join('')
@@ -350,44 +346,26 @@
             imageContainer.classList.add('active');
             const images = await fetchAnglerImages(name);
             console.log(`Rendering ${images.length} images for ${name}:`, images);
-            // Reset all bass spots to placeholders
-            for (let i = 1; i <= 5; i++) {
-              const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
-              if (!bassElement) {
-                console.error(`Bass Spot ${i} element not found for ${name}`);
-                continue;
-              }
-              bassElement.innerHTML = `Bass Spot ${i}`;
-              bassElement.classList.add('placeholder');
-              bassElement.classList.remove('error');
-            }
-            // Assign images to correct spots
-            images.forEach((image, index) => {
-              const spot = index + 1;
-              const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
-              if (!bassElement) {
-                console.error(`Bass Spot ${spot} element not found for ${name}`);
-                return;
-              }
-              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${image}`);
-              if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
-                console.log(`Assigning image ${spot} for ${name}: ${image}`);
-                bassElement.textContent = "";
-                const img = document.createElement("img");
+            const ul = imageContainer.querySelector('ul');
+            ul.innerHTML = ''; // Clear existing content
+            if (images.length > 0) {
+              images.forEach((image, index) => {
+                const li = document.createElement('li');
+                const img = document.createElement('img');
                 img.src = image;
-                img.alt = `Bass Spot ${spot} by ${name}`;
+                img.alt = `Fish ${index + 1} by ${name}`;
                 img.loading = "lazy";
                 img.onerror = () => {
                   console.error(`Failed to load image ${image} for ${name}`);
-                  bassElement.textContent = `No image for Bass Spot ${spot}`;
-                  bassElement.classList.add('error');
+                  li.textContent = 'Image failed to load';
+                  li.classList.add('error');
                 };
-                bassElement.appendChild(img);
-                bassElement.classList.remove('placeholder');
-              } else {
-                console.log(`Skipping invalid image for Bass Spot ${spot}: ${image}`);
-              }
-            });
+                li.appendChild(img);
+                ul.appendChild(li);
+              });
+            } else {
+              ul.innerHTML = '<li class="blank-container">No images available</li>'; // Blank state
+            }
             imageContainer.dataset.loaded = 'true';
           }
         });
