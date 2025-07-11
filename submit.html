@@ -1,3 +1,4 @@
+<!-- Full HTML, updated with manual length input for each fish -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,6 +31,7 @@
     }
     input[type="text"],
     input[type="file"],
+    input[type="number"],
     select {
       width: 100%;
       padding: 0.5em;
@@ -37,6 +39,22 @@
       border-radius: 5px;
       border: none;
       font-size: 1em;
+    }
+    .fish-row {
+      display: flex;
+      flex-direction: column;
+      margin-top: 1em;
+      gap: 0.5em;
+    }
+    .geobox {
+      background: #222;
+      padding: 1em;
+      margin-top: 1.5em;
+      border-radius: 8px;
+      font-style: italic;
+      font-size: 0.9em;
+      text-align: center;
+      border: 1px solid #444;
     }
     button {
       margin-top: 1.5em;
@@ -52,29 +70,6 @@
     }
     button:hover {
       background-color: #218838;
-    }
-    .geobox {
-      background: #222;
-      padding: 1em;
-      margin-top: 1.5em;
-      border-radius: 8px;
-      font-style: italic;
-      font-size: 0.9em;
-      text-align: center;
-      border: 1px solid #444;
-    }
-    .fish-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-top: 1em;
-    }
-    .length-display {
-      min-width: 100px;
-      text-align: right;
-      color: lightgreen;
-      font-weight: bold;
     }
     #statusMessage {
       margin-top: 1em;
@@ -123,19 +118,29 @@
         const row = document.createElement("div");
         row.className = "fish-row";
 
+        const fileLabel = document.createElement("label");
+        fileLabel.textContent = `Fish Photo ${i}:`;
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.name = `fishPhoto${i}`;
         fileInput.accept = "image/*";
         fileInput.required = true;
 
-        const lengthSpan = document.createElement("div");
-        lengthSpan.className = "length-display";
-        lengthSpan.id = `lengthDisplay${i}`;
-        lengthSpan.textContent = "Length: —";
+        const lengthLabel = document.createElement("label");
+        lengthLabel.textContent = `Length in Inches (Fish ${i}):`;
+        const lengthInput = document.createElement("input");
+        lengthInput.type = "number";
+        lengthInput.name = `fishLength${i}`;
+        lengthInput.min = "1";
+        lengthInput.max = "30";
+        lengthInput.required = true;
+        lengthInput.placeholder = "e.g., 15.5";
 
+        row.appendChild(fileLabel);
         row.appendChild(fileInput);
-        row.appendChild(lengthSpan);
+        row.appendChild(lengthLabel);
+        row.appendChild(lengthInput);
+
         fishInputsDiv.appendChild(row);
       }
     });
@@ -166,6 +171,7 @@
         const formData = new FormData(fishForm);
         const fishCount = parseInt(formData.get("fishCount"));
         const name = formData.get("name")?.trim();
+
         if (!name) {
           statusMessage.style.color = "red";
           statusMessage.textContent = "Please enter your angler name.";
@@ -174,9 +180,11 @@
 
         for (let i = 1; i <= fishCount; i++) {
           const file = formData.get(`fishPhoto${i}`);
-          if (!file || !file.name) {
+          const length = formData.get(`fishLength${i}`);
+
+          if (!file || !file.name || !length) {
             statusMessage.style.color = "red";
-            statusMessage.textContent = `Missing photo for fish ${i}`;
+            statusMessage.textContent = `Missing photo or length for fish ${i}`;
             return;
           }
 
@@ -184,6 +192,7 @@
           uploadData.append("fishPhoto" + i, file, file.name);
           uploadData.append("name", name);
           uploadData.append("fishCount", fishCount.toString());
+          uploadData.append("fishLength" + i, length);
 
           try {
             const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
@@ -194,13 +203,6 @@
             if (!response.ok) {
               const errorData = await response.json();
               throw new Error(errorData.error || `HTTP ${response.status}`);
-            }
-
-            const jsonResp = await response.json();
-            const length = jsonResp.length;
-            const lengthDiv = document.getElementById(`lengthDisplay${i}`);
-            if (lengthDiv) {
-              lengthDiv.textContent = `Length: ${length ? length.toFixed(2) : "N/A"} in`;
             }
 
           } catch (error) {
