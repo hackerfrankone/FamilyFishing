@@ -223,6 +223,24 @@
       font-style: italic;
       font-size: 0.8rem;
     }
+    .angler-images .no-images {
+      max-width: 100px;
+      height: 50px;
+      background: #444;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      font-style: italic;
+      font-size: 0.8rem;
+    }
+    .angler-images .fish-length {
+      color: #FFD700;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 0.2rem;
+    }
     @media (max-width: 768px) {
       .top-bar { margin: 0.5rem 0; }
       .social-buttons { gap: 0.5rem; }
@@ -233,7 +251,8 @@
       .countdown { font-size: 1.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
       .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
-      .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 50px; height: 25px; font-size: 0.7rem; }
+      .angler-images img, .angler-images .placeholder, .angler-images .error, .angler-images .no-images { max-width: 50px; height: 25px; font-size: 0.7rem; }
+      .angler-images .fish-length { font-size: 0.7rem; }
     }
   </style>
   <script>
@@ -281,6 +300,23 @@
       }
     }
 
+    async function validateImageUrl(url) {
+      try {
+        console.log(`Validating image URL: ${url}`);
+        const response = await fetch(url, { method: 'HEAD', cache: 'no-cache' });
+        if (response.ok) {
+          console.log(`Image URL valid: ${url}`);
+          return true;
+        } else {
+          console.log(`Image URL invalid (HTTP ${response.status}): ${url}`);
+          return false;
+        }
+      } catch (error) {
+        console.error(`Error validating image URL ${url}:`, error.message);
+        return false;
+      }
+    }
+
     async function fetchAnglerImages(name) {
       const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(name)}&ts=${Date.now()}`;
       const retryCount = 3;
@@ -296,10 +332,26 @@
           }
 
           const data = await response.json();
-          console.log(`Images received for ${name}:`, data.images);
-          return (data.images || []).filter(url =>
-            typeof url === "string" && url.startsWith("https://imagedelivery.net/")
+          const fishData = (data.images || []).filter(item =>
+            typeof item === 'object' && item.url && typeof item.url === 'string' &&
+            item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number'
           );
+          console.log(`Fish data received for ${name}:`, fishData);
+
+          // Validate each image URL
+          const validFishData = [];
+          for (const fish of fishData) {
+            if (await validateImageUrl(fish.url)) {
+              validFishData.push(fish);
+            }
+          }
+          console.log(`Valid fish data for ${name}:`, validFishData);
+          if (validFishData.length === 0) {
+            console.log(`No valid images found for ${name} in Cloudflare KV`);
+          }
+          // Sort by length descending
+          validFishData.sort((a, b) => b.length - a.length);
+          return validFishData.slice(0, 5); // Return top 5
         } catch (error) {
           console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
           if (attempt < retryCount) {
@@ -348,8 +400,9 @@
           document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
           if (!isActive) {
             imageContainer.classList.add('active');
-            const images = await fetchAnglerImages(name);
-            console.log(`Rendering ${images.length} images for ${name}:`, images);
+            const fishData = await fetchAnglerImages(name);
+            console.log(`Rendering ${fishData.length} fish for ${name}:`, fishData);
+
             // Reset all bass spots to placeholders
             for (let i = 1; i <= 5; i++) {
               const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
@@ -359,33 +412,50 @@
               }
               bassElement.innerHTML = `Bass Spot ${i}`;
               bassElement.classList.add('placeholder');
-              bassElement.classList.remove('error');
+              bassElement.classList.remove('error', 'no-images');
             }
-            // Assign images to correct spots
-            images.forEach((image, index) => {
+
+            // Handle empty fish data case
+            if (fishData.length === 0) {
+              console.log(`No fish to render for ${name}`);
+              const firstBassElement = document.getElementById(`bass-spot-1-${encodeURIComponent(name)}`);
+              if (firstBassElement) {
+                firstBassElement.innerHTML = 'No images available';
+                firstBassElement.classList.add('no-images');
+                firstBassElement.classList.remove('placeholder');
+              }
+              return;
+            }
+
+            // Assign images and lengths to bass spots
+            fishData.forEach((fish, index) => {
               const spot = index + 1;
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (!bassElement) {
                 console.error(`Bass Spot ${spot} element not found for ${name}`);
                 return;
               }
-              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${image}`);
-              if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
-                console.log(`Assigning image ${spot} for ${name}: ${image}`);
+              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${fish.url}, Length: ${fish.length}`);
+              if (fish.url && typeof fish.url === 'string' && fish.url.startsWith("https://imagedelivery.net/")) {
+                console.log(`Assigning fish ${spot} for ${name}: ${fish.url}`);
                 bassElement.textContent = "";
                 const img = document.createElement("img");
-                img.src = image;
+                img.src = fish.url;
                 img.alt = `Bass Spot ${spot} by ${name}`;
                 img.loading = "lazy";
                 img.onerror = () => {
-                  console.error(`Failed to load image ${image} for ${name}`);
+                  console.error(`Failed to load image ${fish.url} for ${name}`);
                   bassElement.textContent = `No image for Bass Spot ${spot}`;
                   bassElement.classList.add('error');
                 };
                 bassElement.appendChild(img);
+                const lengthLabel = document.createElement("div");
+                lengthLabel.className = "fish-length";
+                lengthLabel.textContent = `${fish.length} inches`;
+                bassElement.appendChild(lengthLabel);
                 bassElement.classList.remove('placeholder');
               } else {
-                console.log(`Skipping invalid image for Bass Spot ${spot}: ${image}`);
+                console.log(`Skipping invalid fish data for Bass Spot ${spot}:`, fish);
               }
             });
             imageContainer.dataset.loaded = 'true';
