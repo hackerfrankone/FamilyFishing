@@ -196,11 +196,12 @@
       align-items: flex-start;
     }
     .angler-images img {
-      max-width: 100px;
+      max-width: 200px;
       height: auto;
       border-radius: 4px;
       box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
       pointer-events: none;
+      margin: 5px;
     }
     .angler-images .placeholder {
       max-width: 100px;
@@ -307,7 +308,7 @@
 
           const data = await response.json();
           console.log(`Images received for ${name}:`, data.images);
-          return (data.images || []).filter(item => typeof item === 'object' && item.url && item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number').map(item => item.url);
+          return (data.images || []).filter(item => typeof item === 'object' && item.url && item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number');
         } catch (error) {
           console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
           if (attempt < retryCount) {
@@ -365,7 +366,10 @@
             if (!images || images.length === 0) {
               imageContainer.innerHTML = '<p>No images found.</p>';
             } else {
-              imageContainer.innerHTML = images.map(url => `<img src="${url}" alt="${name} photo" style="max-width: 200px; margin: 5px;">`).join('');
+              imageContainer.innerHTML = images.map(item => `
+                <img src="${item.url}" alt="${name} photo" style="max-width: 200px; margin: 5px;">
+                <span class="length">${item.length} inches</span>
+              `).join('');
             }
           }
         });
