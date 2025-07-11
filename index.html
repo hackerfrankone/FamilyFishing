@@ -337,19 +337,25 @@
             imageContainer.classList.add('active');
             if (!imageContainer.dataset.loaded) {
               const images = await fetchAnglerImages(name);
-              console.log(`Rendering ${images.length} images for ${name}`);
+              console.log(`Rendering ${images.length} images for ${name}:`, images);
+              // Reset all bass slots to placeholders
               for (let i = 1; i <= 5; i++) {
                 const bassElement = document.getElementById(`bass-${i}-${encodeURIComponent(name)}`);
-                if (images[i - 1]) {
-                  console.log(`Loading image ${i} for ${name}: ${images[i - 1]}`);
-                  bassElement.innerHTML = `<a href="${images[i - 1]}" target="_blank"><img src="${images[i - 1]}" alt="Bass ${i} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='Failed to load Bass ${i}'; console.error('Failed to load image ${images[i - 1]} for ${name}');"></a>`;
+                bassElement.innerHTML = `Bass ${i}`;
+                bassElement.classList.add('placeholder');
+              }
+              // Assign images to correct slots
+              images.forEach((image, index) => {
+                const slot = index + 1;
+                const bassElement = document.getElementById(`bass-${slot}-${encodeURIComponent(name)}`);
+                if (image && typeof image === 'string') {
+                  console.log(`Assigning image ${slot} for ${name}: ${image}`);
+                  bassElement.innerHTML = `<a href="${image}" target="_blank"><img src="${image}" alt="Bass ${slot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='Failed to load Bass ${slot}'; console.error('Failed to load image ${image} for ${name}');"></a>`;
                   bassElement.classList.remove('placeholder');
                 } else {
-                  console.log(`No image for Bass ${i} for ${name}`);
-                  bassElement.innerHTML = `Bass ${i}`;
-                  bassElement.classList.add('placeholder');
+                  console.log(`No valid image for Bass ${slot} for ${name}`);
                 }
-              }
+              });
               imageContainer.dataset.loaded = 'true';
             }
           }
