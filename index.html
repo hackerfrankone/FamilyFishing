@@ -197,11 +197,7 @@
       height: auto;
       border-radius: 4px;
       box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .angler-images img:hover {
-      transform: scale(1.05);
+      pointer-events: none;
     }
     .angler-images .placeholder {
       max-width: 100px;
@@ -273,7 +269,7 @@
     async function fetchAnglerList() {
       const url = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv';
       try {
-        const response = await fetch(`${url}?cacheBust=${Date.now()}`);
+        const response = await fetch(`${url}?cacheBust=${Date.now()}`, { cache: 'no-cache' });
         if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
         const text = await response.text();
         if (!text.trim()) throw new Error('Empty CSV');
@@ -354,6 +350,7 @@
               const bassElement = document.getElementById(`bass-${i}-${encodeURIComponent(name)}`);
               bassElement.innerHTML = `Bass ${i}`;
               bassElement.classList.add('placeholder');
+              bassElement.classList.remove('error');
             }
             // Assign images to correct slots
             images.forEach((image, index) => {
@@ -361,7 +358,7 @@
               const bassElement = document.getElementById(`bass-${slot}-${encodeURIComponent(name)}`);
               if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
                 console.log(`Assigning image ${slot} for ${name}: ${image}`);
-                bassElement.innerHTML = `<a href="${image}" target="_blank"><img src="${image}" alt="Bass ${slot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=error>No image for Bass ${slot}</div>'; console.error('Failed to load image ${image} for ${name}');"></a>`;
+                bassElement.innerHTML = `<img src="${image}" alt="Bass ${slot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=error>No image for Bass ${slot}</div>'; this.parentNode.classList.add('error'); console.error('Failed to load image ${image} for ${name}');">`;
                 bassElement.classList.remove('placeholder');
               } else {
                 console.log(`Invalid or missing image for Bass ${slot} for ${name}:`, image);
