@@ -281,32 +281,38 @@
       }
     }
 
-    async function fetchAnglerImages(anglerName, retryCount = 3, delayMs = 1000) {
-      for (let attempt = 1; attempt <= retryCount; attempt++) {
-        try {
-          const normalizedName = anglerName.trim().toLowerCase();
-          const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(normalizedName)}&cacheBust=${Date.now()}`;
-          console.log(`Attempt ${attempt}: Fetching images for angler: ${anglerName} (normalized: ${normalizedName}) from ${url}`);
-          const response = await fetch(url, { cache: 'no-cache', method: 'GET' });
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-          }
-          const data = await response.json();
-          console.log(`Images received for ${anglerName}:`, data.images);
-          return (data.images || []).filter(url => typeof url === "string" && url.startsWith("https://imagedelivery.net/"));
-        } catch (error) {
-          console.error(`Attempt ${attempt} failed for ${anglerName}: ${error.message}`);
-          if (attempt < retryCount) {
-            console.log(`Retrying in ${delayMs}ms...`);
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-          } else {
-            console.error(`All attempts failed for ${anglerName}: ${error.message}`);
-            return [];
-          }
-        }
+async function fetchAnglerImages(name) {
+  const url = `https://your-worker-url.com/images?name=${encodeURIComponent(name)}&ts=${Date.now()}`;
+  const retryCount = 3;
+  const delayMs = 500;
+
+  for (let attempt = 1; attempt <= retryCount; attempt++) {
+    try {
+      const response = await fetch(url, { cache: 'no-cache', method: 'GET' });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log(`Images received for ${name}:`, data.images);
+
+      return (data.images || []).filter(url =>
+        typeof url === "string" && url.startsWith("https://imagedelivery.net/")
+      );
+
+    } catch (error) {
+      console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
+      if (attempt < retryCount) {
+        console.log(`Retrying in ${delayMs}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      } else {
+        console.error(`All attempts failed for ${name}: ${error.message}`);
+        return [];
       }
     }
+  }
+}
 
     async function loadAnglerList() {
       const anglerList = document.getElementById('angler-list');
