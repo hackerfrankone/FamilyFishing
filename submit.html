@@ -13,7 +13,7 @@
 
     h1 {
       margin-bottom: 1rem;
-      color: #000; /* adjust if needed for readability */
+      color: #000;
     }
 
     form {
@@ -38,7 +38,7 @@
     label {
       display: block;
       margin: 0.5rem 0 0.25rem;
-      color: #000; /* or adjust to suit */
+      color: #000;
     }
 
     input[type="text"],
@@ -86,7 +86,7 @@
 
   <form id="fishForm">
     <label for="name">Angler Name:</label>
-    <input type="text" id="name" name="name" required />
+    <input type="text" id="name" name="name" required>
 
     <div id="fishContainer">
       <!-- Fish inputs added by JS -->
@@ -115,10 +115,10 @@
       fishDiv.className = "fish-entry";
       fishDiv.innerHTML = `
         <label for="fishPhoto${fishCount}">Fish ${fishCount} Photo:</label>
-        <input type="file" name="fishPhoto${fishCount}" accept="image/*" required />
+        <input type="file" name="fishPhoto${fishCount}" accept="image/*" required>
 
         <label for="fishLength${fishCount}">Fish ${fishCount} Length (inches):</label>
-        <input type="number" name="fishLength${fishCount}" step="0.01" min="0" required />
+        <input type="number" name="fishLength${fishCount}" step="0.01" min="0" required>
       `;
 
       container.appendChild(fishDiv);
@@ -167,7 +167,7 @@
             <h2>Upload successful!</h2>
             <p>${data.message}</p>
             <div>
-              ${data.imageUrls.map((url) => `<img src="${url}" alt="Fish Photo">`).join("")}
+              ${data.imageUrls.map(url => `<img src="${url}" alt="Fish Photo">`).join('')}
             </div>
           `;
         } else {
