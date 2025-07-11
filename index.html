@@ -191,6 +191,9 @@
       margin: 0.1rem 0;
       color: white;
       font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
     .angler-images img {
       max-width: 100px;
@@ -223,6 +226,12 @@
       font-style: italic;
       font-size: 0.8rem;
     }
+    .angler-images .length {
+      margin-top: 0.2rem;
+      font-size: 0.8rem;
+      color: #FFD700;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
     @media (max-width: 768px) {
       .top-bar { margin: 0.5rem 0; }
       .social-buttons { gap: 0.5rem; }
@@ -234,6 +243,7 @@
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
       .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
       .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 50px; height: 25px; font-size: 0.7rem; }
+      .angler-images .length { font-size: 0.7rem; }
     }
   </style>
   <script>
@@ -297,9 +307,7 @@
 
           const data = await response.json();
           console.log(`Images received for ${name}:`, data.images);
-          return (data.images || []).filter(url =>
-            typeof url === "string" && url.startsWith("https://imagedelivery.net/")
-          );
+          return (data.images || []).filter(item => typeof item === 'object' && item.url && item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number');
         } catch (error) {
           console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
           if (attempt < retryCount) {
@@ -328,11 +336,11 @@
             <span class="angler-name" data-name="${encodeURIComponent(name)}">${name}</span>
             <div class="angler-images" id="images-${encodeURIComponent(name)}">
               <ul>
-                <li id="bass-spot-1-${encodeURIComponent(name)}" class="placeholder">Bass Spot 1</li>
-                <li id="bass-spot-2-${encodeURIComponent(name)}" class="placeholder">Bass Spot 2</li>
-                <li id="bass-spot-3-${encodeURIComponent(name)}" class="placeholder">Bass Spot 3</li>
-                <li id="bass-spot-4-${encodeURIComponent(name)}" class="placeholder">Bass Spot 4</li>
-                <li id="bass-spot-5-${encodeURIComponent(name)}" class="placeholder">Bass Spot 5</li>
+                <li id="bass-spot-1-${encodeURIComponent(name)}" class="placeholder">Bass Spot 1: No fish</li>
+                <li id="bass-spot-2-${encodeURIComponent(name)}" class="placeholder">Bass Spot 2: No fish</li>
+                <li id="bass-spot-3-${encodeURIComponent(name)}" class="placeholder">Bass Spot 3: No fish</li>
+                <li id="bass-spot-4-${encodeURIComponent(name)}" class="placeholder">Bass Spot 4: No fish</li>
+                <li id="bass-spot-5-${encodeURIComponent(name)}" class="placeholder">Bass Spot 5: No fish</li>
               </ul>
             </div>
           </li>
@@ -357,35 +365,42 @@
                 console.error(`Bass Spot ${i} element not found for ${name}`);
                 continue;
               }
-              bassElement.innerHTML = `Bass Spot ${i}`;
+              bassElement.innerHTML = `Bass Spot ${i}: No fish`;
               bassElement.classList.add('placeholder');
               bassElement.classList.remove('error');
             }
-            // Assign images to correct spots
-            images.forEach((image, index) => {
+            // Assign images and lengths to correct spots
+            images.forEach((item, index) => {
               const spot = index + 1;
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (!bassElement) {
                 console.error(`Bass Spot ${spot} element not found for ${name}`);
                 return;
               }
-              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${image}`);
-              if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
-                console.log(`Assigning image ${spot} for ${name}: ${image}`);
+              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${item.url}, Length: ${item.length}`);
+              if (item.url && typeof item.url === 'string' && item.url.startsWith("https://imagedelivery.net/") && typeof item.length === 'number') {
+                console.log(`Assigning image ${spot} for ${name}: ${item.url}, ${item.length} inches`);
                 bassElement.textContent = "";
                 const img = document.createElement("img");
-                img.src = image;
+                img.src = item.url;
                 img.alt = `Bass Spot ${spot} by ${name}`;
                 img.loading = "lazy";
                 img.onerror = () => {
-                  console.error(`Failed to load image ${image} for ${name}`);
+                  console.error(`Failed to load image ${item.url} for ${name}`);
                   bassElement.textContent = `No image for Bass Spot ${spot}`;
                   bassElement.classList.add('error');
+                  bassElement.classList.remove('placeholder');
                 };
                 bassElement.appendChild(img);
+                const lengthSpan = document.createElement("span");
+                lengthSpan.className = "length";
+                lengthSpan.textContent = `${item.length} inches`;
+                bassElement.appendChild(lengthSpan);
                 bassElement.classList.remove('placeholder');
               } else {
-                console.log(`Skipping invalid image for Bass Spot ${spot}: ${image}`);
+                console.log(`Skipping invalid image for Bass Spot ${spot}: ${item.url}`);
+                bassElement.textContent = `Bass Spot ${spot}: No fish`;
+                bassElement.classList.add('placeholder');
               }
             });
             imageContainer.dataset.loaded = 'true';
