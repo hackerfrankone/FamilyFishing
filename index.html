@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3">
-  <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3">
+  <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3&cb=${Date.now()}">
+  <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3&cb=${Date.now()}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://raw.githubusercontent.com https://upload.wikimedia.org https://imagedelivery.net data:; connect-src 'self' https://raw.githubusercontent.com https://www.familyfishing.fun https://worldtimeapi.org https://fish-submit.familyfishingfun2025.workers.dev; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
@@ -15,7 +15,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <style>
     body {
-      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=1');
+      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=1&cb=${Date.now()}');
       background-color: #000;
       background-size: cover;
       background-position: center;
@@ -58,7 +58,7 @@
       text-decoration: none;
       transition: filter 0.3s ease;
     }
-    .discord-button { background-color: #5865F2; color: white; }
+    .discord-button { background-color: #5865F2; color white; }
     .archive-button { background-color: #808080; color: white; }
     .tackle-button { background-color: #006400; color: white; }
     .submit-fish-button { background-color: #FFA500; color: white; }
@@ -256,7 +256,7 @@
 
     async function fetchCurrentTime() {
       try {
-        const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { cache: 'no-cache' });
+        const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC?cb=${Date.now()}', { cache: 'no-cache' });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         return new Date(data.utc_datetime);
@@ -281,38 +281,38 @@
       }
     }
 
-async function fetchAnglerImages(name) {
-  const url = `https://your-worker-url.com/images?name=${encodeURIComponent(name)}&ts=${Date.now()}`;
-  const retryCount = 3;
-  const delayMs = 500;
+    async function fetchAnglerImages(name) {
+      const url = `https://your-worker-url.com/images?name=${encodeURIComponent(name)}&ts=${Date.now()}`;
+      const retryCount = 3;
+      const delayMs = 500;
 
-  for (let attempt = 1; attempt <= retryCount; attempt++) {
-    try {
-      const response = await fetch(url, { cache: 'no-cache', method: 'GET' });
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
+      for (let attempt = 1; attempt <= retryCount; attempt++) {
+        try {
+          const response = await fetch(url, { cache: 'no-cache', method: 'GET' });
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+          }
 
-      const data = await response.json();
-      console.log(`Images received for ${name}:`, data.images);
+          const data = await response.json();
+          console.log(`Images received for ${name}:`, data.images);
 
-      return (data.images || []).filter(url =>
-        typeof url === "string" && url.startsWith("https://imagedelivery.net/")
-      );
+          return (data.images || []).filter(url =>
+            typeof url === "string" && url.startsWith("https://imagedelivery.net/")
+          );
 
-    } catch (error) {
-      console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
-      if (attempt < retryCount) {
-        console.log(`Retrying in ${delayMs}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-      } else {
-        console.error(`All attempts failed for ${name}: ${error.message}`);
-        return [];
+        } catch (error) {
+          console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
+          if (attempt < retryCount) {
+            console.log(`Retrying in ${delayMs}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+          } else {
+            console.error(`All attempts failed for ${name}: ${error.message}`);
+            return [];
+          }
+        }
       }
     }
-  }
-}
 
     async function loadAnglerList() {
       const anglerList = document.getElementById('angler-list');
@@ -364,21 +364,18 @@ async function fetchAnglerImages(name) {
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
                 console.log(`Assigning image ${spot} for ${name}: ${image}`);
-bassElement.textContent = ""; // Clear placeholder text
-
-const img = document.createElement("img");
-img.src = image;
-img.alt = `Bass Spot ${spot} by ${name}`;
-img.loading = "lazy";
-
-img.onerror = () => {
-  console.error(`Failed to load image ${image} for ${name}`);
-  bassElement.textContent = `No image for Bass Spot ${spot}`;
-  bassElement.classList.add('error');
-};
-
-bassElement.appendChild(img);
-bassElement.classList.remove('placeholder');
+                bassElement.textContent = "";
+                const img = document.createElement("img");
+                img.src = `${image}?cb=${Date.now()}`;
+                img.alt = `Bass Spot ${spot} by ${name}`;
+                img.loading = "lazy";
+                img.onerror = () => {
+                  console.error(`Failed to load image ${image} for ${name}`);
+                  bassElement.textContent = `No image for Bass Spot ${spot}`;
+                  bassElement.classList.add('error');
+                };
+                bassElement.appendChild(img);
+                bassElement.classList.remove('placeholder');
               } else {
                 console.log(`Invalid or missing image for Bass Spot ${spot} for ${name}:`, image);
               }
@@ -441,17 +438,17 @@ bassElement.classList.remove('placeholder');
   </div>
   <div class="top-bar">
     <div class="social-buttons">
-      <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
+      <a href="PDFs/rules.pdf?v=2&cb=${Date.now()}" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
       <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" width="60" height="60">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg?cb=${Date.now()}" alt="Facebook logo" width="60" height="60">
       </a>
       <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg?cb=${Date.now()}" alt="YouTube logo">
       </a>
       <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
-      <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button">Archive</a>
-      <a href="submit.html" target="_blank" rel="noopener noreferrer" class="submit-fish-button">Submit Fish</a>
-      <a href="pages/tackle.html" target="_blank" rel="noopener noreferrer" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
+      <a href="pages/archive.html?cb=${Date.now()}" target="_blank" rel="noopener noreferrer" class="archive-button">Archive</a>
+      <a href="submit.html?cb=${Date.now()}" target="_blank" rel="noopener noreferrer" class="submit-fish-button">Submit Fish</a>
+      <a href="pages/tackle.html?cb=${Date.now()}" target="_blank" rel="noopener noreferrer" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
     </div>
     <div class="tournament-info">
       <p class="main-text">1st Place: 100% Payout</p>
@@ -470,4 +467,4 @@ bassElement.classList.remove('placeholder');
     </div>
   </div>
 </body>
-</html>
+</html>v
