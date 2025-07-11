@@ -108,11 +108,16 @@
     fishCountInput.addEventListener("input", () => {
       const count = parseInt(fishCountInput.value);
       fishInputsDiv.innerHTML = "";
-      if (count > 0 && count <= 100) { // just a sanity limit
+      if (count > 0 && count <= 100) { // sanity limit
         for (let i = 1; i <= count; i++) {
-          const label = document.createElement("label");
-          label.innerHTML = `Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required />`;
-          fishInputsDiv.appendChild(label);
+          const fishDiv = document.createElement("div");
+          fishDiv.style.marginBottom = "1.5em";
+
+          fishDiv.innerHTML = `
+            <label>Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required /></label>
+            <label>Fish Length ${i} (inches): <input type="number" name="fishLength${i}" step="0.01" min="0" required placeholder="Enter length in inches" /></label>
+          `;
+          fishInputsDiv.appendChild(fishDiv);
         }
       }
     });
@@ -141,14 +146,22 @@
 
       for (let i = 1; i <= fishCount; i++) {
         const file = formData.get(`fishPhoto${i}`);
+        const length = formData.get(`fishLength${i}`);
+
         if (!file || !file.name) {
           statusMessage.style.color = "red";
           statusMessage.textContent = `Missing photo for fish ${i}`;
           return;
         }
+        if (!length || Number(length) <= 0) {
+          statusMessage.style.color = "red";
+          statusMessage.textContent = `Please enter a valid length for fish ${i}`;
+          return;
+        }
 
         const uploadData = new FormData();
         uploadData.append("fishPhoto" + i, file, file.name);
+        uploadData.append("fishLength" + i, length);
         uploadData.append("name", name);
         uploadData.append("fishCount", fishCount.toString());
 
