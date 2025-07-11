@@ -323,11 +323,11 @@
             <span class="angler-name" data-name="${encodeURIComponent(name)}">${name}</span>
             <div class="angler-images" id="images-${encodeURIComponent(name)}">
               <ul>
-                <li id="bass-1-${encodeURIComponent(name)}" class="placeholder">Bass 1</li>
-                <li id="bass-2-${encodeURIComponent(name)}" class="placeholder">Bass 2</li>
-                <li id="bass-3-${encodeURIComponent(name)}" class="placeholder">Bass 3</li>
-                <li id="bass-4-${encodeURIComponent(name)}" class="placeholder">Bass 4</li>
-                <li id="bass-5-${encodeURIComponent(name)}" class="placeholder">Bass 5</li>
+                <li id="bass-spot-1-${encodeURIComponent(name)}" class="placeholder">Bass Spot 1</li>
+                <li id="bass-spot-2-${encodeURIComponent(name)}" class="placeholder">Bass Spot 2</li>
+                <li id="bass-spot-3-${encodeURIComponent(name)}" class="placeholder">Bass Spot 3</li>
+                <li id="bass-spot-4-${encodeURIComponent(name)}" class="placeholder">Bass Spot 4</li>
+                <li id="bass-spot-5-${encodeURIComponent(name)}" class="placeholder">Bass Spot 5</li>
               </ul>
             </div>
           </li>
@@ -345,23 +345,23 @@
             imageContainer.classList.add('active');
             const images = await fetchAnglerImages(name);
             console.log(`Rendering ${images.length} images for ${name}:`, images);
-            // Reset all bass slots to placeholders
+            // Reset all bass spots to placeholders
             for (let i = 1; i <= 5; i++) {
-              const bassElement = document.getElementById(`bass-${i}-${encodeURIComponent(name)}`);
-              bassElement.innerHTML = `Bass ${i}`;
+              const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
+              bassElement.innerHTML = `Bass Spot ${i}`;
               bassElement.classList.add('placeholder');
               bassElement.classList.remove('error');
             }
-            // Assign images to correct slots
+            // Assign images to correct spots
             images.forEach((image, index) => {
-              const slot = index + 1;
-              const bassElement = document.getElementById(`bass-${slot}-${encodeURIComponent(name)}`);
+              const spot = index + 1;
+              const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
-                console.log(`Assigning image ${slot} for ${name}: ${image}`);
-                bassElement.innerHTML = `<img src="${image}" alt="Bass ${slot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=error>No image for Bass ${slot}</div>'; this.parentNode.classList.add('error'); console.error('Failed to load image ${image} for ${name}');">`;
+                console.log(`Assigning image ${spot} for ${name}: ${image}`);
+                bassElement.innerHTML = `<img src="${image}" alt="Bass Spot ${spot} by ${name}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=error>No image for Bass Spot ${spot}</div>'; this.parentNode.classList.add('error'); console.error('Failed to load image ${image} for ${name}');">`;
                 bassElement.classList.remove('placeholder');
               } else {
-                console.log(`Invalid or missing image for Bass ${slot} for ${name}:`, image);
+                console.log(`Invalid or missing image for Bass Spot ${spot} for ${name}:`, image);
               }
             });
             imageContainer.dataset.loaded = 'true';
