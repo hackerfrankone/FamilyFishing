@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Submit Your Catch</title>
-  <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="stylesheet" href="style.css?v=1.1">
-  <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
+  <link rel="stylesheet" href="style.css?v=1.1" />
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
   <style>
     body {
       margin: 0;
@@ -31,6 +30,7 @@
     }
     input[type="text"],
     input[type="file"],
+    select,
     input[type="number"] {
       width: 100%;
       padding: 0.5em;
@@ -87,10 +87,10 @@
     <div class="name-warning">Must match your registered angler name (case-sensitive)</div>
 
     <label for="anglerName">Angler Name (must match registration):</label>
-    <input type="text" id="anglerName" name="name" required autocomplete="off">
+    <input type="text" id="anglerName" name="name" required autocomplete="off" />
 
     <label for="fishCountSelect">How many fish are you submitting?</label>
-    <input type="number" id="fishCountSelect" name="fishCount" min="1" max="5" required placeholder="Enter number of fish (1-5)">
+    <input type="number" id="fishCountSelect" name="fishCount" min="1" required placeholder="Enter number of fish" />
 
     <div id="fishInputs"></div>
 
@@ -99,109 +99,98 @@
     <div id="statusMessage"></div>
   </form>
 
-<script>
-  const fishInputsDiv = document.getElementById("fishInputs");
-  const fishCountInput = document.getElementById("fishCountSelect");
-  const fishForm = document.getElementById("fishForm");
-  const statusMessage = document.getElementById("statusMessage");
+  <script>
+    const fishInputsDiv = document.getElementById("fishInputs");
+    const fishCountInput = document.getElementById("fishCountSelect");
+    const fishForm = document.getElementById("fishForm");
+    const statusMessage = document.getElementById("statusMessage");
 
-  const CF_ACCOUNT_ID = "312be46039aca8bf23a26050451a3bda";
-  const CF_UPLOAD_URL = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/images/v1`;
-  const CF_UPLOAD_TOKEN = "YOUR_UPLOAD_TOKEN_HERE"; // ⚠️ Replace this with your actual Images Upload Token
+    fishCountInput.addEventListener("input", () => {
+      const count = parseInt(fishCountInput.value);
+      fishInputsDiv.innerHTML = "";
+      if (count > 0 && count <= 100) { // sanity limit
+        for (let i = 1; i <= count; i++) {
+          const fishDiv = document.createElement("div");
+          fishDiv.style.marginBottom = "1.5em";
 
-  fishCountInput.addEventListener("input", () => {
-    const count = parseInt(fishCountInput.value) || 0;
-    fishInputsDiv.innerHTML = "";
-    if (count > 0 && count <= 5) {
-      for (let i = 1; i <= count; i++) {
-        const fishDiv = document.createElement("div");
-        fishDiv.style.marginBottom = "1.5em";
-        fishDiv.innerHTML = `
-          <label>Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required></label>
-          <label>Fish Length ${i} (inches): <input type="number" name="fishLength${i}" step="0.01" min="0" required></label>
-        `;
-        fishInputsDiv.appendChild(fishDiv);
+          fishDiv.innerHTML = `
+            <label>Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required /></label>
+            <label>Fish Length ${i} (inches): <input type="number" name="fishLength${i}" step="0.01" min="0" required placeholder="example: 15.75" /></label>
+          `;
+          fishInputsDiv.appendChild(fishDiv);
+        }
       }
-    }
-  });
+    });
 
-  fishForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    statusMessage.style.color = "white";
-    statusMessage.textContent = "Uploading images...";
+    fishForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    const formData = new FormData(fishForm);
-    const fishCount = parseInt(formData.get("fishCount"));
-    const name = formData.get("name")?.trim();
+      statusMessage.style.color = "white";
+      statusMessage.textContent = "Uploading images...";
 
-    if (!name) {
-      statusMessage.style.color = "red";
-      statusMessage.textContent = "Please enter your angler name.";
-      return;
-    }
+      const formData = new FormData(fishForm);
+      const fishCount = parseInt(formData.get("fishCount"));
+      const name = formData.get("name")?.trim();
 
-    try {
-      const imageIds = [];
-      const lengths = [];
+      if (!name) {
+        statusMessage.style.color = "red";
+        statusMessage.textContent = "Please enter your angler name.";
+        return;
+      }
+
+      if (!fishCount || fishCount < 1) {
+        statusMessage.style.color = "red";
+        statusMessage.textContent = "Please enter a valid number of fish to submit.";
+        return;
+      }
 
       for (let i = 1; i <= fishCount; i++) {
         const file = formData.get(`fishPhoto${i}`);
         const length = formData.get(`fishLength${i}`);
-        if (!file || !file.name || !length) {
-          throw new Error(`Missing image or length for fish ${i}`);
+
+        if (!file || !file.name) {
+          statusMessage.style.color = "red";
+          statusMessage.textContent = `Missing photo for fish ${i}`;
+          return;
+        }
+        if (!length || Number(length) <= 0) {
+          statusMessage.style.color = "red";
+          statusMessage.textContent = `Please enter a valid length for fish ${i}`;
+          return;
         }
 
-        // Upload to Cloudflare Images
-        const imageForm = new FormData();
-        imageForm.append("file", file);
-        imageForm.append("requireSignedURLs", "false");
+        const uploadData = new FormData();
+        uploadData.append("fishPhoto" + i, file, file.name);
+        uploadData.append("fishLength" + i, length);
+        uploadData.append("name", name);
+        uploadData.append("fishCount", fishCount.toString());
 
-        const uploadResp = await fetch(CF_UPLOAD_URL, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${CF_UPLOAD_TOKEN}`
-          },
-          body: imageForm
-        });
+        try {
+          const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
+            method: "POST",
+            body: uploadData,
+          });
 
-        const uploadData = await uploadResp.json();
-        if (!uploadResp.ok || !uploadData.success) {
-          throw new Error(`Image upload failed for fish ${i}`);
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+          }
+
+          const jsonResp = await response.json();
+          console.log(`Upload response for fish ${i}:`, jsonResp);
+        } catch (error) {
+          console.error(`Error uploading fish ${i}:`, error.message);
+          statusMessage.style.color = "red";
+          statusMessage.textContent = `Error uploading fish ${i}: ${error.message}`;
+          return;
         }
-
-        const imageId = uploadData.result.id;
-        imageIds.push(imageId);
-        lengths.push(parseFloat(length));
-      }
-
-      // Submit to Worker with angler name, image IDs, and lengths
-      const payload = {
-        name,
-        imageIds,
-        lengths
-      };
-
-      const submitResp = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      if (!submitResp.ok) {
-        const error = await submitResp.json();
-        throw new Error(error?.error || "Failed to submit fish info");
       }
 
       statusMessage.style.color = "lightgreen";
-      statusMessage.textContent = `Successfully uploaded ${fishCount} fish!`;
+      statusMessage.textContent = `Successfully uploaded ${fishCount} fish image(s)!`;
       fishForm.reset();
       fishInputsDiv.innerHTML = "";
-    } catch (err) {
-      console.error(err);
-      statusMessage.style.color = "red";
-      statusMessage.textContent = "Submission error: " + err.message;
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
