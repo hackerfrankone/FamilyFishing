@@ -198,7 +198,7 @@
       height: auto;
       border-radius: 4px;
       box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-      cursor: pointer;
+      pointer-events: none;
     }
     .fish-length {
       color: #FFD700;
@@ -230,36 +230,6 @@
       font-style: italic;
       font-size: 0.8rem;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      color: #fff;
-      font-size: 1.5rem;
-      cursor: pointer;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    }
     @media (max-width: 768px) {
       .top-bar { margin: 0.5rem 0; }
       .social-buttons { gap: 0.5rem; }
@@ -270,10 +240,8 @@
       .countdown { font-size: 1.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
       .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
-      .angler-images img { max-width: 80px; }
-      .angler-images .placeholder, .angler-images .error { max-width: 80px; height: 40px; font-size: 0.7rem; }
+      .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 80px; height: 40px; font-size: 0.7rem; }
       .fish-length { font-size: 0.8rem; }
-      .modal-content { max-width: 95%; max-height: 80%; }
     }
   </style>
   <script>
@@ -393,6 +361,7 @@
             imageContainer.classList.add('active');
             const images = await fetchAnglerImages(name);
             console.log(`Rendering ${images.length} images for ${name}:`, images);
+            // Reset all bass spots to placeholders
             for (let i = 1; i <= 5; i++) {
               const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
               if (!bassElement) {
@@ -403,6 +372,7 @@
               bassElement.classList.add('placeholder');
               bassElement.classList.remove('error');
             }
+            // Assign images and lengths to correct spots
             images.forEach((item, index) => {
               const spot = index + 1;
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
@@ -417,17 +387,6 @@
                 img.src = item.url;
                 img.alt = `Bass Spot ${spot} by ${name}`;
                 img.loading = 'lazy';
-                img.dataset.fullSrc = item.url;
-                img.onclick = () => {
-                  const modal = document.getElementById('image-modal');
-                  const modalImg = document.getElementById('modal-image');
-                  modalImg.src = item.url;
-                  modal.classList.add('active');
-                };
-                img.ontouchstart = (e) => {
-                  e.preventDefault();
-                  img.click();
-                };
                 img.onerror = () => {
                   console.error(`Failed to load image ${item.url} for ${name}`);
                   bassElement.innerHTML = `No image for Bass Spot ${spot}`;
@@ -446,10 +405,6 @@
             });
             imageContainer.dataset.loaded = 'true';
           }
-        });
-        nameElement.addEventListener('touchstart', async (e) => {
-          e.preventDefault();
-          nameElement.click();
         });
       });
     }
@@ -493,17 +448,6 @@
       loadAnglerList();
       setInterval(loadAnglerList, 30000);
       initTournament();
-
-      // Modal close handler
-      const modal = document.getElementById('image-modal');
-      const closeModal = document.getElementById('modal-close');
-      closeModal.onclick = () => modal.classList.remove('active');
-      modal.onclick = (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-      };
-      modal.ontouchstart = (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-      };
     });
   </script>
 </head>
@@ -544,10 +488,6 @@
         </form>
       </div>
     </div>
-  </div>
-  <div id="image-modal" class="modal">
-    <span id="modal-close" class="modal-close">×</span>
-    <img id="modal-image" class="modal-content">
   </div>
 </body>
 </html>
