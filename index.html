@@ -188,23 +188,16 @@
       margin: 0;
     }
     .angler-images li {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 0.3rem 0;
+      margin: 0.1rem 0;
+      color: white;
+      font-size: 0.9rem;
     }
     .angler-images img {
       max-width: 100px;
       height: auto;
       border-radius: 4px;
       box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-      cursor: pointer;
-    }
-    .fish-length {
-      color: #FFD700;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-      font-size: 0.9rem;
+      pointer-events: none;
     }
     .angler-images .placeholder {
       max-width: 100px;
@@ -230,36 +223,6 @@
       font-style: italic;
       font-size: 0.8rem;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      color: #fff;
-      font-size: 1.5rem;
-      cursor: pointer;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    }
     @media (max-width: 768px) {
       .top-bar { margin: 0.5rem 0; }
       .social-buttons { gap: 0.5rem; }
@@ -270,10 +233,7 @@
       .countdown { font-size: 1.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
       .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
-      .angler-images img { max-width: 80px; }
-      .angler-images .placeholder, .angler-images .error { max-width: 80px; height: 40px; font-size: 0.7rem; }
-      .fish-length { font-size: 0.8rem; }
-      .modal-content { max-width: 95%; max-height: 80%; }
+      .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 50px; height: 25px; font-size: 0.7rem; }
     }
   </style>
   <script>
@@ -325,6 +285,7 @@
       const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(name)}&ts=${Date.now()}`;
       const retryCount = 3;
       const delayMs = 500;
+
       for (let attempt = 1; attempt <= retryCount; attempt++) {
         try {
           console.log(`Fetching images for ${name}, attempt ${attempt}, URL: ${url}`);
@@ -333,16 +294,12 @@
             const errorText = await response.text();
             throw new Error(`HTTP ${response.status}: ${errorText}`);
           }
+
           const data = await response.json();
           console.log(`Images received for ${name}:`, data.images);
-          return (data.images || []).filter(item =>
-            item && typeof item === 'object' &&
-            typeof item.url === 'string' && item.url.startsWith('https://imagedelivery.net/') &&
-            (typeof item.length === 'string' || typeof item.length === 'number')
-          ).map(item => ({
-            url: item.url,
-            length: item.length.toString()
-          }));
+          return (data.images || []).filter(url =>
+            typeof url === "string" && url.startsWith("https://imagedelivery.net/")
+          );
         } catch (error) {
           console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
           if (attempt < retryCount) {
@@ -362,7 +319,7 @@
         console.error('Angler list element not found');
         return;
       }
-      anglerList.innerHTML = '<li>Loading...</li>';
+
       const anglers = await fetchAnglerList();
       console.log("Anglers loaded:", anglers);
       anglerList.innerHTML = anglers.length
@@ -404,54 +361,35 @@
               bassElement.classList.add('placeholder');
               bassElement.classList.remove('error');
             }
-            // Assign images and lengths to correct spots
-            images.forEach((item, index) => {
+            // Assign images to correct spots
+            images.forEach((image, index) => {
               const spot = index + 1;
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (!bassElement) {
                 console.error(`Bass Spot ${spot} element not found for ${name}`);
                 return;
               }
-              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${item.url}, Length: ${item.length}`);
-              if (item.url && item.url.startsWith('https://imagedelivery.net/')) {
-                bassElement.innerHTML = '';
-                const img = document.createElement('img');
-                img.src = item.url;
+              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${image}`);
+              if (image && typeof image === 'string' && image.startsWith("https://imagedelivery.net/")) {
+                console.log(`Assigning image ${spot} for ${name}: ${image}`);
+                bassElement.textContent = "";
+                const img = document.createElement("img");
+                img.src = image;
                 img.alt = `Bass Spot ${spot} by ${name}`;
-                img.loading = 'lazy';
-                img.dataset.fullSrc = item.url;
-                img.onclick = () => {
-                  const modal = document.getElementById('image-modal');
-                  const modalImg = document.getElementById('modal-image');
-                  modalImg.src = item.url;
-                  modal.classList.add('active');
-                };
-                img.ontouchstart = (e) => {
-                  e.preventDefault();
-                  img.click();
-                };
+                img.loading = "lazy";
                 img.onerror = () => {
-                  console.error(`Failed to load image ${item.url} for ${name}`);
-                  bassElement.innerHTML = `No image for Bass Spot ${spot}`;
+                  console.error(`Failed to load image ${image} for ${name}`);
+                  bassElement.textContent = `No image for Bass Spot ${spot}`;
                   bassElement.classList.add('error');
-                  bassElement.classList.remove('placeholder');
                 };
-                const lengthSpan = document.createElement('span');
-                lengthSpan.className = 'fish-length';
-                lengthSpan.textContent = item.length ? `${item.length} in` : 'N/A';
                 bassElement.appendChild(img);
-                bassElement.appendChild(lengthSpan);
                 bassElement.classList.remove('placeholder');
               } else {
-                console.log(`Skipping invalid image for Bass Spot ${spot}: ${item.url}`);
+                console.log(`Skipping invalid image for Bass Spot ${spot}: ${image}`);
               }
             });
             imageContainer.dataset.loaded = 'true';
           }
-        });
-        nameElement.addEventListener('touchstart', async (e) => {
-          e.preventDefault();
-          nameElement.click();
         });
       });
     }
@@ -495,17 +433,6 @@
       loadAnglerList();
       setInterval(loadAnglerList, 30000);
       initTournament();
-
-      // Modal close handler
-      const modal = document.getElementById('image-modal');
-      const closeModal = document.getElementById('modal-close');
-      closeModal.onclick = () => modal.classList.remove('active');
-      modal.onclick = (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-      };
-      modal.ontouchstart = (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-      };
     });
   </script>
 </head>
@@ -546,10 +473,6 @@
         </form>
       </div>
     </div>
-  </div>
-  <div id="image-modal" class="modal">
-    <span id="modal-close" class="modal-close">×</span>
-    <img id="modal-image" class="modal-content">
   </div>
 </body>
 </html>
