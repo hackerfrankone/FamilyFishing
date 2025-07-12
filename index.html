@@ -281,7 +281,6 @@
         if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
         const text = await response.text();
         if (!text.trim()) throw new Error('Empty CSV');
-        console.log("Fetched angler list:", text);
         return text.trim().split('\n').slice(1).map(row => row.split(',')[0].trim()).filter(name => name);
       } catch (error) {
         console.error(`Failed to fetch angler list: ${error.message}`);
@@ -291,36 +290,20 @@
 
     async function fetchAnglerImages(name) {
       const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(name)}&ts=${Date.now()}`;
-      const retryCount = 3;
-      const delayMs = 500;
-      for (let attempt = 1; attempt <= retryCount; attempt++) {
-        try {
-          console.log(`Fetching images for ${name}, attempt ${attempt}, URL: ${url}`);
-          const response = await fetch(url, { cache: 'no-cache', method: 'GET' });
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-          }
-          const data = await response.json();
-          console.log(`Images received for ${name}:`, data.images);
-          return (data.images || []).filter(item =>
-            item && typeof item === 'object' &&
-            typeof item.url === 'string' && item.url.startsWith('https://imagedelivery.net/') &&
-            (typeof item.length === 'string' || typeof item.length === 'number')
-          ).map(item => ({
-            url: item.url,
-            length: item.length.toString()
-          }));
-        } catch (error) {
-          console.error(`Attempt ${attempt} failed for ${name}: ${error.message}`);
-          if (attempt < retryCount) {
-            console.log(`Retrying in ${delayMs}ms...`);
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-          } else {
-            console.error(`All attempts failed for ${name}: ${error.message}`);
-            return [];
-          }
+      try {
+        const response = await fetch(url, { cache: 'no-cache' });
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
+        const data = await response.json();
+        return (data.images || []).map(item => ({
+          url: item.url,
+          length: item.length.toString()
+        }));
+      } catch (error) {
+        console.error(`Failed to fetch images for ${name}: ${error.message}`);
+        return [];
       }
     }
 
@@ -332,7 +315,6 @@
       }
       anglerList.innerHTML = '<li>Loading...</li>';
       const anglers = await fetchAnglerList();
-      console.log("Anglers loaded:", anglers);
       anglerList.innerHTML = anglers.length
         ? anglers.map(name => `
           <li class="angler-item">
@@ -353,34 +335,23 @@
       document.querySelectorAll('.angler-name').forEach(nameElement => {
         nameElement.addEventListener('click', async () => {
           const name = decodeURIComponent(nameElement.dataset.name);
-          console.log(`Clicked angler: ${name}`);
           const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
           const isActive = imageContainer.classList.contains('active');
           document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
           if (!isActive) {
             imageContainer.classList.add('active');
             const images = await fetchAnglerImages(name);
-            console.log(`Rendering ${images.length} images for ${name}:`, images);
-            // Reset all bass spots to placeholders
             for (let i = 1; i <= 5; i++) {
               const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
-              if (!bassElement) {
-                console.error(`Bass Spot ${i} element not found for ${name}`);
-                continue;
-              }
+              if (!bassElement) continue;
               bassElement.innerHTML = `Bass Spot ${i}`;
               bassElement.classList.add('placeholder');
               bassElement.classList.remove('error');
             }
-            // Assign images and lengths to correct spots
             images.forEach((item, index) => {
               const spot = index + 1;
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
-              if (!bassElement) {
-                console.error(`Bass Spot ${spot} element not found for ${name}`);
-                return;
-              }
-              console.log(`Processing Bass Spot ${spot} for ${name}, URL: ${item.url}, Length: ${item.length}`);
+              if (!bassElement) return;
               if (item.url && item.url.startsWith('https://imagedelivery.net/')) {
                 bassElement.innerHTML = '';
                 const img = document.createElement('img');
@@ -388,7 +359,6 @@
                 img.alt = `Bass Spot ${spot} by ${name}`;
                 img.loading = 'lazy';
                 img.onerror = () => {
-                  console.error(`Failed to load image ${item.url} for ${name}`);
                   bassElement.innerHTML = `No image for Bass Spot ${spot}`;
                   bassElement.classList.add('error');
                   bassElement.classList.remove('placeholder');
@@ -399,11 +369,8 @@
                 bassElement.appendChild(img);
                 bassElement.appendChild(lengthSpan);
                 bassElement.classList.remove('placeholder');
-              } else {
-                console.log(`Skipping invalid image for Bass Spot ${spot}: ${item.url}`);
               }
             });
-            imageContainer.dataset.loaded = 'true';
           }
         });
       });
@@ -444,7 +411,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      console.log("Initializing page...");
       loadAnglerList();
       setInterval(loadAnglerList, 30000);
       initTournament();
