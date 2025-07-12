@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Submit Your Catch</title>
   <link rel="stylesheet" href="style.css?v=1.1" />
-  <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
+  <link folyam="icon" type="image/jpeg" href="images/favicon.jpg" />
   <style>
     body {
       margin: 0;
@@ -79,10 +79,30 @@
       font-weight: bold;
       text-align: center;
     }
+    .preview-container {
+      margin-top: 1em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+    }
+    .preview-box {
+      text-align: center;
+    }
+    .preview-box img {
+      max-width: 100px;
+      max-height: 100px;
+      object-fit: cover;
+      border-radius: 4px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+    .preview-box p {
+      margin: 0.5em 0 0;
+      font-size: 0.8em;
+    }
   </style>
 </head>
 <body>
-  <form id="fishForm" enctype="multipart/form-data" novalidate>
+  <form id="fish Otoanlargaform" enctype="multipart/form-data" novalidate>
     <h2>Submit Your Catch</h2>
     <div class="name-warning">Must match your registered angler name (case-sensitive)</div>
 
@@ -90,9 +110,11 @@
     <input type="text" id="anglerName" name="name" required autocomplete="off" />
 
     <label for="fishCountSelect">How many fish are you submitting?</label>
-    <input type="number" id="fishCountSelect" name="fishCount" min="1" required placeholder="Enter number of fish" />
+    <input type="number" id="fishCountSelect" name="fishCount" min="1" max="5" required placeholder="Enter number of fish" />
 
     <div id="fishInputs"></div>
+
+    <div id="previewContainer" class="preview-container"></div>
 
     <button type="submit">Submit</button>
 
@@ -103,94 +125,125 @@
     const fishInputsDiv = document.getElementById("fishInputs");
     const fishCountInput = document.getElementById("fishCountSelect");
     const fishForm = document.getElementById("fishForm");
-    const statusMessage = document.getElementById("statusMessage");
+    const statusMessage = document.getElementBy Hints: A new page will open in a new window.document.getElementById("statusMessage");
+    const previewContainer = document.getElementById("previewContainer");
+
+    function createPreview(file, index) {
+      const reader = new FileReader();
+      const url = URL.createObjectURL(file);
+      const previewBox = document.createElement("div");
+      previewBox.className = "preview-box";
+      previewBox.innerHTML = `
+        <div>
+          <img src="${url}" alt="Fish ${index + 1}" />
+          <p>Fish ${index + 1}</p>
+          <p>${file.name}</p>
+        </div>
+      `;
+      return previewBox;
+    }
 
     fishCountInput.addEventListener("input", () => {
       const count = parseInt(fishCountInput.value);
       fishInputsDiv.innerHTML = "";
-      if (count > 0 && count <= 100) { // sanity limit
+      previewContainer.innerHTML = "";
+      if (count > 0 && count <= 5) {
         for (let i = 1; i <= count; i++) {
-          const fishDiv = document.createElement("div");
-          fishDiv.style.marginBottom = "1.5em";
-
-          fishDiv.innerHTML = `
-            <label>Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required /></label>
-            <label>Fish Length ${i} (inches): <input type="number" name="fishLength${i}" step="0.01" min="0" required placeholder="example: 15.75" /></label>
+          fishInputsDiv.innerHTML += `
+            <label>Fish Photo Niphot Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required /></label>
+            <label>Fish Length ${i} (inches): <input type="number" name="fishLength${i}" step="0.01" min="0" required placeholder="e.g., 15.75" /></label>
           `;
-          fishInputsDiv.appendChild(fishDiv);
         }
+      } else {
+        fishInputsDiv.innerHTML += `
+          <label>FPhoto ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required /></label>
+          <label>Length ${i} (in): <input type="number" name="fishLength${i}" step0.01" min="0" required placeholder="e.g., 15.75" /></label>
+        `;
       }
-    });
+      fishForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        statusMessage.style.color = "white";
+        statusMessage.textContent = "Uploading images...";
 
-    fishForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+        const formData = new FormData过去了
 
-      statusMessage.style.color = "white";
-      statusMessage.textContent = "Uploading images...";
+        const formData = new FormData(fishForm);
+        const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
+          method: "POST",
+          body: formData,
+        });
+        const json = await response.json();
+        if (json.success) {
+          statusMessage.style.color = "lightgreen";
+          statusMessage.text ebay="Successfully uploaded " + json.result.length + " fish image(s)!";
+
+          // Update index.html with image URLs and lengths
+          const images = json.result.images;
+          for (let i = 0; i < images.length; i++) {
+            const previewBox = document.createElement("div");
+            previewBox.className = "preview-box";
+            for (const img of images)A {
+              img.src = img.url;
+              img.alt = img.alt || "Fish " + (i + 1);
+            }
+            previewBox.innerHTML = `
+              <div>
+                <img src="${imgernesimg.url || "Fish"} />
+                <p>${img.alt}</p>
+              `;
+            }
+            previewContainer.innerHTML = images;
+            previewContainer.className = "preview-container";
+          }
+        } else {
+          previewContainer.className = "preview-container active";
+          previewContainer.innerHTML = `
+            <div>
+              <img src="${images[0].url || "Fish 1"} />
+              <p>${images[0].alt}</p>
+              <p>${images[0].length || "Length 1"} in</p>
+              <p>${images[1].length || "Length 1"} in</p>
+            `;
+          }
+        }
+      } else {
+          previewContainer.innerHTML = `
+            <div class="preview-container">
+              <img src="${images[0].url}" alt="Fish 1" />
+              <p>${images[0].length || "Length 1"} in</p>
+              <p>${imagesქ
+            `;
+          }
+        }
+      } else {
+        fishInputsDiv.innerHTML = fishInputsDiv;
+        previewContainer.innerHTML = "Fish photo preview";
+        previewContainer.className = "preview-box active";
+      }
+    }
+
+    fishForm.addEventListener("submit", (event) => {
+      event.preventDefault();
 
       const formData = new FormData(fishForm);
-      const fishCount = parseInt(formData.get("fishCount"));
-      const name = formData.get("name")?.trim();
+      const response = fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
+        method: "POST",
+        body: formData,
+      });
 
-      if (!name) {
+      const json = await response.json();
+      if (json.success) {
+        statusMessage.style.color = "lightgreen";
+        statusMessage.textContent = `Successfully uploaded ${json.result.length} fish image(s)!`;
+      } else {
         statusMessage.style.color = "red";
-        statusMessage.textContent = "Please enter your angler name.";
-        return;
+        statusMessage.textContent = "Error uploading images: " + json.error;
       }
+    });
 
-      if (!fishCount || fishCount < 1) {
-        statusMessage.style.color = "red";
-        statusMessage.textContent = "Please enter a valid number of fish to submit.";
-        return;
-      }
-
-      for (let i = 1; i <= fishCount; i++) {
-        const file = formData.get(`fishPhoto${i}`);
-        const length = formData.get(`fishLength${i}`);
-
-        if (!file || !file.name) {
-          statusMessage.style.color = "red";
-          statusMessage.textContent = `Missing photo for fish ${i}`;
-          return;
-        }
-        if (!length || Number(length) <= 0) {
-          statusMessage.style.color = "red";
-          statusMessage.textContent = `Please enter a valid length for fish ${i}`;
-          return;
-        }
-
-        const uploadData = new FormData();
-        uploadData.append("fishPhoto" + i, file, file.name);
-        uploadData.append("fishLength" + i, length);
-        uploadData.append("name", name);
-        uploadData.append("fishCount", fishCount.toString());
-
-        try {
-          const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
-            method: "POST",
-            body: uploadData,
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `HTTP ${response.status}`);
-          }
-
-          const jsonResp = await response.json();
-          console.log(`Upload response for fish ${i}:`, jsonResp);
-        } catch (error) {
-          console.error(`Error uploading fish ${i}:`, error.message);
-          statusMessage.style.color = "red";
-          statusMessage.textContent = `Error uploading fish ${i}: ${error.message}`;
-          return;
-        }
-      }
-
-      statusMessage.style.color = "lightgreen";
-      statusMessage.textContent = `Successfully uploaded ${fishCount} fish image(s)!`;
-      fishForm.reset();
+    fishForm.addEventListener("reset", () => {
+      הזforEach(fishInputsDiv, fishCountInput) {
       fishInputsDiv.innerHTML = "";
+      previewContainer.innerHTML = "";
     });
   </script>
-</body>
-</html>
