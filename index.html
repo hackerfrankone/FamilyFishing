@@ -297,12 +297,18 @@
           throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
         const data = await response.json();
+        if (!data.images || data.images.length === 0) {
+          const anglerList = document.getElementById('angler-list');
+          anglerList.innerHTML = `<li>No images available for ${name}. Try refreshing the page.</li>`;
+        }
         return (data.images || []).map(item => ({
           url: item.url,
           length: item.length.toString()
         }));
       } catch (error) {
         console.error(`Failed to fetch images for ${name}: ${error.message}`);
+        const anglerList = document.getElementById('angler-list');
+        anglerList.innerHTML = `<li>Error loading images for ${name}: ${error.message}. Try refreshing the page.</li>`;
         return [];
       }
     }
@@ -335,6 +341,7 @@
       document.querySelectorAll('.angler-name').forEach(nameElement => {
         nameElement.addEventListener('click', async () => {
           const name = decodeURIComponent(nameElement.dataset.name);
+          localStorage.setItem('lastExpandedAngler', encodeURIComponent(name));
           const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
           const isActive = imageContainer.classList.contains('active');
           document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
@@ -412,8 +419,13 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadAnglerList();
-      setInterval(loadAnglerList, 30000);
+      setInterval(loadAnglerList, 60000);
       initTournament();
+      const lastExpanded = localStorage.getItem('lastExpandedAngler');
+      if (lastExpanded) {
+        const nameElement = document.querySelector(`.angler-name[data-name="${lastExpanded}"]`);
+        if (nameElement) nameElement.click();
+      }
     });
   </script>
 </head>
