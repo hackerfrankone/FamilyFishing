@@ -100,15 +100,18 @@
     <input type="number" id="fishCountSelect" name="fishCount" min="1" max="5" required placeholder="Enter number of fish" />
     <div id="fishInputs"></div>
     <div id="previewContainer" class="preview-container"></div>
-    <button type="submit">Submit</button>
+    <button type="submit">Upload to Dropbox</button>
     <div id="statusMessage"></div>
   </form>
+
   <script>
     const fishInputsDiv = document.getElementById("fishInputs");
     const fishCountInput = document.getElementById("fishCountSelect");
     const fishForm = document.getElementById("fishForm");
     const statusMessage = document.getElementById("statusMessage");
     const previewContainer = document.getElementById("previewContainer");
+
+    const DROPBOX_ACCESS_TOKEN = "YOUR_DROPBOX_ACCESS_TOKEN_HERE"; // <-- Replace securely on server or inject via JS
 
     function updateFishInputs(count) {
       fishInputsDiv.innerHTML = "";
@@ -152,7 +155,7 @@
     fishForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       statusMessage.style.color = "white";
-      statusMessage.textContent = "Uploading images...";
+      statusMessage.textContent = "Uploading to Dropbox...";
 
       const formData = new FormData(fishForm);
       const fishCount = parseInt(formData.get("fishCount"));
@@ -170,20 +173,46 @@
       }
 
       try {
-        const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
-          method: "POST",
-          body: formData,
-        });
-        const json = await response.json();
-        if (!response.ok) {
-          throw new Error(json.error || `HTTP ${response.status}`);
+        let uploadedCount = 0;
+
+        for (let i = 1; i <= fishCount; i++) {
+          const file = formData.get(`fishPhoto${i}`);
+          if (!file || !file.name) continue;
+
+          const arrayBuffer = await file.arrayBuffer();
+          const dropboxPath = `/fish-submissions/${name}/fish_${i}_${Date.now()}_${file.name}`;
+
+          const response = await fetch("https://content.dropboxapi.com/2/files/upload", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${DROPBOX_ACCESS_TOKEN}`,
+              "Dropbox-API-Arg": JSON.stringify({
+                path: dropboxPath,
+                mode: "add",
+                autorename: true,
+                mute: false
+              }),
+              "Content-Type": "application/octet-stream"
+            },
+            body: arrayBuffer
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Fish ${i} upload failed: ${errorData.error_summary || response.status}`);
+          }
+
+          uploadedCount++;
         }
+
         statusMessage.style.color = "lightgreen";
-        statusMessage.textContent = `Successfully uploaded ${fishCount} fish image(s)!`;
+        statusMessage.textContent = `Successfully uploaded ${uploadedCount} fish image(s) to Dropbox!`;
         fishForm.reset();
         fishInputsDiv.innerHTML = "";
         previewContainer.innerHTML = "";
+
       } catch (error) {
+        console.error(error);
         statusMessage.style.color = "red";
         statusMessage.textContent = `Error uploading: ${error.message}`;
       }
