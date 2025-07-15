@@ -407,12 +407,12 @@
         else countdownElement.classList.remove('countdown-red');
       };
       update();
-      const interval = setInterval(update, 2000);
+      const interval = setInterval(update, 180000);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       loadAnglerList();
-      setInterval(loadAnglerList, 30000);
+      setInterval(loadAnglerList, 180000);
       initTournament();
     });
   </script>
