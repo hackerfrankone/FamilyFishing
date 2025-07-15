@@ -298,7 +298,7 @@
         }
         const data = await response.json();
         return (data.images || []).map(item => ({
-          url: `${item.url}?ts=${Date.now()}`, // Cache busting
+          url: item.url,
           length: item.length.toString()
         }));
       } catch (error) {
@@ -350,26 +350,25 @@
             }
             images.forEach((item, index) => {
               const spot = index + 1;
-              if (spot <= 5) { // Ensure we don't exceed 5 spots
-                const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
-                if (bassElement) {
-                  bassElement.innerHTML = '';
-                  const img = document.createElement('img');
-                  img.src = item.url;
-                  img.alt = `Bass Spot ${spot} by ${name}`;
-                  img.loading = 'lazy';
-                  img.onerror = () => {
-                    bassElement.innerHTML = `No image for Bass Spot ${spot}`;
-                    bassElement.classList.add('error');
-                    bassElement.classList.remove('placeholder');
-                  };
-                  const lengthSpan = document.createElement('span');
-                  lengthSpan.className = 'fish-length';
-                  lengthSpan.textContent = item.length ? `${item.length} in` : 'N/A';
-                  bassElement.appendChild(img);
-                  bassElement.appendChild(lengthSpan);
+              const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
+              if (!bassElement) return;
+              if (item.url && item.url.startsWith('https://imagedelivery.net/')) {
+                bassElement.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = item.url;
+                img.alt = `Bass Spot ${spot} by ${name}`;
+                img.loading = 'lazy';
+                img.onerror = () => {
+                  bassElement.innerHTML = `No image for Bass Spot ${spot}`;
+                  bassElement.classList.add('error');
                   bassElement.classList.remove('placeholder');
-                }
+                };
+                const lengthSpan = document.createElement('span');
+                lengthSpan.className = 'fish-length';
+                lengthSpan.textContent = item.length ? `${item.length} in` : 'N/A';
+                bassElement.appendChild(img);
+                bassElement.appendChild(lengthSpan);
+                bassElement.classList.remove('placeholder');
               }
             });
           }
@@ -408,12 +407,12 @@
         else countdownElement.classList.remove('countdown-red');
       };
       update();
-      const interval = setInterval(update, 180000);
+      const interval = setInterval(update, 2000);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       loadAnglerList();
-      setInterval(loadAnglerList, 180000); // Set to 3 minutes (180,000 ms)
+      setInterval(loadAnglerList, 30000);
       initTournament();
     });
   </script>
