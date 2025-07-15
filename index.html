@@ -7,7 +7,7 @@
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3">
   <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://www.dropbox.com https://dl.dropboxusercontent.com https://upload.wikimedia.org data:; connect-src 'self' https://www.dropbox.com https://dl.dropboxusercontent.com https://fish-submit.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://www.dropbox.com https://dl.dropboxusercontent.com https://upload.wikimedia.org data:; connect-src 'self' https://fish-submit.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -275,13 +275,16 @@
     }
 
     async function fetchAnglerList() {
-      const url = 'YOUR_DROPBOX_CSV_SHARED_LINK?raw=1'; // Replace with your Dropbox shared link for angler_list.csv
+      const url = 'https://fish-submit.familyfishingfun2025.workers.dev/angler-list';
       try {
         const response = await fetch(`${url}?cacheBust=${Date.now()}`, { cache: 'no-cache' });
-        if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
-        const text = await response.text();
-        if (!text.trim()) throw new Error('Empty CSV');
-        return text.trim().split('\n').slice(1).map(row => row.split(',')[0].trim()).filter(name => name);
+        if (!response.ok) {
+          const errorText = await response.text().catch(() => 'No error text available');
+          throw new Error(`HTTP ${response.status} for ${url}: ${errorText}`);
+        }
+        const data = await response.json();
+        if (!data.anglers || !data.anglers.length) throw new Error('Empty angler list');
+        return data.anglers;
       } catch (error) {
         console.error(`Failed to fetch angler list: ${error.message}`);
         return [];
@@ -434,8 +437,8 @@
       </a>
       <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
       <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button">Archive</a>
-      <a href="submit.html" target="_blank" rel="noopener noreferrer" class="submit-fish-button">Submit Fish</a>
-      <a href="pages/tackle.html" target="_blank" rel="noopener noreferrer" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
+      <a href="submit.html" target="_blank" rel="noopener" class="submit-fish-button">Submit Fish</a>
+      <a href="pages/tackle.html" target="_blank" rel="noopener" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
     </div>
     <div class="tournament-info">
       <p class="main-text">1st Place: 100% Payout</p>
