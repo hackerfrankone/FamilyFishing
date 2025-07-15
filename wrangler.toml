@@ -7,6 +7,7 @@ workers_dev = true
 binding = "KV"
 id = "1bf9787e0d014e9a8aeb6e297e1ba76bc"
 
+
 [vars]
 CF_ACCOUNT_ID = ""
 CF_API_TOKEN = ""
