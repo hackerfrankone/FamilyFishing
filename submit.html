@@ -91,7 +91,7 @@
   </style>
 </head>
 <body>
-  <form id="fishForm" enctype="multipart/form-data" novalidate>
+  <form id="fishForm" enctype="multipart/form-data">
     <h2>Submit Your Catch</h2>
     <div class="name-warning">Must match your registered angler name (case-sensitive)</div>
     <label for="anglerName">Angler Name:</label>
@@ -179,10 +179,13 @@
       }
 
       try {
-        // Send form data to your Cloudflare Worker
+        // IMPORTANT: Your Cloudflare Worker must handle OPTIONS requests and send CORS headers
+        // Here we add mode: 'cors' to the fetch call to avoid CORS issues on modern browsers.
         const response = await fetch(WORKER_URL, {
           method: "POST",
-          body: formData
+          body: formData,
+          mode: 'cors',
+          credentials: 'omit',
         });
 
         if (!response.ok) {
