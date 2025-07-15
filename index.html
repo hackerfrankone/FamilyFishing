@@ -7,7 +7,7 @@
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3">
   <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://raw.githubusercontent.com https://upload.wikimedia.org https://dl.dropboxusercontent.com data:; connect-src 'self' https://raw.githubusercontent.com https://www.familyfishing.fun https://worldtimeapi.org https://fish-submit.familyfishingfun2025.workers.dev; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://www.dropbox.com https://dl.dropboxusercontent.com https://upload.wikimedia.org data:; connect-src 'self' https://www.dropbox.com https://dl.dropboxusercontent.com https://fish-submit.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -275,7 +275,7 @@
     }
 
     async function fetchAnglerList() {
-      const url = 'https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv';
+      const url = 'YOUR_DROPBOX_CSV_SHARED_LINK?raw=1'; // Replace with your Dropbox shared link for angler_list.csv
       try {
         const response = await fetch(`${url}?cacheBust=${Date.now()}`, { cache: 'no-cache' });
         if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
@@ -297,10 +297,8 @@
           throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
         const data = await response.json();
-        return (data.files || []).map(item => ({
-          url: item.sharedLink,
-          length: item.length || 'N/A'
-        }));
+        // Return single image as an array for consistency with UI
+        return data.imageUrl ? [{ url: data.imageUrl, length: 'N/A' }] : [];
       } catch (error) {
         console.error(`Failed to fetch images for ${name}: ${error.message}`);
         return [];
@@ -429,10 +427,10 @@
     <div class="social-buttons">
       <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
       <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" width="60" height="60">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook logo" width="60" height="60">
       </a>
       <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube logo" width="60" height="60">
       </a>
       <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
       <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button">Archive</a>
