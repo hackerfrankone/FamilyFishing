@@ -1,209 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Submit Your Catch</title>
-  <link rel="stylesheet" href="style.css?v=1.1" />
-  <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://fish-submit.familyfishingfun2025.workers.dev;">
+  <title>Family Fishing Fun - Submit Fish</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background: url('images/background.png') no-repeat center center fixed;
+      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=1');
+      background-color: #000;
       background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #fff;
       font-family: Arial, sans-serif;
-      color: white;
+      margin: 0;
+      padding: 20px;
     }
-    form {
-      background: rgba(0, 0, 0, 0.75);
-      max-width: 500px;
-      margin: 5vh auto;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #000;
-    }
-    label {
-      display: block;
-      margin-top: 1em;
-      font-weight: bold;
-    }
-    input[type="text"],
-    input[type="file"],
-    input[type="number"] {
-      width: 100%;
-      padding: 0.5em;
-      margin-top: 0.5em;
-      border-radius: 5px;
-      border: none;
-      font-size: 1em;
-    }
-    button {
-      margin-top: 1.5em;
-      width: 100%;
-      padding: 0.75em;
-      background-color: #28a745;
-      border: none;
-      border-radius: 5px;
-      font-size: 1.1em;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      color: white;
-    }
-    button:hover {
-      background-color: #218838;
-    }
-    .name-warning {
-      color: #ff6666;
-      font-weight: bold;
-      margin-bottom: 0.75em;
-      text-align: center;
-    }
-    #fishInputs label {
-      margin-top: 1em;
-      font-weight: normal;
-    }
-    #statusMessage {
-      margin-top: 1em;
-      font-weight: bold;
-      text-align: center;
-    }
-    .preview-container {
-      margin-top: 1em;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1em;
-    }
-    .preview-box {
-      text-align: center;
-    }
-    .preview-box img {
-      max-width: 100px;
-      max-height: 100px;
-      object-fit: cover;
-      border-radius: 4px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    }
-    .preview-box p {
-      margin: 0.5em 0 0;
-      font-size: 0.8em;
+    h1 { text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
+    .form-container { max-width: 600px; margin: 0 auto; background: rgba(0, 0, 0, 0.6); padding: 1rem; border-radius: 8px; }
+    .form-container input, .form-container button { display: block; width: 100%; margin: 10px 0; padding: 10px; }
+    .form-container button { background-color: #FFA500; color: white; border: none; cursor: pointer; font-weight: bold; }
+    .form-container button:hover { filter: brightness(75%); }
+    .error { color: #ff0000; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
+    .success { color: #FFD700; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
+    @media (max-width: 768px) {
+      .form-container { padding: 0.5rem; }
+      .form-container input, .form-container button { font-size: 0.9rem; }
     }
   </style>
 </head>
 <body>
-  <form id="fishForm" enctype="multipart/form-data">
-    <h2>Submit Your Catch</h2>
-    <div class="name-warning">Must match your registered angler name (case-sensitive)</div>
-    <label for="anglerName">Angler Name:</label>
-    <input type="text" id="anglerName" name="name" required autocomplete="off" />
-    <label for="fishCountSelect">Number of Fish (1-5):</label>
-    <input type="number" id="fishCountSelect" name="fishCount" min="1" max="5" required placeholder="Enter number of fish" />
-    <div id="fishInputs"></div>
-    <div id="previewContainer" class="preview-container"></div>
-    <button type="submit">Upload to Dropbox</button>
-    <div id="statusMessage"></div>
-  </form>
-
+  <h1>Submit Your Fish</h1>
+  <div class="form-container">
+    <input type="text" id="anglerName" placeholder="Enter your name" required>
+    <input type="file" id="fishImage" accept="image/*" required>
+    <button onclick="submitFish()">Submit</button>
+    <p id="message"></p>
+  </div>
   <script>
-    const fishInputsDiv = document.getElementById("fishInputs");
-    const fishCountInput = document.getElementById("fishCountSelect");
-    const fishForm = document.getElementById("fishForm");
-    const statusMessage = document.getElementById("statusMessage");
-    const previewContainer = document.getElementById("previewContainer");
+    async function submitFish() {
+      const name = document.getElementById('anglerName').value.trim();
+      const file = document.getElementById('fishImage').files[0];
+      const message = document.getElementById('message');
 
-    // Your actual Cloudflare Worker URL:
-    const WORKER_URL = "https://fish-submit.familyfishingfun2025.workers.dev/";
-
-    function updateFishInputs(count) {
-      fishInputsDiv.innerHTML = "";
-      previewContainer.innerHTML = "";
-      if (count >= 1 && count <= 5) {
-        for (let i = 1; i <= count; i++) {
-          const fishDiv = document.createElement("div");
-          fishDiv.style.marginBottom = "1.5em";
-          fishDiv.innerHTML = `
-            <label>Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required /></label>
-            <label>Fish Length ${i} (inches): <input type="number" name="fishLength${i}" step="0.01" min="0" required placeholder="example 15.75" /></label>
-          `;
-          fishInputsDiv.appendChild(fishDiv);
-
-          const fileInput = fishDiv.querySelector(`input[name="fishPhoto${i}"]`);
-          fileInput.addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = (ev) => {
-                // Clear previous preview of this fish if any
-                const existingPreview = previewContainer.querySelector(`.preview-box[data-index="${i}"]`);
-                if (existingPreview) existingPreview.remove();
-
-                const previewBox = document.createElement("div");
-                previewBox.className = "preview-box";
-                previewBox.dataset.index = i;
-                previewBox.innerHTML = `
-                  <img src="${ev.target.result}" alt="Fish ${i}" />
-                  <p>Fish ${i}: ${file.name}</p>
-                `;
-                previewContainer.appendChild(previewBox);
-              };
-              reader.readAsDataURL(file);
-            }
-          });
-        }
-      }
-    }
-
-    fishCountInput.addEventListener("input", () => {
-      const count = parseInt(fishCountInput.value) || 0;
-      updateFishInputs(count);
-    });
-
-    fishForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      statusMessage.style.color = "white";
-      statusMessage.textContent = "Uploading to Dropbox...";
-
-      const formData = new FormData(fishForm);
-      const fishCount = parseInt(formData.get("fishCount"));
-      const name = formData.get("name")?.trim();
-
-      if (!name) {
-        statusMessage.style.color = "red";
-        statusMessage.textContent = "Please enter your angler name.";
+      if (!name || !file) {
+        message.innerHTML = '<p class="error">Please provide both name and image</p>';
         return;
       }
-      if (!fishCount || fishCount < 1 || fishCount > 5) {
-        statusMessage.style.color = "red";
-        statusMessage.textContent = "Please enter a valid number of fish (1-5).";
-        return;
-      }
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('file', file);
 
       try {
-        // IMPORTANT: Your Cloudflare Worker must handle OPTIONS requests and send CORS headers
-        // Here we add mode: 'cors' to the fetch call to avoid CORS issues on modern browsers.
-        const response = await fetch(WORKER_URL, {
-          method: "POST",
+        const response = await fetch('https://fish-submit.familyfishingfun2025.workers.dev/', {
+          method: 'POST',
           body: formData,
-          mode: 'cors',
-          credentials: 'omit',
         });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText || "Upload failed");
+        const result = await response.json();
+        if (response.ok) {
+          message.innerHTML = `<p class="success">Image uploaded successfully! <a href="index.html" style="color: #00ffff;">View Angler List</a></p>`;
+        } else {
+          message.innerHTML = `<p class="error">Error: ${result.error}</p>`;
         }
-
-        statusMessage.style.color = "lightgreen";
-        statusMessage.textContent = "Successfully uploaded fish images to Dropbox!";
-        fishForm.reset();
-        fishInputsDiv.innerHTML = "";
-        previewContainer.innerHTML = "";
       } catch (error) {
-        console.error(error);
-        statusMessage.style.color = "red";
-        statusMessage.textContent = `Error uploading: ${error.message}`;
+        message.innerHTML = '<p class="error">Failed to submit image</p>';
       }
-    });
+    }
   </script>
 </body>
 </html>
