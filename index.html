@@ -7,7 +7,7 @@
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3">
   <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://raw.githubusercontent.com https://upload.wikimedia.org https://imagedelivery.net data:; connect-src 'self' https://raw.githubusercontent.com https://www.familyfishing.fun https://worldtimeapi.org https://fish-submit.familyfishingfun2025.workers.dev; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://raw.githubusercontent.com https://upload.wikimedia.org https://dl.dropboxusercontent.com data:; connect-src 'self' https://raw.githubusercontent.com https://www.familyfishing.fun https://worldtimeapi.org https://fish-submit.familyfishingfun2025.workers.dev; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -297,9 +297,9 @@
           throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
         const data = await response.json();
-        return (data.images || []).map(item => ({
-          url: item.url,
-          length: item.length.toString()
+        return (data.files || []).map(item => ({
+          url: item.sharedLink,
+          length: item.length || 'N/A'
         }));
       } catch (error) {
         console.error(`Failed to fetch images for ${name}: ${error.message}`);
@@ -352,7 +352,7 @@
               const spot = index + 1;
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (!bassElement) return;
-              if (item.url && item.url.startsWith('https://imagedelivery.net/')) {
+              if (item.url && item.url.startsWith('https://dl.dropboxusercontent.com/')) {
                 bassElement.innerHTML = '';
                 const img = document.createElement('img');
                 img.src = item.url;
@@ -365,7 +365,7 @@
                 };
                 const lengthSpan = document.createElement('span');
                 lengthSpan.className = 'fish-length';
-                lengthSpan.textContent = item.length ? `${item.length} in` : 'N/A';
+                lengthSpan.textContent = item.length !== 'N/A' ? `${item.length} in` : 'N/A';
                 bassElement.appendChild(img);
                 bassElement.appendChild(lengthSpan);
                 bassElement.classList.remove('placeholder');
