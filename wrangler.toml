@@ -1,7 +1,13 @@
 name = "fish-submit"
 main = "fish-submit.js"
-compatibility_date = "2025-07-14"
+compatibility_date = "2025-07-15"
 
 [[kv_namespaces]]
 binding = "KV"
 id = "1bf9787e0d014e9a8aeb6e297e1ba76bc"
+
+[vars]
+CF_ACCOUNT_ID = "312be46039aca8bf23a26050451a3bda"
+CF_API_TOKEN = "Oej3NilNKR7HejPTvjRhfgU6oTkeUz1Jo4CzW65q"
+CF_IMAGE_NAMESPACE = "KAl3aX9juos101z8hH6mSQ"
+CSV_URL = "https://raw.githubusercontent.com/hackerfrankone/FamilyFishing/main/CSV/angler_list.csv"
