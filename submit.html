@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://fish-submit.familyfishingfun2025.workers.dev;">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://fish-submit.familyfishingfun2025.workers.dev; img-src 'self' https://hackerfrankone.github.io;" />
   <title>Family Fishing Fun - Submit Fish</title>
   <style>
     body {
@@ -19,24 +19,58 @@
       margin: 0;
       padding: 20px;
     }
-    h1 { text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); }
-    .form-container { max-width: 600px; margin: 0 auto; background: rgba(0, 0, 0, 0.6); padding: 1rem; border-radius: 8px; }
-    .form-container input, .form-container button { display: block; width: 100%; margin: 10px 0; padding: 10px; }
-    .form-container button { background-color: #FFA500; color: white; border: none; cursor: pointer; font-weight: bold; }
-    .form-container button:hover { filter: brightness(75%); }
-    .error { color: #ff0000; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
-    .success { color: #FFD700; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
+    h1 {
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    .form-container input,
+    .form-container button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+    }
+    .form-container button {
+      background-color: #ffa500;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .form-container button:hover {
+      filter: brightness(75%);
+    }
+    .error {
+      color: #ff0000;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    .success {
+      color: #ffd700;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
     @media (max-width: 768px) {
-      .form-container { padding: 0.5rem; }
-      .form-container input, .form-container button { font-size: 0.9rem; }
+      .form-container {
+        padding: 0.5rem;
+      }
+      .form-container input,
+      .form-container button {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
   <h1>Submit Your Fish</h1>
   <div class="form-container">
-    <input type="text" id="anglerName" placeholder="Enter your name" required>
-    <input type="file" id="fishImage" accept="image/*" required>
+    <input type="text" id="anglerName" placeholder="Enter your name" required />
+    <input type="file" id="fishImage" accept="image/*" required />
     <button onclick="submitFish()">Submit</button>
     <p id="message"></p>
   </div>
