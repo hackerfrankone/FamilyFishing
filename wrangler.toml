@@ -1,6 +1,7 @@
 name = "fish-submit"
 main = "fish-submit.js"
 compatibility_date = "2025-07-15"
+workers_dev = true
 
 [[kv_namespaces]]
 binding = "KV"
