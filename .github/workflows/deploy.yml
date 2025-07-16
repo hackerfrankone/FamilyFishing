@@ -12,8 +12,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use a stable Node.js version
-          cache: 'npm' # Cache npm dependencies
+          node-version: '20'
+          cache: 'npm'
       - name: Install Dependencies
         run: npm install
       - name: Deploy with Wrangler
@@ -22,6 +22,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           packageManager: npm
-          command: deploy # Use 'deploy' instead of deprecated 'publish'
+          command: deploy
         env:
-          NODE_OPTIONS: --openssl-legacy-provider # For Node.js 17+ compatibility
+          DROPBOX_CLIENT_ID: ${{ secrets.DROPBOX_CLIENT_ID }}
+          DROPBOX_CLIENT_SECRET: ${{ secrets.DROPBOX_CLIENT_SECRET }}
+          DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+          NODE_OPTIONS: --openssl-legacy-provider
