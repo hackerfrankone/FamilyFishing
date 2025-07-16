@@ -80,11 +80,16 @@
       gap: 0.5rem;
       margin-bottom: 0.5rem;
     }
-    .error-message {
-      color: #ff0000;
+    .error-message, .success-message {
       font-size: 0.9rem;
       text-align: center;
       display: none;
+    }
+    .error-message {
+      color: #ff0000;
+    }
+    .success-message {
+      color: #00ff00;
     }
     @media (max-width: 768px) {
       .submit-form { padding: 0.5rem; }
@@ -135,22 +140,71 @@
       const anglerSelect = document.getElementById('anglerName');
       const fishCount = parseInt(document.getElementById('fishCount').value) || 0;
       const submitButton = document.getElementById('submitButton');
+      const errorMessage = document.getElementById('errorMessage');
+      
       let isValid = anglerSelect.value !== '' && fishCount >= 1 && fishCount <= 5;
+      if (!isValid) {
+        console.log('Validation failed:', {
+          angler: anglerSelect.value,
+          fishCount: fishCount
+        });
+      }
       
       for (let i = 1; i <= fishCount; i++) {
         const photo = document.getElementById(`fishPhoto${i}`).files[0];
         const length = document.getElementById(`fishLength${i}`).value;
         if (!photo || !length || isNaN(parseFloat(length)) || parseFloat(length) <= 0) {
           isValid = false;
+          console.log(`Fish ${i} invalid:`, { photo: !!photo, length: length });
           break;
         }
       }
       
       submitButton.disabled = !isValid;
+      errorMessage.style.display = isValid ? 'none' : 'block';
+      errorMessage.textContent = isValid ? '' : 'Please select a valid angler and provide at least one fish photo and valid length.';
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const form = document.getElementById('fishForm');
+      const errorMessage = document.getElementById('errorMessage');
+      const successMessage = document.getElementById('successMessage');
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+      
+      try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+        
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || `HTTP ${response.status}`);
+        }
+        
+        successMessage.textContent = result.message || 'Submission successful!';
+        successMessage.style.display = 'block';
+        form.reset();
+        document.getElementById('anglerName').value = '';
+        document.getElementById('fishCount').value = '';
+        for (let i = 1; i <= 5; i++) {
+          document.getElementById(`fishEntry${i}`).style.display = 'none';
+        }
+        document.getElementById('submitButton').disabled = true;
+      } catch (error) {
+        console.error('Submission error:', error.message);
+        errorMessage.textContent = `Submission failed: ${error.message}`;
+        errorMessage.style.display = 'block';
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       populateAnglerDropdown();
+      document.getElementById('fishForm').addEventListener('submit', handleSubmit);
       document.getElementById('anglerName').addEventListener('change', validateForm);
       document.getElementById('fishCount').addEventListener('change', (e) => {
         const count = parseInt(e.target.value) || 0;
@@ -173,6 +227,7 @@
     <label for="anglerName">Angler Name:</label>
     <select id="anglerName" name="name" required></select>
     <p id="errorMessage" class="error-message"></p>
+    <p id="successMessage" class="success-message"></p>
     
     <label for="fishCount">Number of Fish (1-5):</label>
     <input type="number" id="fishCount" name="fishCount" min="1" max="5" required>
