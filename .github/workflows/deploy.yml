@@ -1,4 +1,4 @@
-name: Deploy Cloudflare Worker
+name: Deploy to Cloudflare Workers
 on:
   push:
     branches:
@@ -6,14 +6,22 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    name: Deploy
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Deploy to Cloudflare
+          node-version: '20' # Use a stable Node.js version
+          cache: 'npm' # Cache npm dependencies
+      - name: Install Dependencies
+        run: npm install
+      - name: Deploy with Wrangler
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          packageManager: npm
+          command: deploy # Use 'deploy' instead of deprecated 'publish'
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider # For Node.js 17+ compatibility
