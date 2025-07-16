@@ -2,122 +2,217 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Submit Fish Picture</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.paypalobjects.com https://www.paypal.com; frame-ancestors 'none';">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Submit Your Catch</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
   <style>
+    /* Your original CSS restored */
     body {
       background-color: #000;
       color: #00FF00;
       font-family: monospace;
       text-align: center;
-      padding: 40px;
+      padding: 50px;
+      margin: 0;
     }
 
     h1 {
       font-size: 2.5rem;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
-    input[type="file"] {
-      margin: 20px 0;
+    /* Added fish submit form styling from your reference */
+    form {
+      background: rgba(0, 0, 0, 0.75);
+      max-width: 500px;
+      margin: 2rem auto 4rem auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00FF00;
+      text-align: left;
+      color: #66ff66;
+      font-weight: normal;
     }
-
-    .button {
+    label {
+      display: block;
+      margin-top: 1em;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="file"],
+    input[type="number"] {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.5em;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+      background-color: #000;
+      color: #00FF00;
+      border: 1px solid #00FF00;
+    }
+    button {
+      margin-top: 1.5em;
+      width: 100%;
+      padding: 0.75em;
       background-color: #000;
       border: 2px solid #00FF00;
-      color: #00FF00;
-      padding: 10px 20px;
-      font-size: 1rem;
+      border-radius: 5px;
+      font-size: 1.1em;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.3s;
-    }
-
-    .button:hover {
-      transform: scale(1.05);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      color: #00FF00;
+      font-weight: bold;
       box-shadow: 0 0 10px #00FF00;
     }
-
-    .message {
-      margin-top: 20px;
-      font-size: 1rem;
+    button:hover {
+      background-color: #003300;
+      box-shadow: 0 0 20px #00FF00;
+    }
+    .name-warning {
+      color: #66ff66;
+      font-weight: bold;
+      margin-bottom: 0.75em;
+      text-align: center;
+    }
+    #fishInputs label {
+      margin-top: 1em;
+      font-weight: normal;
+    }
+    #statusMessage {
+      margin-top: 1em;
+      font-weight: bold;
+      text-align: center;
       color: #66ff66;
     }
-
-    .disabled {
-      opacity: 0.5;
-      pointer-events: none;
+    .preview-container {
+      margin-top: 1em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      justify-content: center;
+    }
+    .preview-box {
+      text-align: center;
+    }
+    .preview-box img {
+      max-width: 100px;
+      max-height: 100px;
+      object-fit: cover;
+      border-radius: 4px;
+      box-shadow: 0 0 5px #00FF00;
+    }
+    .preview-box p {
+      margin: 0.5em 0 0;
+      font-size: 0.8em;
     }
   </style>
 </head>
 <body>
 
-  <h1>Submit Your Fish Picture</h1>
+  <h1>Submit Your Catch</h1>
 
-  <form id="uploadForm">
-    <input type="file" id="fileInput" name="file" accept="image/*" required />
-    <br />
-    <button type="submit" class="button" id="submitBtn">Submit</button>
+  <form id="fishForm" enctype="multipart/form-data" novalidate>
+    <div class="name-warning">Must match your registered angler name (case-sensitive)</div>
+    <label for="anglerName">Angler Name:</label>
+    <input type="text" id="anglerName" name="name" required autocomplete="off" />
+    
+    <label for="fishCountSelect">Number of Fish (1-5):</label>
+    <input type="number" id="fishCountSelect" name="fishCount" min="1" max="5" required placeholder="Enter number of fish" />
+    
+    <div id="fishInputs"></div>
+    <div id="previewContainer" class="preview-container"></div>
+    
+    <button type="submit">Submit</button>
+    <div id="statusMessage"></div>
   </form>
 
-  <div class="message" id="messageArea"></div>
-
   <script>
-    const DROPBOX_URL = "https://www.dropbox.com/request/cI0PMHqjsdo9FrZ0KRMG";
+    const fishInputsDiv = document.getElementById("fishInputs");
+    const fishCountInput = document.getElementById("fishCountSelect");
+    const fishForm = document.getElementById("fishForm");
+    const statusMessage = document.getElementById("statusMessage");
+    const previewContainer = document.getElementById("previewContainer");
 
-    const cooldownSeconds = 60; // Prevent repeat submits for 1 minute
-    let lastUploadTime = 0;
+    function updateFishInputs(count) {
+      fishInputsDiv.innerHTML = "";
+      previewContainer.innerHTML = "";
+      if (count >= 1 && count <= 5) {
+        for (let i = 1; i <= count; i++) {
+          const fishDiv = document.createElement("div");
+          fishDiv.style.marginBottom = "1.5em";
+          fishDiv.innerHTML = `
+            <label>Fish Photo ${i}: <input type="file" name="fishPhoto${i}" accept="image/*" required /></label>
+            <label>Fish Length ${i} (inches): <input type="number" name="fishLength${i}" step="0.01" min="0" required placeholder="example 15.75" /></label>
+          `;
+          fishInputsDiv.appendChild(fishDiv);
 
-    const form = document.getElementById("uploadForm");
-    const message = document.getElementById("messageArea");
-    const submitBtn = document.getElementById("submitBtn");
-    const fileInput = document.getElementById("fileInput");
-
-    function validateFile(file) {
-      if (!file) {
-        message.textContent = "Please select a file.";
-        return false;
+          const fileInput = fishDiv.querySelector(`input[name="fishPhoto${i}"]`);
+          fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (ev) => {
+                const previewBox = document.createElement("div");
+                previewBox.className = "preview-box";
+                previewBox.innerHTML = `
+                  <img src="${ev.target.result}" alt="Fish ${i}" />
+                  <p>Fish ${i}: ${file.name}</p>
+                `;
+                previewContainer.appendChild(previewBox);
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
       }
-      if (!file.type.startsWith("image/")) {
-        message.textContent = "Only image files are allowed.";
-        return false;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        message.textContent = "Image is too large. Max 5MB.";
-        return false;
-      }
-      return true;
     }
 
-    function startCooldown() {
-      lastUploadTime = Date.now();
-      submitBtn.classList.add("disabled");
-      fileInput.disabled = true;
+    fishCountInput.addEventListener("input", () => {
+      const count = parseInt(fishCountInput.value) || 0;
+      updateFishInputs(count);
+    });
 
-      setTimeout(() => {
-        submitBtn.classList.remove("disabled");
-        fileInput.disabled = false;
-        message.textContent = "You can upload another image now.";
-      }, cooldownSeconds * 1000);
-    }
-
-    form.addEventListener("submit", (e) => {
+    fishForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      statusMessage.style.color = "#66ff66";
+      statusMessage.textContent = "Uploading images...";
 
-      const file = fileInput.files[0];
+      const formData = new FormData(fishForm);
+      const fishCount = parseInt(formData.get("fishCount"));
+      const name = formData.get("name")?.trim();
 
-      if (!validateFile(file)) return;
-
-      const now = Date.now();
-      if (now - lastUploadTime < cooldownSeconds * 1000) {
-        message.textContent = `Please wait before uploading again.`;
+      if (!name) {
+        statusMessage.style.color = "#ff6666";
+        statusMessage.textContent = "Please enter your angler name.";
+        return;
+      }
+      if (!fishCount || fishCount < 1 || fishCount > 5) {
+        statusMessage.style.color = "#ff6666";
+        statusMessage.textContent = "Please enter a valid number of fish (1-5).";
         return;
       }
 
-      message.textContent = "Opening Dropbox upload page...";
-      startCooldown();
-
-      // Open Dropbox file request in a new tab
-      window.open(DROPBOX_URL, "_blank");
+      try {
+        const response = await fetch("https://fish-submit.familyfishingfun2025.workers.dev/", {
+          method: "POST",
+          body: formData,
+        });
+        const json = await response.json();
+        if (!response.ok) {
+          throw new Error(json.error || `HTTP ${response.status}`);
+        }
+        statusMessage.style.color = "#66ff66";
+        statusMessage.textContent = `Successfully uploaded ${fishCount} fish image(s)!`;
+        fishForm.reset();
+        fishInputsDiv.innerHTML = "";
+        previewContainer.innerHTML = "";
+      } catch (error) {
+        statusMessage.style.color = "#ff6666";
+        statusMessage.textContent = `Error uploading: ${error.message}`;
+      }
     });
   </script>
 
