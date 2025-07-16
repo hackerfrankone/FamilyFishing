@@ -136,33 +136,40 @@
         anglers.map(name => `<option value="${encodeURIComponent(name)}">${name}</option>`).join('');
     }
 
+    function populateFishCountDropdown() {
+      const fishCountSelect = document.getElementById('fishCount');
+      fishCountSelect.innerHTML = '<option value="">Select number of fish</option>' + 
+        [1, 2, 3, 4, 5].map(num => `<option value="${num}">${num}</option>`).join('');
+    }
+
     function validateForm() {
       const anglerSelect = document.getElementById('anglerName');
-      const fishCount = parseInt(document.getElementById('fishCount').value) || 0;
+      const fishCountSelect = document.getElementById('fishCount');
       const submitButton = document.getElementById('submitButton');
       const errorMessage = document.getElementById('errorMessage');
       
-      let isValid = anglerSelect.value !== '' && fishCount >= 1 && fishCount <= 5;
-      if (!isValid) {
-        console.log('Validation failed:', {
-          angler: anglerSelect.value,
-          fishCount: fishCount
-        });
-      }
+      const anglerValid = anglerSelect.value !== '';
+      const fishCount = parseInt(fishCountSelect.value) || 0;
+      const fishCountValid = fishCount >= 1 && fishCount <= 5;
+      
+      let isValid = anglerValid && fishCountValid;
+      if (!anglerValid) console.log('Validation failed: No angler selected');
+      if (!fishCountValid) console.log('Validation failed: Invalid fish count:', fishCount);
       
       for (let i = 1; i <= fishCount; i++) {
         const photo = document.getElementById(`fishPhoto${i}`).files[0];
         const length = document.getElementById(`fishLength${i}`).value;
-        if (!photo || !length || isNaN(parseFloat(length)) || parseFloat(length) <= 0) {
+        const lengthValid = length && !isNaN(parseFloat(length)) && parseFloat(length) > 0;
+        if (!photo || !lengthValid) {
           isValid = false;
-          console.log(`Fish ${i} invalid:`, { photo: !!photo, length: length });
+          console.log(`Fish ${i} invalid:`, { photo: !!photo, length: length, lengthValid });
           break;
         }
       }
       
       submitButton.disabled = !isValid;
+      errorMessage.textContent = isValid ? '' : 'Please select a valid angler, number of fish (1-5), and provide valid photos and lengths.';
       errorMessage.style.display = isValid ? 'none' : 'block';
-      errorMessage.textContent = isValid ? '' : 'Please select a valid angler and provide at least one fish photo and valid length.';
     }
 
     async function handleSubmit(event) {
@@ -186,8 +193,9 @@
           throw new Error(result.error || `HTTP ${response.status}`);
         }
         
-        successMessage.textContent = result.message || 'Submission successful!';
+        successMessage.textContent = 'Fish submitted successfully!';
         successMessage.style.display = 'block';
+        alert('Submission successful! Your fish have been uploaded.');
         form.reset();
         document.getElementById('anglerName').value = '';
         document.getElementById('fishCount').value = '';
@@ -204,6 +212,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       populateAnglerDropdown();
+      populateFishCountDropdown();
       document.getElementById('fishForm').addEventListener('submit', handleSubmit);
       document.getElementById('anglerName').addEventListener('change', validateForm);
       document.getElementById('fishCount').addEventListener('change', (e) => {
@@ -225,12 +234,21 @@
   <h1>Submit Your Fish</h1>
   <form id="fishForm" class="submit-form" action="https://fish-submit.familyfishingfun2025.workers.dev/" method="POST" enctype="multipart/form-data">
     <label for="anglerName">Angler Name:</label>
-    <select id="anglerName" name="name" required></select>
+    <select id="anglerName" name="name" required>
+      <option value="">Loading anglers...</option>
+    </select>
     <p id="errorMessage" class="error-message"></p>
     <p id="successMessage" class="success-message"></p>
     
     <label for="fishCount">Number of Fish (1-5):</label>
-    <input type="number" id="fishCount" name="fishCount" min="1" max="5" required>
+    <select id="fishCount" name="fishCount" required>
+      <option value="">Select number of fish</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
     
     <div id="fishEntry1" class="fish-entry">
       <label for="fishPhoto1">Fish 1 Photo:</label>
