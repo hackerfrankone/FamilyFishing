@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
-  <base href="https://hackerfrankone.github.io/FamilyFishing/">
+  <base href="https://www.familyfishing.fun/">
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3">
   <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://www.dropbox.com https://dl.dropboxusercontent.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://www.dropbox.com https://dl.dropboxusercontent.com https://fish-submit.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <style>
-    /* Your existing CSS styles unchanged */
     body {
-      background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=1');
+      background-image: url('https://www.familyfishing.fun/images/background.png?v=1');
       background-color: #000;
       background-size: cover;
       background-position: center;
@@ -276,18 +274,34 @@
     }
 
     async function fetchAnglerList() {
-      try {
-        const response = await fetch('https://fish-submit.familyfishingfun2025.workers.dev/', { cache: 'no-cache' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        if (!Array.isArray(data.anglers) || data.anglers.length === 0) {
-          throw new Error('No anglers found or invalid data format');
+      const maxRetries = 3;
+      let attempts = 0save
+      while (attempts < maxRetries) {
+        try {
+          const response = await fetch('https://fish-submit.familyfishingfun2025.workers.dev/anglers', {
+            cache: 'no-cache',
+            headers: { 'Accept': 'application/json' }
+          });
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+          }
+          const data = await response.json();
+          if (!Array.isArray(data.anglers) || data.anglers.length === 0) {
+            throw new Error('No anglers found or invalid data format');
+          }
+          return data.anglers.filter(name => name && typeof name === 'string').map(name => name.trim());
+        } catch (error) {
+          attempts++;
+          console.error(`Attempt ${attempts} failed to load anglers: ${error.message}`);
+          if (attempts === maxRetries) {
+            console.error('Max retries reached. Unable to load angler list.');
+            return [];
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
         }
-        return data.anglers.filter(name => name && typeof name === 'string').map(name => name.trim());
-      } catch (error) {
-        console.error('Failed to load anglers:', error.message);
-        return [];
       }
+      return [];
     }
 
     async function fetchAnglerImages(name) {
@@ -299,7 +313,7 @@
           throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
         const data = await response.json();
-        return data.imageUrl ? [{ url: data.imageUrl, length: 'N/A' }] : [];
+        return data.images || [];
       } catch (error) {
         console.error(`Failed to fetch images for ${name}: ${error.message}`);
         return [];
@@ -329,7 +343,7 @@
             </div>
           </li>
         `).join('')
-        : '<li>No anglers registered</li>';
+        : '<li>Unable to load anglers. Please try again later.</li>';
 
       document.querySelectorAll('.angler-name').forEach(nameElement => {
         nameElement.addEventListener('click', async () => {
@@ -349,6 +363,7 @@
             }
             images.forEach((item, index) => {
               const spot = index + 1;
+              if (spot > 5) return;
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (!bassElement) return;
               if (item.url && item.url.startsWith('https://dl.dropboxusercontent.com/')) {
