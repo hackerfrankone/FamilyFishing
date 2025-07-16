@@ -57,22 +57,27 @@
       color: #000;
       font-size: 1rem;
     }
-    select:disabled, input[type="submit"]:disabled {
+    select:disabled {
       background: #666;
       cursor: not-allowed;
     }
     input[type="submit"] {
-      background-color: #FFA500;
+      background-color: #00ff00;
       color: #fff;
       font-weight: bold;
       border: none;
       padding: 0.75rem;
       border-radius: 4px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: filter 0.3s ease;
+    }
+    input[type="submit"]:disabled {
+      background-color: #00ff00;
+      cursor: not-allowed;
+      filter: brightness(70%);
     }
     input[type="submit"]:hover:not(:disabled) {
-      background-color: #cc8400;
+      filter: brightness(120%);
     }
     .fish-entry {
       display: flex;
@@ -80,16 +85,11 @@
       gap: 0.5rem;
       margin-bottom: 0.5rem;
     }
-    .error-message, .success-message {
+    .success-message {
       font-size: 0.9rem;
       text-align: center;
-      display: none;
-    }
-    .error-message {
-      color: #ff0000;
-    }
-    .success-message {
       color: #00ff00;
+      display: none;
     }
     @media (max-width: 768px) {
       .submit-form { padding: 0.5rem; }
@@ -121,19 +121,17 @@
 
     async function populateAnglerDropdown() {
       const anglerSelect = document.getElementById('anglerName');
-      const errorMessage = document.getElementById('errorMessage');
       anglerSelect.disabled = true;
       anglerSelect.innerHTML = '<option value="">Loading anglers...</option>';
       const anglers = await fetchAnglerList();
       anglerSelect.disabled = false;
       if (anglers.length === 0) {
         anglerSelect.innerHTML = '<option value="">No anglers registered</option>';
-        errorMessage.textContent = 'No registered anglers available. Please join the tournament.';
-        errorMessage.style.display = 'block';
+        alert('No registered anglers available. Please join the tournament.');
         return;
       }
       anglerSelect.innerHTML = '<option value="">Select your name</option>' + 
-        anglers.map(name => `<option value="${encodeURIComponent(name)}">${name}</option>`).join('');
+        anglers.map(name => `<option value="${name}">${name}</option>`).join('');
     }
 
     function populateFishCountDropdown() {
@@ -146,7 +144,6 @@
       const anglerSelect = document.getElementById('anglerName');
       const fishCountSelect = document.getElementById('fishCount');
       const submitButton = document.getElementById('submitButton');
-      const errorMessage = document.getElementById('errorMessage');
       
       const anglerValid = anglerSelect.value !== '';
       const fishCount = parseInt(fishCountSelect.value) || 0;
@@ -168,20 +165,27 @@
       }
       
       submitButton.disabled = !isValid;
-      errorMessage.textContent = isValid ? '' : 'Please select a valid angler, number of fish (1-5), and provide valid photos and lengths.';
-      errorMessage.style.display = isValid ? 'none' : 'block';
     }
 
     async function handleSubmit(event) {
       event.preventDefault();
       const form = document.getElementById('fishForm');
-      const errorMessage = document.getElementById('errorMessage');
       const successMessage = document.getElementById('successMessage');
-      errorMessage.style.display = 'none';
       successMessage.style.display = 'none';
       
       try {
         const formData = new FormData(form);
+        console.log('Submitting form with data:', {
+          name: formData.get('name'),
+          fishCount: formData.get('fishCount'),
+          photos: Array.from(formData.entries())
+            .filter(([key]) => key.startsWith('fishPhoto'))
+            .map(([key, value]) => key),
+          lengths: Array.from(formData.entries())
+            .filter(([key]) => key.startsWith('fishLength'))
+            .map(([key, value]) => value)
+        });
+        
         const response = await fetch(form.action, {
           method: 'POST',
           body: formData,
@@ -205,8 +209,7 @@
         document.getElementById('submitButton').disabled = true;
       } catch (error) {
         console.error('Submission error:', error.message);
-        errorMessage.textContent = `Submission failed: ${error.message}`;
-        errorMessage.style.display = 'block';
+        alert(`Submission failed: ${error.message}`);
       }
     }
 
@@ -237,7 +240,6 @@
     <select id="anglerName" name="name" required>
       <option value="">Loading anglers...</option>
     </select>
-    <p id="errorMessage" class="error-message"></p>
     <p id="successMessage" class="success-message"></p>
     
     <label for="fishCount">Number of Fish (1-5):</label>
