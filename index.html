@@ -311,9 +311,9 @@
         }
         const data = await response.json();
         return Array.isArray(data) ? data.map(item => ({
-          url: item.imageUrl || '',
+          url: item.url || '',
           length: item.length || 'N/A'
-        })) : data.imageUrl ? [{ url: data.imageUrl, length: data.length || 'N/A' }] : [];
+        })) : data.url ? [{ url: data.url, length: data.length || 'N/A' }] : [];
       } catch (error) {
         console.error(`Failed to fetch images for ${name}: ${error.message}`);
         return [];
@@ -444,6 +444,52 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadAnglerList();
       setInterval(loadAnglerList, 60000); // Refresh every 60 seconds
+      window.addEventListener('message', async (event) => {
+        if (event.origin !== 'https://hackerfrankone.github.io') return;
+        if (event.data.type === 'refreshAnglerList' && event.data.angler) {
+          const name = event.data.angler;
+          const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
+          if (imageContainer) {
+            imageContainer.classList.add('active');
+            const images = await fetchAnglerImages(name);
+            for (let i = 1; i <= 5; i++) {
+              const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
+              if (!bassElement) continue;
+              bassElement.innerHTML = `Bass Spot ${i}`;
+              bassElement.classList.add('placeholder');
+              bassElement.classList.remove('error');
+            }
+            images.forEach((item, index) => {
+              const spot = index + 1;
+              if (spot > 5) return;
+              const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
+              if (!bassElement) return;
+              if (item.url && item.url.startsWith('https://dl.dropboxusercontent.com/')) {
+                bassElement.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = item.url;
+                img.alt = `Bass Spot ${spot} by ${name}`;
+                img.loading = 'lazy';
+                img.onerror = () => {
+                  bassElement.innerHTML = `No image for Bass Spot ${spot}`;
+                  bassElement.classList.add('error');
+                  bassElement.classList.remove('placeholder');
+                };
+                const lengthSpan = document.createElement('span');
+                lengthSpan.className = 'fish-length';
+                lengthSpan.textContent = item.length !== 'N/A' ? `${item.length} in` : 'N/A';
+                bassElement.appendChild(img);
+                bassElement.appendChild(lengthSpan);
+                bassElement.classList.remove('placeholder');
+              } else {
+                bassElement.innerHTML = `No image for Bass Spot ${spot}`;
+                bassElement.classList.add('error');
+                bassElement.classList.remove('placeholder');
+              }
+            });
+          }
+        }
+      });
       initTournament();
     });
   </script>
