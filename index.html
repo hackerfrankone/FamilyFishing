@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.ico?v=3">
-  <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png?v=3">
+  <link rel="icon" type="image/x-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.ico">
+  <link rel="apple-touch-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://www.dropbox.com https://dl.dropboxusercontent.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://www.dropbox.com https://dl.dropboxusercontent.com https://fish-submit.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
@@ -279,7 +279,7 @@
 
     async function fetchAnglerList() {
       try {
-        const response = await fetch('https://hackerfrankone.github.io/FamilyFishing/CSV/angler_list.csv', {
+        const response = await fetch('https://fish-submit.familyfishingfun2025.workers.dev/proxy/angler_list.csv', {
           cache: 'no-cache',
           headers: { 'Accept': 'text/csv' }
         });
@@ -320,7 +320,6 @@
       }
     }
 
-    // Simple debounce function to limit rapid clicks
     function debounce(func, wait) {
       let timeout;
       return function executedFunction(...args) {
@@ -376,7 +375,7 @@
             }
             images.forEach((item, index) => {
               const spot = index + 1;
-              if (spot > 5) return; // Limit to 5 spots
+              if (spot > 5) return;
               const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
               if (!bassElement) return;
               if (item.url && item.url.startsWith('https://dl.dropboxusercontent.com/')) {
@@ -444,7 +443,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadAnglerList();
-      setInterval(loadAnglerList, 30000);
+      setInterval(loadAnglerList, 60000);
       initTournament();
     });
   </script>
