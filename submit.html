@@ -2,38 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.paypalobjects.com https://www.paypal.com; frame-ancestors 'none';">
-  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Submit Your Catch</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="stylesheet" href="style.css?v=1.1" />
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg" />
   <style>
-    /* Your original CSS restored */
     body {
-      background-color: #000;
-      color: #00FF00;
-      font-family: monospace;
-      text-align: center;
-      padding: 50px;
       margin: 0;
+      padding: 0;
+      background: url('images/background.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: white;
     }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-    }
-
-    /* Added fish submit form styling from your reference */
     form {
       background: rgba(0, 0, 0, 0.75);
       max-width: 500px;
-      margin: 2rem auto 4rem auto;
+      margin: 5vh auto;
       padding: 2rem;
       border-radius: 12px;
-      box-shadow: 0 0 10px #00FF00;
-      text-align: left;
-      color: #66ff66;
-      font-weight: normal;
+      box-shadow: 0 0 10px #000;
     }
     label {
       display: block;
@@ -49,30 +37,24 @@
       border-radius: 5px;
       border: none;
       font-size: 1em;
-      background-color: #000;
-      color: #00FF00;
-      border: 1px solid #00FF00;
     }
     button {
       margin-top: 1.5em;
       width: 100%;
       padding: 0.75em;
-      background-color: #000;
-      border: 2px solid #00FF00;
+      background-color: #28a745;
+      border: none;
       border-radius: 5px;
       font-size: 1.1em;
       cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      color: #00FF00;
-      font-weight: bold;
-      box-shadow: 0 0 10px #00FF00;
+      transition: background-color 0.3s ease;
+      color: white;
     }
     button:hover {
-      background-color: #003300;
-      box-shadow: 0 0 20px #00FF00;
+      background-color: #218838;
     }
     .name-warning {
-      color: #66ff66;
+      color: #ff6666;
       font-weight: bold;
       margin-bottom: 0.75em;
       text-align: center;
@@ -85,14 +67,12 @@
       margin-top: 1em;
       font-weight: bold;
       text-align: center;
-      color: #66ff66;
     }
     .preview-container {
       margin-top: 1em;
       display: flex;
       flex-wrap: wrap;
       gap: 1em;
-      justify-content: center;
     }
     .preview-box {
       text-align: center;
@@ -102,7 +82,7 @@
       max-height: 100px;
       object-fit: cover;
       border-radius: 4px;
-      box-shadow: 0 0 5px #00FF00;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     }
     .preview-box p {
       margin: 0.5em 0 0;
@@ -111,30 +91,28 @@
   </style>
 </head>
 <body>
-
-  <h1>Submit Your Catch</h1>
-
   <form id="fishForm" enctype="multipart/form-data" novalidate>
+    <h2>Submit Your Catch</h2>
     <div class="name-warning">Must match your registered angler name (case-sensitive)</div>
     <label for="anglerName">Angler Name:</label>
     <input type="text" id="anglerName" name="name" required autocomplete="off" />
-    
     <label for="fishCountSelect">Number of Fish (1-5):</label>
     <input type="number" id="fishCountSelect" name="fishCount" min="1" max="5" required placeholder="Enter number of fish" />
-    
     <div id="fishInputs"></div>
     <div id="previewContainer" class="preview-container"></div>
-    
     <button type="submit">Submit</button>
     <div id="statusMessage"></div>
   </form>
-
   <script>
     const fishInputsDiv = document.getElementById("fishInputs");
     const fishCountInput = document.getElementById("fishCountSelect");
     const fishForm = document.getElementById("fishForm");
     const statusMessage = document.getElementById("statusMessage");
     const previewContainer = document.getElementById("previewContainer");
+
+    // Cooldown timer to prevent spamming (60 seconds)
+    const cooldownSeconds = 60;
+    let lastSubmitTime = 0;
 
     function updateFishInputs(count) {
       fishInputsDiv.innerHTML = "";
@@ -177,7 +155,14 @@
 
     fishForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      statusMessage.style.color = "#66ff66";
+      const now = Date.now();
+      if (now - lastSubmitTime < cooldownSeconds * 1000) {
+        statusMessage.style.color = "red";
+        statusMessage.textContent = `Please wait ${Math.ceil((cooldownSeconds * 1000 - (now - lastSubmitTime))/1000)} seconds before submitting again.`;
+        return;
+      }
+
+      statusMessage.style.color = "white";
       statusMessage.textContent = "Uploading images...";
 
       const formData = new FormData(fishForm);
@@ -185,12 +170,12 @@
       const name = formData.get("name")?.trim();
 
       if (!name) {
-        statusMessage.style.color = "#ff6666";
+        statusMessage.style.color = "red";
         statusMessage.textContent = "Please enter your angler name.";
         return;
       }
       if (!fishCount || fishCount < 1 || fishCount > 5) {
-        statusMessage.style.color = "#ff6666";
+        statusMessage.style.color = "red";
         statusMessage.textContent = "Please enter a valid number of fish (1-5).";
         return;
       }
@@ -204,17 +189,17 @@
         if (!response.ok) {
           throw new Error(json.error || `HTTP ${response.status}`);
         }
-        statusMessage.style.color = "#66ff66";
+        statusMessage.style.color = "lightgreen";
         statusMessage.textContent = `Successfully uploaded ${fishCount} fish image(s)!`;
         fishForm.reset();
         fishInputsDiv.innerHTML = "";
         previewContainer.innerHTML = "";
+        lastSubmitTime = Date.now(); 
       } catch (error) {
-        statusMessage.style.color = "#ff6666";
+        statusMessage.style.color = "red";
         statusMessage.textContent = `Error uploading: ${error.message}`;
       }
     });
   </script>
-
 </body>
 </html>
