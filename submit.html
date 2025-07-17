@@ -91,6 +91,13 @@
       color: #28a745;
       display: none;
     }
+    .loading-message {
+      font-size: 0.9rem;
+      text-align: center;
+      color: #FFD700;
+      display: none;
+      font-weight: bold;
+    }
     @media (max-width: 768px) {
       .submit-form { padding: 0.5rem; }
       h1 { font-size: 1.5rem; }
@@ -171,7 +178,12 @@
       event.preventDefault();
       const form = document.getElementById('fishForm');
       const successMessage = document.getElementById('successMessage');
+      const loadingMessage = document.getElementById('loadingMessage');
+      const submitButton = document.getElementById('submitButton');
+      
       successMessage.style.display = 'none';
+      loadingMessage.style.display = 'block';
+      submitButton.disabled = true;
       
       try {
         const formData = new FormData(form);
@@ -206,10 +218,12 @@
         for (let i = 1; i <= 5; i++) {
           document.getElementById(`fishEntry${i}`).style.display = 'none';
         }
-        document.getElementById('submitButton').disabled = true;
       } catch (error) {
         console.error('Submission error:', error.message);
         alert(`Submission failed: ${error.message}`);
+      } finally {
+        loadingMessage.style.display = 'none';
+        submitButton.disabled = !validateForm();
       }
     }
 
@@ -241,6 +255,7 @@
       <option value="">Loading anglers...</option>
     </select>
     <p id="successMessage" class="success-message"></p>
+    <p id="loadingMessage" class="loading-message">Please do not close, uploading picture...</p>
     
     <label for="fishCount">Number of Fish (1-5):</label>
     <select id="fishCount" name="fishCount" required>
@@ -272,7 +287,8 @@
     </div>
     <div id="fishEntry4" class="fish-entry" style="display: none;">
       <label for="fishPhoto4">Fish 4 Photo:</label>
-      <input type="file" id="fishPhoto4" name="fishPhoto苗 4 Length (inches):</label>
+      <input type="file" id="fishPhoto4" name="fishPhoto4" accept="image/*">
+      <label for="fishLength4">Fish 4 Length (inches):</label>
       <input type="number" id="fishLength4" name="fishLength4" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry5" class="fish-entry" style="display: none;">
