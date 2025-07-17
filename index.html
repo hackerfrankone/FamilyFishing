@@ -313,7 +313,7 @@
         return Array.isArray(data) ? data.map(item => ({
           url: item.imageUrl || '',
           length: item.length || 'N/A'
-        })) : data.imageUrl ? [{ url: data.imageUrl, length: data.length || 'N/A' }] : [];
+        })).filter(item => item.url && item.url.startsWith('https://dl.dropboxusercontent.com/')) : [];
       } catch (error) {
         console.error(`Failed to fetch images for ${name}: ${error.message}`);
         return [];
@@ -338,20 +338,14 @@
         console.error('Angler list element not found');
         return;
       }
-      anglerList.innerHTML = '<li>Loading...</li>';
+      anglerList.innerHTML = '';
       const anglers = await fetchAnglerList();
       anglerList.innerHTML = anglers.length
         ? anglers.map(name => `
           <li class="angler-item">
             <span class="angler-name" data-name="${encodeURIComponent(name)}">${name}</span>
             <div class="angler-images" id="images-${encodeURIComponent(name)}">
-              <ul>
-                <li id="bass-spot-1-${encodeURIComponent(name)}" class="placeholder">Bass Spot 1</li>
-                <li id="bass-spot-2-${encodeURIComponent(name)}" class="placeholder">Bass Spot 2</li>
-                <li id="bass-spot-3-${encodeURIComponent(name)}" class="placeholder">Bass Spot 3</li>
-                <li id="bass-spot-4-${encodeURIComponent(name)}" class="placeholder">Bass Spot 4</li>
-                <li id="bass-spot-5-${encodeURIComponent(name)}" class="placeholder">Bass Spot 5</li>
-              </ul>
+              <ul id="image-list-${encodeURIComponent(name)}"></ul>
             </div>
           </li>
         `).join('')
@@ -361,44 +355,28 @@
         const debouncedClick = debounce(async () => {
           const name = decodeURIComponent(nameElement.dataset.name);
           const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
+          const imageList = document.getElementById(`image-list-${encodeURIComponent(name)}`);
           const isActive = imageContainer.classList.contains('active');
           document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
           if (!isActive) {
             imageContainer.classList.add('active');
+            imageList.innerHTML = '<li>Loading images...</li>';
             const images = await fetchAnglerImages(name);
-            for (let i = 1; i <= 5; i++) {
-              const bassElement = document.getElementById(`bass-spot-${i}-${encodeURIComponent(name)}`);
-              if (!bassElement) continue;
-              bassElement.innerHTML = `Bass Spot ${i}`;
-              bassElement.classList.add('placeholder');
-              bassElement.classList.remove('error');
-            }
+            imageList.innerHTML = images.length
+              ? images.map((item, index) => `
+                <li>
+                  <img src="${item.url}" alt="Bass ${index + 1} by ${name}" loading="lazy">
+                  <span class="fish-length">${item.length !== 'N/A' ? `${item.length} in` : 'N/A'}</span>
+                </li>
+              `).join('')
+              : '<li>No images available</li>';
             images.forEach((item, index) => {
-              const spot = index + 1;
-              if (spot > 5) return;
-              const bassElement = document.getElementById(`bass-spot-${spot}-${encodeURIComponent(name)}`);
-              if (!bassElement) return;
-              if (item.url && item.url.startsWith('https://dl.dropboxusercontent.com/')) {
-                bassElement.innerHTML = '';
-                const img = document.createElement('img');
-                img.src = item.url;
-                img.alt = `Bass Spot ${spot} by ${name}`;
-                img.loading = 'lazy';
-                img.onerror = () => {
-                  bassElement.innerHTML = `No image for Bass Spot ${spot}`;
-                  bassElement.classList.add('error');
-                  bassElement.classList.remove('placeholder');
+              const imgElement = imageList.querySelector(`li:nth-child(${index + 1}) img`);
+              if (imgElement) {
+                imgElement.onerror = () => {
+                  const li = imgElement.parentElement;
+                  li.innerHTML = `<span class="error">Failed to load image ${index + 1}</span>`;
                 };
-                const lengthSpan = document.createElement('span');
-                lengthSpan.className = 'fish-length';
-                lengthSpan.textContent = item.length !== 'N/A' ? `${item.length} in` : 'N/A';
-                bassElement.appendChild(img);
-                bassElement.appendChild(lengthSpan);
-                bassElement.classList.remove('placeholder');
-              } else {
-                bassElement.innerHTML = `No image for Bass Spot ${spot}`;
-                bassElement.classList.add('error');
-                bassElement.classList.remove('placeholder');
               }
             });
           }
@@ -443,7 +421,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadAnglerList();
-      setInterval(loadAnglerList, 60000); // Refresh every 60 seconds
+      setInterval(loadAnglerList, 60000);
       initTournament();
     });
   </script>
@@ -466,9 +444,9 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube logo" width="60" height="60">
       </a>
       <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
-      <a href="pages/archive.html" target="_blank" rel="noopener noreferrer" class="archive-button">Archive</a>
-      <a href="submit.html" target="_blank" rel="noopener noreferrer" class="submit-fish-button">Submit Fish</a>
-      <a href="pages/tackle.html" target="_blank" rel="noopener noreferrer" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
+      <a href="pages/archive.html" target="_blank" rel="noopener" class="archive-button">Archive</a>
+      <a href="submit.html" target="_blank" rel="noopener" class="submit-fish-button">Submit Fish</a>
+      <a href="pages/tackle.html" target="_blank" rel="noopener" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
     </div>
     <div class="tournament-info">
       <p class="main-text">1st Place: 100% Payout</p>
