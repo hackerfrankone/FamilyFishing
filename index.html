@@ -40,6 +40,7 @@
       position: absolute;
       top: 0;
       left: 0;
+      z-index: 1000; /* Ensure it stays above other content */
     }
     .paypal-form {
       display: flex;
@@ -218,13 +219,53 @@
     .submit-fish-button:hover { filter: brightness(75%); }
     .rules-button:hover { background-color: #ff0000; }
     @media (max-width: 768px) {
-      .top-bar { padding: 0.5rem; flex-direction: column; gap: 1rem; }
-      .paypal-form { flex-direction: column; gap: 0.5rem; }
-      .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
-      .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
-      .social-buttons { position: static; flex-direction: row; gap: 0.5rem; align-items: center; margin: 1rem auto; }
-      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button { width: 50px; height: 50px; font-size: 10px; }
-      .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 80px; height: 40px; font-size: 0.7rem; }
+      .top-bar {
+        padding: 1.5rem 0 0.5rem; /* Add top padding to avoid overlap with browser UI */
+        flex-direction: column;
+        gap: 0.5rem;
+        position: relative; /* Remove absolute positioning on mobile to avoid overlap */
+        top: 0;
+      }
+      .paypal-form {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+        text-align: center;
+      }
+      .pp-MQGR2KDA2VZP4 {
+        min-width: 9rem;
+        height: 2rem;
+        font-size: 0.8rem;
+        margin: 0 auto; /* Center the button */
+      }
+      .countdown {
+        font-size: 1.5rem; /* Reduce font size for mobile */
+      }
+      .identifier-container, .angler-sidebar {
+        position: static;
+        margin: 1rem auto;
+        max-width: 100%;
+        text-align: center;
+      }
+      .social-buttons {
+        position: static;
+        flex-direction: row;
+        gap: 0.5rem;
+        align-items: center;
+        margin: 1rem auto;
+        width: 100%;
+        justify-content: center;
+      }
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
+        width: 40px;
+        height: 40px;
+        font-size: 8px;
+      }
+      .angler-images img, .angler-images .placeholder, .angler-images .error {
+        max-width: 80px;
+        height: 40px;
+        font-size: 0.7rem;
+      }
       .fish-length { font-size: 0.8rem; }
     }
   </style>
