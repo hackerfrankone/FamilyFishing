@@ -31,26 +31,53 @@
       align-items: center;
     }
     a { color: #00ffff; text-decoration: none; }
-    .top-countdown {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      padding: 0.5rem 0;
-      position: absolute;
+    .identifier-container {
+      position: fixed;
       top: 0;
-      left: 0;
+      left: 0.5rem;
+      z-index: 1002;
+      padding: 0.5rem;
+    }
+    .month-identifier {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      font-weight: bold;
+      color: #ff0000;
+      font-size: 1.5rem;
+    }
+    .top-countdown {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 1001;
+      padding: 0.25rem 0; /* Reduced padding to save space */
+      text-align: center;
+      white-space: nowrap; /* Prevent wrapping */
+      display: flex; /* Use flex to align items */
+      align-items: center; /* Vertically center the content */
+      justify-content: center; /* Horizontally center the content */
+    }
+    .countdown {
+      font-size: 1.75rem; /* Slightly reduced to ensure single line */
+      font-weight: bold;
+      color: #FFD700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin: 0;
+      display: inline-flex; /* Keep inline with flex properties */
+      gap: 0.5rem; /* Space between "ends in:" and timer */
+    }
+    .countdown-red {
+      color: #ff0000 !important;
     }
     .top-bar {
+      position: fixed;
+      top: 3rem; /* Adjusted to be below identifier and countdown */
+      left: 0;
+      width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100%;
       padding: 1rem 0;
-      position: absolute;
-      top: 2.5rem; /* Adjusted to be below top-countdown */
-      left: 0;
       z-index: 1000;
     }
     .paypal-form {
@@ -75,31 +102,9 @@
       align-items: center;
       justify-content: center;
     }
-    .countdown {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #FFD700;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      padding: 0.2rem 0;
-    }
-    .countdown-red {
-      color: #ff0000 !important;
-    }
-    .identifier-container {
-      position: fixed;
-      top: 3rem; /* Moved down slightly to avoid overlap */
-      left: 0.5rem;
-      z-index: 1002;
-    }
-    .month-identifier {
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      font-weight: bold;
-      color: #ff0000;
-      font-size: 1.5rem;
-    }
     .angler-sidebar {
       position: fixed;
-      top: 4rem;
+      top: 6rem; /* Adjusted to be below top-bar */
       left: 1rem;
       padding: 1rem;
       border-radius: 8px;
@@ -136,7 +141,7 @@
     }
     .social-buttons {
       position: fixed;
-      top: 4rem;
+      top: 6rem; /* Adjusted to be below top-bar */
       right: 1rem;
       display: flex;
       flex-direction: column;
@@ -158,14 +163,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9px; /* Reduced further for better fit */
+      font-size: 9px;
       font-weight: bold;
       text-decoration: none;
       transition: filter 0.3s ease;
-      line-height: 1; /* Adjust line height for vertical centering */
-      padding: 0; /* Remove default padding */
-      white-space: nowrap; /* Prevent text wrapping */
-      text-align: center; /* Explicitly center text */
+      line-height: 1;
+      padding: 0;
+      white-space: nowrap;
+      text-align: center;
     }
     .discord-button { background-color: #5865F2; color: white; }
     .archive-button { background-color: #808080; color: white; }
@@ -176,15 +181,22 @@
     .submit-fish-button:hover { filter: brightness(75%); }
     .rules-button:hover { background-color: #ff0000; }
     @media (max-width: 768px) {
+      .identifier-container {
+        position: static;
+        margin: 0.5rem auto;
+        text-align: center;
+      }
       .top-countdown {
-        padding: 1rem 0;
+        position: static;
+        margin: 0.5rem auto;
+        text-align: center;
       }
       .top-bar {
+        position: relative;
+        top: 0;
         padding: 1.5rem 0 0.5rem;
         flex-direction: column;
         gap: 0.5rem;
-        position: relative;
-        top: 3rem; /* Adjusted to account for top-countdown */
       }
       .paypal-form {
         flex-direction: column;
@@ -199,9 +211,9 @@
         margin: 0 auto;
       }
       .countdown {
-        font-size: 1.5rem;
+        font-size: 1.25rem; /* Further reduced for smaller screens */
       }
-      .identifier-container, .angler-sidebar {
+      .angler-sidebar {
         position: static;
         margin: 1rem auto;
         max-width: 100%;
@@ -219,7 +231,7 @@
       .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
         width: 40px;
         height: 40px;
-        font-size: 7px; /* Adjusted for smaller screens */
+        font-size: 7px;
       }
     }
   </style>
@@ -335,10 +347,6 @@
   <div class="identifier-container">
     <p class="month-identifier"><span id="month"></span> Identifier: <span id="month-code"></span></p>
   </div>
-  <div class="angler-sidebar">
-    <h3>Registered Anglers</h3>
-    <ul id="anglerList"><li>Loading...</li></ul>
-  </div>
   <div class="top-countdown">
     <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
   </div>
@@ -349,6 +357,10 @@
         <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
       </form>
     </div>
+  </div>
+  <div class="angler-sidebar">
+    <h3>Registered Anglers</h3>
+    <ul id="anglerList"><li>Loading...</li></ul>
   </div>
   <div class="social-buttons">
     <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
