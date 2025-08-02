@@ -26,52 +26,25 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     a { color: #00ffff; text-decoration: none; }
     .top-bar {
-      text-align: center;
-      margin: 1rem 0;
-    }
-    .social-buttons {
       display: flex;
       justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 1200px;
+      padding: 1rem 0;
     }
-    .facebook-button img, .youtube-button img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      transition: filter 0.3s ease;
-    }
-    .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
-    .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: filter 0.3s ease;
-    }
-    .discord-button { background-color: #5865F2; color: white; }
-    .archive-button { background-color: #808080; color: white; }
-    .tackle-button { background-color: #006400; color: white; }
-    .submit-fish-button { background-color: #FFA500; color: white; }
-    .rules-button { background-color: #cc0000; color: white; }
-    .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
-    .submit-fish-button:hover { filter: brightness(75%); }
-    .rules-button:hover { background-color: #ff0000; }
     .tournament-info {
-      display: inline-block;
       padding: 0.5rem 1rem;
       border-radius: 6px;
       background: rgba(0, 0, 0, 0.6);
       text-align: center;
+      width: 100%;
+      max-width: 600px;
     }
     .tournament-info p {
       margin: 0;
@@ -230,16 +203,53 @@
       font-style: italic;
       font-size: 0.8rem;
     }
+    .social-buttons {
+      position: fixed;
+      top: 4rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-end;
+      z-index: 1000;
+    }
+    .facebook-button img, .youtube-button img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      transition: filter 0.3s ease;
+    }
+    .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
+    .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: filter 0.3s ease;
+    }
+    .discord-button { background-color: #5865F2; color: white; }
+    .archive-button { background-color: #808080; color: white; }
+    .tackle-button { background-color: #006400; color: white; }
+    .submit-fish-button { background-color: #FFA500; color: white; }
+    .rules-button { background-color: #cc0000; color: white; }
+    .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
+    .submit-fish-button:hover { filter: brightness(75%); }
+    .rules-button:hover { background-color: #ff0000; }
     @media (max-width: 768px) {
-      .top-bar { margin: 0.5rem 0; }
-      .social-buttons { gap: 0.5rem; }
-      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button { width: 50px; height: 50px; font-size: 10px; }
+      .top-bar { padding: 0.5rem; }
       .tournament-info { padding: 0.3rem 0.8rem; }
       .main-text { font-size: 1.2rem; }
       .sub-text, .feedback { font-size: 0.8rem; }
       .countdown { font-size: 1.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
       .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
+      .social-buttons { position: static; flex-direction: row; gap: 0.5rem; align-items: center; margin: 1rem auto; }
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button { width: 50px; height: 50px; font-size: 10px; }
       .angler-images img, .angler-images .placeholder, .angler-images .error { max-width: 80px; height: 40px; font-size: 0.7rem; }
       .fish-length { font-size: 0.8rem; }
     }
@@ -430,19 +440,6 @@
     <ul id="anglerList"><li>Loading...</li></ul>
   </div>
   <div class="top-bar">
-    <div class="social-buttons">
-      <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
-      <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook logo" width="60" height="60">
-      </a>
-      <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube logo" width="60" height="60">
-      </a>
-      <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
-      <a href="pages/archive.html" target="_blank" rel="noopener" class="archive-button">Archive</a>
-      <a href="submit.html" target="_blank" rel="noopener" class="submit-fish-button">Submit Fish</a>
-      <a href="pages/tackle.html" target="_blank" rel="noopener" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
-    </div>
     <div class="tournament-info">
       <p class="main-text">1st Place: 100% Payout</p>
       <p class="main-text">Month long | 5 Bass limit | More anglers = More payout</p>
@@ -458,6 +455,19 @@
         </form>
       </div>
     </div>
+  </div>
+  <div class="social-buttons">
+    <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
+    <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook logo" width="60" height="60">
+    </a>
+    <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube logo" width="60" height="60">
+    </a>
+    <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
+    <a href="pages/archive.html" target="_blank" rel="noopener" class="archive-button">Archive</a>
+    <a href="submit.html" target="_blank" rel="noopener" class="submit-fish-button">Submit Fish</a>
+    <a href="pages/tackle.html" target="_blank" rel="noopener" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
   </div>
 </body>
 </html>
