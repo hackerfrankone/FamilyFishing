@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
-  <link rel="icon" type="image/x-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.jpg">
+  <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg"> <!-- Updated to https -->
   <link rel="apple-touch-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://www.dropbox.com https://dl.dropboxusercontent.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://www.dropbox.com https://dl.dropboxusercontent.com https://fish-submit.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
@@ -40,7 +40,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 1000; /* Ensure it stays above other content */
+      z-index: 1000;
     }
     .paypal-form {
       display: flex;
@@ -123,64 +123,6 @@
     .angler-name:hover {
       color: #FFD140;
     }
-    .angler-images {
-      display: none;
-      margin-top: 0.3rem;
-      background: rgba(0, 0, 0, 0.75);
-      padding: 0.3rem;
-      border-radius: 4px;
-    }
-    .angler-images.active {
-      display: block;
-    }
-    .angler-images ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .angler-images li {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 0.3rem 0;
-    }
-    .angler-images img {
-      max-width: 100px;
-      height: auto;
-      border-radius: 4px;
-      box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-      pointer-events: none;
-    }
-    .fish-length {
-      color: #FFD700;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-      font-size: 0.9rem;
-    }
-    .angler-images .placeholder {
-      max-width: 100px;
-      height: 50px;
-      background: #333;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #999;
-      font-style: italic;
-      font-size: 0.8rem;
-    }
-    .angler-images .error {
-      max-width: 100px;
-      height: 50px;
-      background: #600;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-style: italic;
-      font-size: 0.8rem;
-    }
     .social-buttons {
       position: fixed;
       top: 4rem;
@@ -220,10 +162,10 @@
     .rules-button:hover { background-color: #ff0000; }
     @media (max-width: 768px) {
       .top-bar {
-        padding: 1.5rem 0 0.5rem; /* Add top padding to avoid overlap with browser UI */
+        padding: 1.5rem 0 0.5rem;
         flex-direction: column;
         gap: 0.5rem;
-        position: relative; /* Remove absolute positioning on mobile to avoid overlap */
+        position: relative;
         top: 0;
       }
       .paypal-form {
@@ -236,10 +178,10 @@
         min-width: 9rem;
         height: 2rem;
         font-size: 0.8rem;
-        margin: 0 auto; /* Center the button */
+        margin: 0 auto;
       }
       .countdown {
-        font-size: 1.5rem; /* Reduce font size for mobile */
+        font-size: 1.5rem;
       }
       .identifier-container, .angler-sidebar {
         position: static;
@@ -261,12 +203,6 @@
         height: 40px;
         font-size: 8px;
       }
-      .angler-images img, .angler-images .placeholder, .angler-images .error {
-        max-width: 80px;
-        height: 40px;
-        font-size: 0.7rem;
-      }
-      .fish-length { font-size: 0.8rem; }
     }
   </style>
   <script>
@@ -308,48 +244,14 @@
           cache: 'no-cache',
           headers: { 'Accept': 'application/json' }
         });
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const anglers = await response.json();
         if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
         return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
-        console.error('Failed to load anglers:', error.message);
+        console.error('Fetch error:', error.message);
         return [];
       }
-    }
-
-    async function fetchAnglerImages(name) {
-      const url = `https://fish-submit.familyfishingfun2025.workers.dev/images?name=${encodeURIComponent(name)}&ts=${Date.now()}`;
-      try {
-        const response = await fetch(url, {
-          cache: 'no-cache',
-          headers: { 'Accept': 'application/json' }
-        });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-        const data = await response.json();
-        return Array.isArray(data) ? data.map(item => ({
-          url: item.imageUrl || '',
-          length: item.length || 'N/A'
-        })).filter(item => item.url && item.url.startsWith('https://dl.dropboxusercontent.com/')) : [];
-      } catch (error) {
-        console.error(`Failed to fetch images for ${name}: ${error.message}`);
-        return [];
-      }
-    }
-
-    function debounce(func, wait) {
-      let timeout;
-      return function executedFunction(...args) {
-        const later = () => {
-          clearTimeout(timeout);
-          func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-      };
     }
 
     async function loadAnglerList() {
@@ -363,46 +265,11 @@
       anglerList.innerHTML = anglers.length
         ? anglers.map(name => `
           <li class="angler-item">
-            <span class="angler-name" data-name="${encodeURIComponent(name)}">${name}</span>
-            <div class="angler-images" id="images-${encodeURIComponent(name)}">
-              <ul id="image-list-${encodeURIComponent(name)}"></ul>
-            </div>
+            <span class="angler-name">${name}</span>
           </li>
         `).join('')
         : '<li>No anglers registered</li>';
-
-      document.querySelectorAll('.angler-name').forEach(nameElement => {
-        const debouncedClick = debounce(async () => {
-          const name = decodeURIComponent(nameElement.dataset.name);
-          const imageContainer = document.getElementById(`images-${encodeURIComponent(name)}`);
-          const imageList = document.getElementById(`image-list-${encodeURIComponent(name)}`);
-          const isActive = imageContainer.classList.contains('active');
-          document.querySelectorAll('.angler-images.active').forEach(container => container.classList.remove('active'));
-          if (!isActive) {
-            imageContainer.classList.add('active');
-            imageList.innerHTML = '<li>Loading images...</li>';
-            const images = await fetchAnglerImages(name);
-            imageList.innerHTML = images.length
-              ? images.map((item, index) => `
-                <li>
-                  <img src="${item.url}" alt="Bass ${index + 1} by ${name}" loading="lazy">
-                  <span class="fish-length">${item.length !== 'N/A' ? `${item.length} in` : 'N/A'}</span>
-                </li>
-              `).join('')
-              : '<li>No images available</li>';
-            images.forEach((item, index) => {
-              const imgElement = imageList.querySelector(`li:nth-child(${index + 1}) img`);
-              if (imgElement) {
-                imgElement.onerror = () => {
-                  const li = imgElement.parentElement;
-                  li.innerHTML = `<span class="error">Failed to load image ${index + 1}</span>`;
-                };
-              }
-            });
-          }
-        }, 300);
-        nameElement.addEventListener('click', debouncedClick);
-      });
+      console.log('Anglers loaded:', anglers);
     }
 
     async function initTournament() {
@@ -441,7 +308,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadAnglerList();
-      setInterval(loadAnglerList, 60000);
+      setInterval(loadAnglerList, 5000);
       initTournament();
     });
   </script>
