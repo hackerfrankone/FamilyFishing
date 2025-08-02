@@ -34,53 +34,17 @@
     .top-bar {
       display: flex;
       justify-content: center;
+      align-items: center;
       width: 100%;
-      max-width: 1200px;
       padding: 1rem 0;
-    }
-    .tournament-info {
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      background: rgba(0, 0, 0, 0.6);
-      text-align: center;
-      width: 100%;
-      max-width: 600px;
-    }
-    .tournament-info p {
-      margin: 0;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
-    .main-text {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #FFD700;
-      padding: 0.2rem 0;
-    }
-    .sub-text, .feedback {
-      font-size: 1rem;
-      padding: 0.2rem 0;
-    }
-    .sub-text-container {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .countdown {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #FFD700;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      padding: 0.2rem 0;
-    }
-    .countdown-red {
-      color: #ff0000 !important;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
     .paypal-form {
-      display: grid;
-      justify-items: center;
-      gap: 0.3rem;
-      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
     .pp-MQGR2KDA2VZP4 {
       text-align: center;
@@ -95,6 +59,19 @@
       font-family: "Helvetica Neue", Arial, sans-serif;
       font-size: 1rem;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .countdown {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #FFD700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      padding: 0.2rem 0;
+    }
+    .countdown-red {
+      color: #ff0000 !important;
     }
     .identifier-container {
       position: fixed;
@@ -241,11 +218,8 @@
     .submit-fish-button:hover { filter: brightness(75%); }
     .rules-button:hover { background-color: #ff0000; }
     @media (max-width: 768px) {
-      .top-bar { padding: 0.5rem; }
-      .tournament-info { padding: 0.3rem 0.8rem; }
-      .main-text { font-size: 1.2rem; }
-      .sub-text, .feedback { font-size: 0.8rem; }
-      .countdown { font-size: 1.5rem; }
+      .top-bar { padding: 0.5rem; flex-direction: column; gap: 1rem; }
+      .paypal-form { flex-direction: column; gap: 0.5rem; }
       .pp-MQGR2KDA2VZP4 { min-width: 9rem; height: 2rem; font-size: 0.8rem; }
       .identifier-container, .angler-sidebar { position: static; margin: 1rem auto; max-width: 100%; text-align: center; }
       .social-buttons { position: static; flex-direction: row; gap: 0.5rem; align-items: center; margin: 1rem auto; }
@@ -440,20 +414,12 @@
     <ul id="anglerList"><li>Loading...</li></ul>
   </div>
   <div class="top-bar">
-    <div class="tournament-info">
-      <p class="main-text">1st Place: 100% Payout</p>
-      <p class="main-text">Month long | 5 Bass limit | More anglers = More payout</p>
-      <div class="sub-text-container">
-        <p class="sub-text">Tennessee Lakes Only</p>
-        <p class="feedback">| Feedback: <a href="mailto:usa@familyfishing.fun" rel="noopener">usa@familyfishing.fun</a></p>
-      </div>
+    <div class="paypal-form">
+      <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank">
+        <input type="hidden" name="amount" value="25.00">
+        <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
+      </form>
       <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
-      <div class="paypal-form">
-        <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank" style="display:inline-grid;justify-items:center;gap:0.5rem;">
-          <input type="hidden" name="amount" value="25.00">
-          <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $25" />
-        </form>
-      </div>
     </div>
   </div>
   <div class="social-buttons">
