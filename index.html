@@ -33,7 +33,7 @@
     a { color: #00ffff; text-decoration: none; }
     .identifier-container {
       position: fixed;
-      top: 0;
+      top: 2rem;
       left: 0.5rem;
       z-index: 1002;
       padding: 0.5rem;
@@ -49,7 +49,7 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 1001;
+      z-index: 1003;
       padding: 0.25rem 0;
       text-align: center;
       white-space: nowrap;
@@ -57,6 +57,8 @@
       align-items: center;
       justify-content: center;
       width: 100%;
+      visibility: visible;
+      overflow: visible;
     }
     .countdown {
       font-size: 1.75rem;
@@ -199,20 +201,23 @@
       .top-countdown {
         position: static;
         margin: 0.5rem auto;
-        padding: 0.5rem 0;
+        padding: 0.5rem 0 0.5rem 50%;
         text-align: center;
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
-        max-width: 90%;
+        white-space: nowrap;
+        visibility: visible;
+        overflow: visible;
       }
       .countdown {
-        font-size: 1rem;
+        font-size: 0.9rem;
         display: inline-flex;
         justify-content: center;
         align-items: center;
         width: auto;
+        white-space: nowrap;
       }
       .top-bar {
         position: static;
