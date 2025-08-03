@@ -145,37 +145,18 @@
       right: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 1rem;
       align-items: flex-end;
       z-index: 1000;
     }
-    .rules-button {
-      width: 80px;
-      height: 80px;
+    .facebook-button img, .youtube-button img {
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-      text-decoration: none;
-      background-color: #cc0000;
-      color: white;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-      line-height: 1.2;
-      text-align: center;
-      cursor: pointer;
+      transition: filter 0.3s ease;
     }
-    .rules-button:hover {
-      background-color: #ff0000;
-      transform: scale(1.1);
-    }
-    .social-buttons .facebook-button,
-    .social-buttons .youtube-button,
-    .social-buttons .discord-button,
-    .social-buttons .archive-button,
-    .social-buttons .tackle-button,
-    .social-buttons .submit-fish-button {
+    .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
+    .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
       width: 60px;
       height: 60px;
       border-radius: 50%;
@@ -185,36 +166,22 @@
       font-size: 9px;
       font-weight: bold;
       text-decoration: none;
-      transition: all 0.3s ease;
-      line-height: 1;
-      text-align: center;
-      opacity: 0;
-      transform: translateX(100px);
-      pointer-events: none;
-    }
-    .social-buttons:hover .facebook-button,
-    .social-buttons:hover .youtube-button,
-    .social-buttons:hover .discord-button,
-    .social-buttons:hover .archive-button,
-    .social-buttons:hover .tackle-button,
-    .social-buttons:hover .submit-fish-button,
-    .social-buttons.active .facebook-button,
-    .social-buttons.active .youtube-button,
-    .social-buttons.active .discord-button,
-    .social-buttons.active .archive-button,
-    .social-buttons.active .tackle-button,
-    .social-buttons.active .submit-fish-button {
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: auto;
-    }
-    .facebook-button img, .youtube-button img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
       transition: filter 0.3s ease;
+      line-height: 1;
+      padding: 0;
+      white-space: nowrap;
+      text-align: center;
     }
-    .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
+    .rules-button {
+      width: 80px;
+      height: 80px;
+      font-size: 12px;
+      background-color: #cc0000;
+      color: white;
+    }
+    .rules-button:hover {
+      background-color: #ff0000;
+    }
     .discord-button { background-color: #5865F2; color: white; }
     .archive-button { background-color: #808080; color: white; }
     .tackle-button { background-color: #006400; color: white; }
@@ -262,37 +229,22 @@
       }
       .social-buttons {
         position: static;
-        flex-direction: column;
+        flex-direction: row;
         gap: 0.5rem;
         align-items: center;
         margin: 1rem auto;
         width: 100%;
         justify-content: center;
       }
-      .rules-button {
-        width: 60px;
-        height: 60px;
-        font-size: 10px;
-      }
-      .social-buttons .facebook-button,
-      .social-buttons .youtube-button,
-      .social-buttons .discord-button,
-      .social-buttons .archive-button,
-      .social-buttons .tackle-button,
-      .social-buttons .submit-fish-button {
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .submit-fish-button, .rules-button {
         width: 40px;
         height: 40px;
         font-size: 7px;
       }
-      .social-buttons.active .facebook-button,
-      .social-buttons.active .youtube-button,
-      .social-buttons.active .discord-button,
-      .social-buttons.active .archive-button,
-      .social-buttons.active .tackle-button,
-      .social-buttons.active .submit-fish-button {
-        opacity: 1;
-        transform: translateX(0);
-        pointer-events: auto;
+      .rules-button {
+        width: 60px;
+        height: 60px;
+        font-size: 10px;
       }
     }
   </style>
@@ -401,11 +353,6 @@
       loadAnglerList();
       setInterval(loadAnglerList, 180000);
       initTournament();
-      const socialButtons = document.querySelector('.social-buttons');
-      const rulesButton = document.querySelector('.rules-button');
-      rulesButton.addEventListener('click', () => {
-        socialButtons.classList.toggle('active');
-      });
     });
   </script>
 </head>
