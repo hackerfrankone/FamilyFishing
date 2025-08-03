@@ -1,4 +1,6 @@
-toml
 name = "fish-submit"
 main = "fish-submit.js"
-compatibility_date = "2025-07-16"
+compatibility_date = "2025-08-02"  # Update to today's date
+
+[d1_databases]
+db = { binding = "DB", database_name = "fff-db", database_id = "8a81751d-2ac5-4c6b-be9e-6a528468d16d" }
