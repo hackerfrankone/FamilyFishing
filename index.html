@@ -7,7 +7,7 @@
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg">
   <link rel="apple-touch-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://www.dropbox.com https://dl.dropboxusercontent.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://www.dropbox.com https://dl.dropboxusercontent.com https://angler-list.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://www.dropbox.com https://dl.dropboxusercontent.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://www.dropbox.com https://dl.dropboxusercontent.com https://angler-list.familyfishingfun2025.workers.dev https://worldtimeapi.org https://bible-verse-worker.familyfishingfun2025.workers.dev; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -204,6 +204,24 @@
     .submit-fish-button { background-color: #FFA500; color: white; }
     .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
     .submit-fish-button:hover { filter: brightness(75%); }
+    .bible-verse-container {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      padding: 0.5rem 1rem;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 8px;
+      text-align: center;
+      max-width: 90%;
+    }
+    .bible-verse {
+      color: #FFD700;
+      font-size: 1.1rem;
+      font-style: italic;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
     @media (max-width: 768px) {
       .identifier-container {
         position: static;
@@ -275,6 +293,14 @@
         height: 70px;
         font-size: 20px;
       }
+      .bible-verse-container {
+        bottom: 0.5rem;
+        padding: 0.5rem;
+        max-width: 95%;
+      }
+      .bible-verse {
+        font-size: 0.9rem;
+      }
     }
   </style>
   <script>
@@ -326,6 +352,21 @@
       }
     }
 
+    async function fetchBibleVerse() {
+      try {
+        const response = await fetch('https://bible-verse-worker.familyfishingfun2025.workers.dev/', {
+          cache: 'no-cache',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        const verse = await response.json();
+        return `${verse.text} (${verse.reference})`;
+      } catch (error) {
+        console.error('Failed to fetch Bible verse:', error.message);
+        return 'In the beginning God created the heavens and the earth. (Genesis 1:1)';
+      }
+    }
+
     async function loadAnglerList() {
       const anglerList = document.getElementById('anglerList');
       if (!anglerList) {
@@ -342,6 +383,16 @@
         `).join('')
         : '<li>No anglers registered</li>';
       console.log('Anglers loaded:', anglers);
+    }
+
+    async function loadBibleVerse() {
+      const verseElement = document.getElementById('bibleVerse');
+      if (!verseElement) {
+        console.error('Bible verse element not found');
+        return;
+      }
+      const verseText = await fetchBibleVerse();
+      verseElement.textContent = verseText;
     }
 
     async function initTournament() {
@@ -381,6 +432,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadAnglerList();
       setInterval(loadAnglerList, 180000);
+      loadBibleVerse();
+      setInterval(loadBibleVerse, 8 * 3600000); // Refresh every 8 hours to match worker
       initTournament();
     });
   </script>
@@ -416,6 +469,9 @@
     <a href="pages/archive.html" target="_blank" rel="noopener" class="archive-button">Archive</a>
     <a href="submit.html" target="_blank" rel="noopener" class="submit-fish-button">📷</a>
     <a href="pages/tackle.html" target="_blank" rel="noopener" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
+  </div>
+  <div class="bible-verse-container">
+    <p class="bible-verse" id="bibleVerse">Loading verse...</p>
   </div>
 </body>
 </html>
