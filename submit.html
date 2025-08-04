@@ -5,7 +5,7 @@
   <title>Submit Fish - Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://fish-angler.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -98,6 +98,12 @@
       display: none;
       font-weight: bold;
     }
+    .error-message {
+      font-size: 0.9rem;
+      text-align: center;
+      color: #ff0000;
+      display: none;
+    }
     @media (max-width: 768px) {
       .submit-form { padding: 0.5rem; }
       h1 { font-size: 1.5rem; }
@@ -113,26 +119,38 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const anglers = await response.json();
-        return anglers;
+        if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
+        return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
         console.error('Failed to load anglers:', error.message);
+        document.getElementById('errorMessage').textContent = 'Failed to load anglers. Please try again later.';
+        document.getElementById('errorMessage').style.display = 'block';
         return [];
       }
     }
 
     async function populateAnglerDropdown() {
       const anglerSelect = document.getElementById('anglerName');
+      const errorMessage = document.getElementById('errorMessage');
       anglerSelect.disabled = true;
       anglerSelect.innerHTML = '<option value="">Loading anglers...</option>';
-      const anglers = await fetchAnglerList();
-      anglerSelect.disabled = false;
-      if (anglers.length === 0) {
-        anglerSelect.innerHTML = '<option value="">No anglers registered</option>';
-        alert('No registered anglers available. Please join the tournament.');
-        return;
+      try {
+        const anglers = await fetchAnglerList();
+        anglerSelect.disabled = false;
+        if (anglers.length === 0) {
+          anglerSelect.innerHTML = '<option value="">No anglers registered</option>';
+          errorMessage.textContent = 'No registered anglers available. Please join the tournament.';
+          errorMessage.style.display = 'block';
+          return;
+        }
+        anglerSelect.innerHTML = '<option value="">Select your name</option>' + 
+          anglers.map(name => `<option value="${name}">${name}</option>`).join('');
+      } catch (error) {
+        anglerSelect.disabled = false;
+        anglerSelect.innerHTML = '<option value="">Error loading anglers</option>';
+        errorMessage.textContent = 'Error loading anglers. Please try again later.';
+        errorMessage.style.display = 'block';
       }
-      anglerSelect.innerHTML = '<option value="">Select your name</option>' + 
-        anglers.map(name => `<option value="${name}">${name}</option>`).join('');
     }
 
     function populateFishCountDropdown() {
@@ -173,9 +191,11 @@
       const form = document.getElementById('fishForm');
       const successMessage = document.getElementById('successMessage');
       const loadingMessage = document.getElementById('loadingMessage');
+      const errorMessage = document.getElementById('errorMessage');
       const submitButton = document.getElementById('submitButton');
       
       successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
       loadingMessage.style.display = 'block';
       submitButton.disabled = true;
       
@@ -203,6 +223,8 @@
         }
       } catch (error) {
         console.error('Submission error:', error.message);
+        errorMessage.textContent = `Submission failed: ${error.message}`;
+        errorMessage.style.display = 'block';
         alert(`Submission failed: ${error.message}`);
       } finally {
         loadingMessage.style.display = 'none';
@@ -238,6 +260,7 @@
       <option value="">Loading anglers...</option>
     </select>
     <p id="successMessage" class="success-message"></p>
+    <p id="errorMessage" class="error-message"></p>
     
     <label for="fishCount">Number of Fish (1-5):</label>
     <select id="fishCount" name="fishCount" required>
