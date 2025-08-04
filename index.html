@@ -148,10 +148,13 @@
       list-style: none;
       background-color: rgba(255, 255, 255, 0.1);
       border: 1px solid #FFD700;
-      display: block; /* Always visible */
+      display: flex; /* Horizontal layout */
+      flex-direction: row;
+      flex-wrap: wrap; /* Allow wrapping if many fish */
+      gap: 0.5rem; /* Space between lengths */
     }
     .fish-item {
-      margin-bottom: 0.3rem;
+      margin-bottom: 0;
     }
     .fish-length {
       color: #FFD700;
@@ -333,7 +336,10 @@
         text-align: center;
         background-color: rgba(255, 255, 255, 0.1);
         border: 1px solid #FFD700;
-        display: block;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
       }
       .social-buttons {
         position: static;
@@ -458,7 +464,7 @@
       anglerList.innerHTML = '';
       const anglers = await fetchAnglerList();
       for (const name of anglers) {
-        const fish = await fetchFishForAngler(name); // Fetch fish for each angler
+        const fish = await fetchFishForAngler(name);
         const li = document.createElement('li');
         li.className = 'angler-item';
         li.innerHTML = `
