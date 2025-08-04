@@ -6,7 +6,6 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg">
   <link rel="apple-touch-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.png">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://fish-angler.familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
@@ -111,6 +110,7 @@
       top: 6rem;
       left: 1rem;
       padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.7);
       border-radius: 8px;
       max-width: 250px;
       max-height: 500px;
@@ -130,7 +130,6 @@
       margin: 0;
     }
     .angler-item {
-      cursor: pointer;
       margin-bottom: 0.5rem;
     }
     .angler-name {
@@ -144,13 +143,12 @@
       color: #FFD140;
     }
     .fish-list {
-      display: none;
       margin-top: 0.5rem;
       padding-left: 1rem;
       list-style: none;
-    }
-    .fish-list.active {
-      display: block;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid #FFD700;
+      display: block; /* Always visible */
     }
     .fish-item {
       margin-bottom: 0.3rem;
@@ -328,10 +326,14 @@
         margin: 1rem auto;
         max-width: 100%;
         text-align: center;
+        background-color: rgba(0, 0, 0, 0.7);
       }
       .fish-list {
         padding-left: 0;
         text-align: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid #FFD700;
+        display: block;
       }
       .social-buttons {
         position: static;
@@ -456,37 +458,24 @@
       anglerList.innerHTML = '';
       const anglers = await fetchAnglerList();
       for (const name of anglers) {
+        const fish = await fetchFishForAngler(name); // Fetch fish for each angler
         const li = document.createElement('li');
         li.className = 'angler-item';
         li.innerHTML = `
           <span class="angler-name">${name}</span>
-          <ul class="fish-list" id="fishList-${name.replace(/\s+/g, '-')}" style="display: none;">
-            <li>Loading fish...</li>
+          <ul class="fish-list" id="fishList-${name.replace(/\s+/g, '-')}">
+            ${fish.length > 0
+              ? fish.map(f => `
+                <li class="fish-item">
+                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${f.length} in</a>
+                </li>
+              `).join('')
+              : '<li class="fish-item">No fish submitted</li>'
+            }
           </ul>
         `;
         anglerList.appendChild(li);
-
-        const anglerNameElement = li.querySelector('.angler-name');
-        const fishListElement = li.querySelector('.fish-list');
-        anglerNameElement.addEventListener('click', async () => {
-          console.log(`Clicked angler: ${name}`);
-          if (fishListElement.classList.contains('active')) {
-            fishListElement.classList.remove('active');
-            console.log(`Hid fish list for ${name}`);
-            return;
-          }
-          fishListElement.classList.add('active');
-          console.log(`Showing fish list for ${name}`);
-          const fish = await fetchFishForAngler(name);
-          fishListElement.innerHTML = fish.length > 0
-            ? fish.map(f => `
-              <li class="fish-item">
-                <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${f.length} in</a>
-              </li>
-            `).join('')
-            : '<li class="fish-item">No fish submitted</li>';
-          console.log(`Rendered fish for ${name}:`, fishListElement.innerHTML);
-        });
+        console.log(`Rendered fish for ${name}:`, li.querySelector('.fish-list').innerHTML);
       }
       console.log('Anglers loaded:', anglers);
     }
