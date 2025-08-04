@@ -6,9 +6,8 @@
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg">
   <link rel="apple-touch-icon" href="https://hackerfrankone.github.io/FamilyFishing/images/favicon.png">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://fish-angler.familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://fish-angler.familyfishingfun2025.workers.dev https://worldtimeapi.org https://bible-verse-worker.familyfishingfun2025.workers.dev; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -425,19 +424,21 @@
         if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
         return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
-        console.error('Fetch error:', error.message);
+        console.error('Fetch angler list error:', error.message);
         return [];
       }
     }
 
     async function fetchFishForAngler(anglerName) {
       try {
+        console.log(`Fetching fish for ${anglerName}`);
         const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/fish_list?angler=${encodeURIComponent(anglerName)}`, {
           cache: 'no-cache',
           headers: { 'Accept': 'application/json' }
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const fish = await response.json();
+        console.log(`Fish data for ${anglerName}:`, fish);
         return fish;
       } catch (error) {
         console.error(`Failed to fetch fish for ${anglerName}:`, error.message);
@@ -467,11 +468,14 @@
         const anglerNameElement = li.querySelector('.angler-name');
         const fishListElement = li.querySelector('.fish-list');
         anglerNameElement.addEventListener('click', async () => {
+          console.log(`Clicked angler: ${name}`);
           if (fishListElement.classList.contains('active')) {
             fishListElement.classList.remove('active');
+            console.log(`Hid fish list for ${name}`);
             return;
           }
           fishListElement.classList.add('active');
+          console.log(`Showing fish list for ${name}`);
           const fish = await fetchFishForAngler(name);
           fishListElement.innerHTML = fish.length > 0
             ? fish.map(f => `
@@ -480,6 +484,7 @@
               </li>
             `).join('')
             : '<li class="fish-item">No fish submitted</li>';
+          console.log(`Rendered fish for ${name}:`, fishListElement.innerHTML);
         });
       }
       console.log('Anglers loaded:', anglers);
