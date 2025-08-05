@@ -517,7 +517,7 @@
         }
         const validFish = fish
           .filter(f => {
-            if (!f.image_url || typeof f.image_url !== 'string' || !f.image_url.includes('imagedelivery.net')) {
+            if (!f.image_url || typeof f.image_url !== 'string' || f.image_url.trim() === '') {
               console.warn(`Invalid image_url for ${anglerName}: ${f.image_url}`);
               return false;
             }
@@ -560,8 +560,16 @@
       }
     }
 
-    function showLightbox(imageUrl) {
-      if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.includes('imagedelivery.net')) {
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    const showLightbox = debounce(function(imageUrl) {
+      if (!imageUrl || typeof imageUrl !== 'string' || imageUrl.trim() === '') {
         console.error('Invalid image URL:', imageUrl);
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
@@ -595,7 +603,7 @@
         lightbox.classList.toggle('zoomed');
       };
       document.addEventListener('keydown', closeOnEscape);
-    }
+    }, 300);
 
     function closeLightbox() {
       const lightbox = document.getElementById('lightbox');
@@ -651,9 +659,9 @@
             ${fish.length > 0
               ? fish.map(f => `
                 <li class="fish-item">
-                  <span class="fish-length${f.image_url.includes('imagedelivery.net') ? '' : ' invalid'}" 
+                  <span class="fish-length${f.image_url.trim() ? '' : ' invalid'}" 
                         data-image-url="${f.image_url.replace(/"/g, '&quot;')}" 
-                        onclick="${f.image_url.includes('imagedelivery.net') ? 'showLightbox(this.getAttribute(\'data-image-url\'))' : 'return false;'}">
+                        onclick="${f.image_url.trim() ? 'showLightbox(this.getAttribute(\'data-image-url\'))' : 'return false;'}">
                     ${Number(f.length).toFixed(2)} in
                   </span>
                 </li>
