@@ -164,6 +164,20 @@
     .fish-length:hover {
       color: #ffeb3b;
     }
+    .angler-total {
+      color: #FFD700;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    .angler-rank {
+      color: #FF4500;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-right: 0.5rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
     .social-buttons {
       position: fixed;
       top: 6rem;
@@ -463,27 +477,45 @@
       }
       anglerList.innerHTML = '';
       const anglers = await fetchAnglerList();
+      const anglerData = [];
+
+      // Fetch fish for all anglers and calculate totals
       for (const name of anglers) {
         const fish = await fetchFishForAngler(name);
+        const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
+        anglerData.push({ name, fish, totalLength });
+      }
+
+      // Sort anglers by total length (descending) and assign ranks
+      anglerData.sort((a, b) => b.totalLength - a.totalLength);
+      const rankedAnglers = anglerData.map((angler, index) => ({
+        ...angler,
+        rank: index + 1
+      }));
+
+      // Render sorted anglers with rank and total
+      for (const { name, fish, totalLength, rank } of rankedAnglers) {
         const li = document.createElement('li');
         li.className = 'angler-item';
         li.innerHTML = `
+          <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'}</span>
           <span class="angler-name">${name}</span>
           <ul class="fish-list" id="fishList-${name.replace(/\s+/g, '-')}">
             ${fish.length > 0
               ? fish.map(f => `
                 <li class="fish-item">
-                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${f.length} in</a>
+                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)} in</a>
                 </li>
               `).join('')
               : '<li class="fish-item">No fish submitted</li>'
             }
           </ul>
+          <div class="angler-total">Total: ${totalLength.toFixed(2)} in</div>
         `;
         anglerList.appendChild(li);
         console.log(`Rendered fish for ${name}:`, li.querySelector('.fish-list').innerHTML);
       }
-      console.log('Anglers loaded:', anglers);
+      console.log('Anglers loaded:', rankedAnglers);
     }
 
     async function loadBibleVerse() {
