@@ -7,7 +7,7 @@
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg">
   <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.imagedelivery.net https://upload.wikimedia.org data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -164,6 +164,10 @@
     }
     .fish-length:hover {
       color: #ffeb3b;
+    }
+    .fish-length.invalid {
+      color: #ff4500;
+      cursor: not-allowed;
     }
     .angler-total {
       color: #FFD700;
@@ -325,6 +329,13 @@
       font-weight: bold;
       cursor: pointer;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    #lightbox-error {
+      color: #ff4500;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      display: none;
     }
     @media (max-width: 768px) {
       .identifier-container {
@@ -500,13 +511,28 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const fish = await response.json();
-        if (!Array.isArray(fish)) return [];
-        return fish
-          .filter(f => f.image_url && typeof f.image_url === 'string' && f.length && !isNaN(parseFloat(f.length)))
+        if (!Array.isArray(fish)) {
+          console.error(`Invalid fish data for ${anglerName}: not an array`);
+          return [];
+        }
+        const validFish = fish
+          .filter(f => {
+            if (!f.image_url || typeof f.image_url !== 'string' || !f.image_url.includes('imagedelivery.net')) {
+              console.warn(`Invalid image_url for ${anglerName}: ${f.image_url}`);
+              return false;
+            }
+            if (!f.length || isNaN(parseFloat(f.length))) {
+              console.warn(`Invalid length for ${anglerName}: ${f.length}`);
+              return false;
+            }
+            return true;
+          })
           .map(f => ({
             image_url: f.image_url,
             length: parseFloat(f.length)
           }));
+        console.log(`Valid fish for ${anglerName}:`, validFish);
+        return validFish;
       } catch (error) {
         console.error(`Failed to fetch fish for ${anglerName}:`, error.message);
         return [];
@@ -535,18 +561,30 @@
     }
 
     function showLightbox(imageUrl) {
-      if (!imageUrl || typeof imageUrl !== 'string') {
+      if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.includes('imagedelivery.net')) {
         console.error('Invalid image URL:', imageUrl);
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxError = document.getElementById('lightbox-error');
+        lightboxImg.style.display = 'none';
+        lightboxError.textContent = 'Image not available';
+        lightboxError.style.display = 'block';
+        lightbox.style.display = 'flex';
         return;
       }
       const lightbox = document.getElementById('lightbox');
       const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxError = document.getElementById('lightbox-error');
       lightboxImg.src = '';
       lightboxImg.src = imageUrl;
+      lightboxImg.style.display = 'block';
+      lightboxError.style.display = 'none';
       lightbox.style.display = 'flex';
       lightboxImg.onerror = () => {
         console.error('Failed to load image:', imageUrl);
-        lightbox.style.display = 'none';
+        lightboxImg.style.display = 'none';
+        lightboxError.textContent = 'Image not available';
+        lightboxError.style.display = 'block';
       };
       lightboxImg.onclick = () => {
         lightbox.classList.toggle('zoomed');
@@ -556,9 +594,13 @@
 
     function closeLightbox() {
       const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxError = document.getElementById('lightbox-error');
       lightbox.style.display = 'none';
       lightbox.classList.remove('zoomed');
-      document.getElementById('lightbox-img').src = '';
+      lightboxImg.src = '';
+      lightboxImg.style.display = 'block';
+      lightboxError.style.display = 'none';
       document.removeEventListener('keydown', closeOnEscape);
     }
 
@@ -603,7 +645,11 @@
             ${fish.length > 0
               ? fish.map(f => `
                 <li class="fish-item">
-                  <span class="fish-length" data-image-url="${f.image_url.replace(/"/g, '&quot;')}" onclick="showLightbox(this.getAttribute('data-image-url'))">${Number(f.length).toFixed(2)} in</span>
+                  <span class="fish-length${f.image_url.includes('imagedelivery.net') ? '' : ' invalid'}" 
+                        data-image-url="${f.image_url.replace(/"/g, '&quot;')}" 
+                        onclick="${f.image_url.includes('imagedelivery.net') ? 'showLightbox(this.getAttribute(\'data-image-url\'))' : 'return false;'}">
+                    ${Number(f.length).toFixed(2)} in
+                  </span>
                 </li>
               `).join('')
               : '<li class="fish-item">No fish submitted</li>'
@@ -730,6 +776,7 @@
   <div id="lightbox">
     <span id="lightbox-close" onclick="closeLightbox()">×</span>
     <img id="lightbox-img" src="" alt="Fish image">
+    <div id="lightbox-error"></div>
   </div>
 </body>
 </html>
