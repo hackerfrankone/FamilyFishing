@@ -498,8 +498,7 @@
         const li = document.createElement('li');
         li.className = 'angler-item';
         li.innerHTML = `
-          <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'}</span>
-          <span class="angler-name">${name}</span>
+          <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'} ${totalLength.toFixed(2)}" ${name}</span>
           <ul class="fish-list" id="fishList-${name.replace(/\s+/g, '-')}">
             ${fish.length > 0
               ? fish.map(f => `
