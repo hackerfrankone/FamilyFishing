@@ -194,7 +194,7 @@
       transition: filter 0.3s ease;
     }
     .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
-    .discord-button, .archive-button, .rules-button, .privacy-button {
+    .discord-button, .archive-button, .rules-button, .tackle-button {
       width: 80px;
       height: 80px;
       border-radius: 50%;
@@ -228,20 +228,21 @@
       background-color: #FFA500;
       color: white;
     }
-    .rules-button, .privacy-button {
+    .rules-button {
       background-color: #cc0000;
       color: white;
     }
-    .rules-button:hover, .privacy-button:hover {
+    .rules-button:hover {
       background-color: #ff0000;
     }
     .discord-button { background-color: #5865F2; color: white; }
     .archive-button { background-color: #808080; color: white; }
-    .discord-button:hover, .archive-button:hover { filter: brightness(150%); }
+    .tackle-button { background-color: #006400; color: white; }
+    .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
     .submit-fish-button:hover { filter: brightness(75%); }
     .bible-verse-container {
       position: fixed;
-      bottom: 1rem;
+      bottom: 4rem;
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
@@ -289,6 +290,25 @@
     }
     .learn-more-button:hover {
       background-color: #ffeb3b;
+    }
+    .privacy-policy-container {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      padding: 0.5rem 1rem;
+      text-align: center;
+    }
+    .privacy-policy {
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 1rem;
+      text-decoration: none;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
+    .privacy-policy:hover {
+      color: #00ffff;
     }
     @media (max-width: 768px) {
       .identifier-container {
@@ -362,7 +382,7 @@
         width: 100%;
         justify-content: center;
       }
-      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .rules-button, .privacy-button {
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .rules-button, .tackle-button {
         width: 70px;
         height: 70px;
         font-size: 11px;
@@ -374,7 +394,7 @@
       }
       .bible-verse-container {
         position: static;
-        margin: 2rem auto 1rem;
+        margin: 2rem auto 4rem;
         padding: 0.5rem;
         max-width: 95%;
         transform: none;
@@ -398,6 +418,15 @@
       .learn-more-button {
         font-size: 0.8rem;
         padding: 0.4rem 0.8rem;
+      }
+      .privacy-policy-container {
+        position: static;
+        margin: 1rem auto 2rem;
+        transform: none;
+        padding: 0.5rem;
+      }
+      .privacy-policy {
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -600,7 +629,6 @@
     <ul id="anglerList"><li>Loading...</li></ul>
   </div>
   <div class="social-buttons">
-    <a href="PDFs/PRIVACY-POLICY.pdf" target="_blank" rel="noopener" class="privacy-button">📄 Privacy</a>
     <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
     <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button">
       <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook logo" width="80" height="80">
@@ -611,6 +639,7 @@
     <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
     <a href="pages/archive.html" target="_blank" rel="noopener" class="archive-button">Archive</a>
     <a href="/submit.html?v=6" target="_blank" rel="noopener" class="submit-fish-button">📷</a>
+    <a href="pages/tackle.html" target="_blank" rel="noopener" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
   </div>
   <div class="bible-verse-container">
     <div class="bible-verse-content">
@@ -618,6 +647,9 @@
       <p class="bible-reference" id="bibleReference">Loading reference...</p>
     </div>
     <a href="#" class="learn-more-button" onclick="alert('Coming Soon'); return false;">Learn More</a>
+  </div>
+  <div class="privacy-policy-container">
+    <a href="PDFs/PRIVACY-POLICY.pdf" target="_blank" rel="noopener" class="privacy-policy">Privacy Policy</a>
   </div>
 </body>
 </html>
