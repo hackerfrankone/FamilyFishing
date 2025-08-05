@@ -483,7 +483,7 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const anglers = await response.json();
-        if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
+        if (!Array.isArray(anglers) || anglers.length === 0) return [];
         return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
         console.error('Fetch angler list error:', error.message);
@@ -500,8 +500,14 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const fish = await response.json();
-        console.log(`Fish data for ${anglerName}:`, fish);
-        return fish;
+        if (!Array.isArray(fish)) return [];
+        // Validate fish data
+        return fish
+          .filter(f => f.image_url && typeof f.image_url === 'string' && f.length && !isNaN(parseFloat(f.length)))
+          .map(f => ({
+            image_url: f.image_url,
+            length: parseFloat(f.length)
+          }));
       } catch (error) {
         console.error(`Failed to fetch fish for ${anglerName}:`, error.message);
         return [];
@@ -530,10 +536,19 @@
     }
 
     function showLightbox(imageUrl) {
+      if (!imageUrl || typeof imageUrl !== 'string') {
+        console.error('Invalid image URL:', imageUrl);
+        return;
+      }
       const lightbox = document.getElementById('lightbox');
       const lightboxImg = document.getElementById('lightbox-img');
+      lightboxImg.src = '';
       lightboxImg.src = imageUrl;
       lightbox.style.display = 'flex';
+      lightboxImg.onerror = () => {
+        console.error('Failed to load image:', imageUrl);
+        lightbox.style.display = 'none';
+      };
       lightboxImg.onclick = () => {
         lightbox.classList.toggle('zoomed');
       };
@@ -544,6 +559,7 @@
       const lightbox = document.getElementById('lightbox');
       lightbox.style.display = 'none';
       lightbox.classList.remove('zoomed');
+      document.getElementById('lightbox-img').src = '';
       document.removeEventListener('keydown', closeOnEscape);
     }
 
@@ -557,13 +573,17 @@
         console.error('Angler list element not found');
         return;
       }
-      anglerList.innerHTML = '';
+      anglerList.innerHTML = '<li>Loading...</li>';
       const anglers = await fetchAnglerList();
-      const anglerData = [];
+      if (anglers.length === 0) {
+        anglerList.innerHTML = '<li>No anglers registered</li>';
+        return;
+      }
 
+      const anglerData = [];
       for (const name of anglers) {
         const fish = await fetchFishForAngler(name);
-        const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
+        const totalLength = fish.reduce((sum, f) => sum + f.length, 0);
         anglerData.push({ name, fish, totalLength });
       }
 
@@ -573,6 +593,7 @@
         rank: index + 1
       }));
 
+      anglerList.innerHTML = '';
       for (const { name, fish, totalLength, rank } of rankedAnglers) {
         const li = document.createElement('li');
         li.className = 'angler-item';
@@ -583,7 +604,7 @@
             ${fish.length > 0
               ? fish.map(f => `
                 <li class="fish-item">
-                  <span class="fish-length" onclick="showLightbox('${f.image_url}')">${Number(f.length).toFixed(2)} in</span>
+                  <span class="fish-length" data-image-url="${f.image_url.replace(/"/g, '&quot;')}" onclick="showLightbox(this.getAttribute('data-image-url'))">${Number(f.length).toFixed(2)} in</span>
                 </li>
               `).join('')
               : '<li class="fish-item">No fish submitted</li>'
@@ -592,7 +613,6 @@
           <div class="angler-total">Total: ${totalLength.toFixed(2)} in</div>
         `;
         anglerList.appendChild(li);
-        console.log(`Rendered fish for ${name}:`, li.querySelector('.fish-list').innerHTML);
       }
       console.log('Anglers loaded:', rankedAnglers);
     }
