@@ -443,6 +443,7 @@
   </style>
   <script>
     const monthCodes = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const RESET_TOKEN = "your-secret-token-here"; // Replace with a secure token
 
     function getTournamentCode(year, month) {
       if (year === 2025 && month === 6) return "VUM";
@@ -504,6 +505,27 @@
       } catch (error) {
         console.error(`Failed to fetch fish for ${anglerName}:`, error.message);
         return [];
+      }
+    }
+
+    async function resetTournament() {
+      try {
+        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/reset', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${RESET_TOKEN}`
+          },
+          cache: 'no-cache'
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        console.log('Tournament reset successfully');
+        const anglerList = document.getElementById('anglerList');
+        if (anglerList) {
+          anglerList.innerHTML = '<li>No anglers registered</li>';
+        }
+      } catch (error) {
+        console.error('Failed to reset tournament:', error.message);
       }
     }
 
@@ -612,11 +634,17 @@
       codeElement.textContent = getTournamentCode(year, month);
 
       const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
-      const update = () => {
+      let hasReset = false;
+
+      const update = async () => {
         const timeDiff = target - new Date();
         if (timeDiff <= 0) {
           timerElement.textContent = 'Tournament ended!';
           countdownElement.classList.remove('countdown-red');
+          if (!hasReset) {
+            await resetTournament();
+            hasReset = true;
+          }
           clearInterval(interval);
           return;
         }
