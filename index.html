@@ -7,7 +7,7 @@
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg">
   <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.imagedelivery.net https://upload.wikimedia.org data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -160,9 +160,14 @@
       color: #FFD700;
       font-size: 1rem;
       transition: color 0.3s ease;
+      cursor: pointer;
     }
     .fish-length:hover {
       color: #ffeb3b;
+    }
+    .fish-length.invalid {
+      color: #ff4500;
+      cursor: not-allowed;
     }
     .angler-total {
       color: #FFD700;
@@ -292,6 +297,46 @@
     .learn-more-button:hover {
       background-color: #ffeb3b;
     }
+    #lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    #lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      transform: scale(1);
+      transition: transform 0.2s ease;
+      cursor: zoom-in;
+    }
+    #lightbox.zoomed img {
+      transform: scale(1.5);
+      cursor: zoom-out;
+    }
+    #lightbox-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    #lightbox-error {
+      color: #ff4500;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      display: none;
+    }
     @media (max-width: 768px) {
       .identifier-container {
         position: static;
@@ -401,10 +446,15 @@
         font-size: 0.8rem;
         padding: 0.4rem 0.8rem;
       }
+      #lightbox img {
+        max-width: 95%;
+        max-height: 95%;
+      }
     }
   </style>
   <script>
     const monthCodes = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const RESET_TOKEN = "7b9c8d4e2f1a3b5c7d9e0f1a2b3c4d5e";
 
     function getTournamentCode(year, month) {
       if (year === 2025 && month === 6) return "VUM";
@@ -444,7 +494,7 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const anglers = await response.json();
-        if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
+        if (!Array.isArray(anglers) || anglers.length === 0) return [];
         return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
         console.error('Fetch angler list error:', error.message);
@@ -461,12 +511,107 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const fish = await response.json();
-        console.log(`Fish data for ${anglerName}:`, fish);
-        return fish;
+        if (!Array.isArray(fish)) {
+          console.error(`Invalid fish data for ${anglerName}: not an array`);
+          return [];
+        }
+        const validFish = fish
+          .filter(f => {
+            if (!f.image_url || typeof f.image_url !== 'string' || !f.image_url.includes('imagedelivery.net')) {
+              console.warn(`Invalid image_url for ${anglerName}: ${f.image_url}`);
+              return false;
+            }
+            if (!f.length || isNaN(parseFloat(f.length))) {
+              console.warn(`Invalid length for ${anglerName}: ${f.length}`);
+              return false;
+            }
+            return true;
+          })
+          .map(f => ({
+            image_url: f.image_url,
+            length: parseFloat(f.length)
+          }));
+        console.log(`Valid fish for ${anglerName}:`, validFish);
+        return validFish;
       } catch (error) {
         console.error(`Failed to fetch fish for ${anglerName}:`, error.message);
         return [];
       }
+    }
+
+    async function resetTournament() {
+      try {
+        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/reset', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${RESET_TOKEN}`
+          },
+          cache: 'no-cache'
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        console.log('Tournament reset successfully');
+        const anglerList = document.getElementById('anglerList');
+        if (anglerList) {
+          anglerList.innerHTML = '<li>No anglers registered</li>';
+        }
+      } catch (error) {
+        console.error('Failed to reset tournament:', error.message);
+      }
+    }
+
+    function showLightbox(imageUrl) {
+      if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.includes('imagedelivery.net')) {
+        console.error('Invalid image URL:', imageUrl);
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxError = document.getElementById('lightbox-error');
+        lightboxImg.src = 'https://www.familyfishing.fun/images/placeholder-fish.png';
+        lightboxImg.alt = 'Placeholder fish image';
+        lightboxImg.style.display = 'block';
+        lightboxError.textContent = 'Image not available';
+        lightboxError.style.display = 'block';
+        lightbox.style.display = 'flex';
+        return;
+      }
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxError = document.getElementById('lightbox-error');
+      lightboxImg.src = '';
+      lightboxImg.src = imageUrl;
+      lightboxImg.alt = 'Fish image';
+      lightboxImg.style.display = 'block';
+      lightboxError.style.display = 'none';
+      lightbox.style.display = 'flex';
+      lightboxImg.onerror = () => {
+        console.error('Failed to load image:', imageUrl);
+        lightboxImg.src = 'https://www.familyfishing.fun/images/placeholder-fish.png';
+        lightboxImg.alt = 'Placeholder fish image';
+        lightboxImg.style.display = 'block';
+        lightboxError.textContent = 'Image not available';
+        lightboxError.style.display = 'block';
+      };
+      lightboxImg.onclick = () => {
+        lightbox.classList.toggle('zoomed');
+      };
+      document.addEventListener('keydown', closeOnEscape);
+    }
+
+    function closeLightbox() {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxError = document.getElementById('lightbox-error');
+      lightbox.style.display = 'none';
+      lightbox.classList.remove('zoomed');
+      lightboxImg.src = '';
+      lightboxImg.alt = 'Fish image';
+      lightboxImg.style.display = 'block';
+      lightboxError.style.display = 'none';
+      document.removeEventListener('keydown', closeOnEscape);
+    }
+
+    function closeOnEscape(e) {
+      if (e.key === 'Escape') closeLightbox();
     }
 
     async function loadAnglerList() {
@@ -475,25 +620,27 @@
         console.error('Angler list element not found');
         return;
       }
-      anglerList.innerHTML = '';
+      anglerList.innerHTML = '<li>Loading...</li>';
       const anglers = await fetchAnglerList();
-      const anglerData = [];
+      if (anglers.length === 0) {
+        anglerList.innerHTML = '<li>No anglers registered</li>';
+        return;
+      }
 
-      // Fetch fish for all anglers and calculate totals
+      const anglerData = [];
       for (const name of anglers) {
         const fish = await fetchFishForAngler(name);
-        const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
+        const totalLength = fish.reduce((sum, f) => sum + f.length, 0);
         anglerData.push({ name, fish, totalLength });
       }
 
-      // Sort anglers by total length (descending) and assign ranks
       anglerData.sort((a, b) => b.totalLength - a.totalLength);
       const rankedAnglers = anglerData.map((angler, index) => ({
         ...angler,
         rank: index + 1
       }));
 
-      // Render sorted anglers with rank and total
+      anglerList.innerHTML = '';
       for (const { name, fish, totalLength, rank } of rankedAnglers) {
         const li = document.createElement('li');
         li.className = 'angler-item';
@@ -504,7 +651,11 @@
             ${fish.length > 0
               ? fish.map(f => `
                 <li class="fish-item">
-                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)} in</a>
+                  <span class="fish-length${f.image_url.includes('imagedelivery.net') ? '' : ' invalid'}" 
+                        data-image-url="${f.image_url.replace(/"/g, '&quot;')}" 
+                        onclick="${f.image_url.includes('imagedelivery.net') ? 'showLightbox(this.getAttribute(\'data-image-url\'))' : 'return false;'}">
+                    ${Number(f.length).toFixed(2)} in
+                  </span>
                 </li>
               `).join('')
               : '<li class="fish-item">No fish submitted</li>'
@@ -555,11 +706,17 @@
       codeElement.textContent = getTournamentCode(year, month);
 
       const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
-      const update = () => {
+      let hasReset = false;
+
+      const update = async () => {
         const timeDiff = target - new Date();
         if (timeDiff <= 0) {
           timerElement.textContent = 'Tournament ended!';
           countdownElement.classList.remove('countdown-red');
+          if (!hasReset) {
+            await resetTournament();
+            hasReset = true;
+          }
           clearInterval(interval);
           return;
         }
@@ -622,6 +779,11 @@
       <p class="bible-reference" id="bibleReference">Loading reference...</p>
     </div>
     <a href="#" class="learn-more-button" onclick="alert('Coming Soon'); return false;">Learn More</a>
+  </div>
+  <div id="lightbox">
+    <span id="lightbox-close" onclick="closeLightbox()">×</span>
+    <img id="lightbox-img" src="" alt="Fish image">
+    <div id="lightbox-error"></div>
   </div>
 </body>
 </html>
