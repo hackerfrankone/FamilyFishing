@@ -133,7 +133,7 @@
       margin-bottom: 0.5rem;
     }
     .angler-name {
-      color: yellow;
+      color: #FFD700;
       font-weight: bold;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
       font-size: 1.2rem;
@@ -164,11 +164,10 @@
     .fish-length:hover {
       color: #ffeb3b;
     }
-    .angler-total {
+    .angler-total-length {
       color: #FFD700;
-      font-size: 1rem;
+      font-size: 1.2rem;
       font-weight: bold;
-      margin-top: 0.5rem;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     }
     .angler-rank {
@@ -498,7 +497,7 @@
         const li = document.createElement('li');
         li.className = 'angler-item';
         li.innerHTML = `
-          <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'} ${totalLength.toFixed(2)}" <span class="angler-name">${name}</span></span>
+          <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'}</span> <span class="angler-total-length">${totalLength.toFixed(2)}"</span> <span class="angler-name">${name}</span>
           <ul class="fish-list" id="fishList-${name.replace(/\s+/g, '-')}">
             ${fish.length > 0
               ? fish.map(f => `
