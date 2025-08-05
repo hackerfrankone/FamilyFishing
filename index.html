@@ -195,7 +195,7 @@
       transition: filter 0.3s ease;
     }
     .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
-    .discord-button, .archive-button, .tackle-button, .rules-button {
+    .discord-button, .archive-button, .tackle-button, .rules-button, .privacy-button {
       width: 80px;
       height: 80px;
       border-radius: 50%;
@@ -229,11 +229,11 @@
       background-color: #FFA500;
       color: white;
     }
-    .rules-button {
+    .rules-button, .privacy-button {
       background-color: #cc0000;
       color: white;
     }
-    .rules-button:hover {
+    .rules-button:hover, .privacy-button:hover {
       background-color: #ff0000;
     }
     .discord-button { background-color: #5865F2; color: white; }
@@ -364,7 +364,7 @@
         width: 100%;
         justify-content: center;
       }
-      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .rules-button {
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .rules-button, .privacy-button {
         width: 70px;
         height: 70px;
         font-size: 11px;
@@ -602,6 +602,7 @@
     <ul id="anglerList"><li>Loading...</li></ul>
   </div>
   <div class="social-buttons">
+    <a href="PDFs/PRIVACY-POLICY.pdf" target="_blank" rel="noopener" class="privacy-button">📄 Privacy</a>
     <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
     <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button">
       <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook logo" width="80" height="80">
