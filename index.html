@@ -566,7 +566,9 @@
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxError = document.getElementById('lightbox-error');
-        lightboxImg.style.display = 'none';
+        lightboxImg.src = 'https://www.familyfishing.fun/images/placeholder-fish.png';
+        lightboxImg.alt = 'Placeholder fish image';
+        lightboxImg.style.display = 'block';
         lightboxError.textContent = 'Image not available';
         lightboxError.style.display = 'block';
         lightbox.style.display = 'flex';
@@ -577,12 +579,15 @@
       const lightboxError = document.getElementById('lightbox-error');
       lightboxImg.src = '';
       lightboxImg.src = imageUrl;
+      lightboxImg.alt = 'Fish image';
       lightboxImg.style.display = 'block';
       lightboxError.style.display = 'none';
       lightbox.style.display = 'flex';
       lightboxImg.onerror = () => {
         console.error('Failed to load image:', imageUrl);
-        lightboxImg.style.display = 'none';
+        lightboxImg.src = 'https://www.familyfishing.fun/images/placeholder-fish.png';
+        lightboxImg.alt = 'Placeholder fish image';
+        lightboxImg.style.display = 'block';
         lightboxError.textContent = 'Image not available';
         lightboxError.style.display = 'block';
       };
@@ -599,6 +604,7 @@
       lightbox.style.display = 'none';
       lightbox.classList.remove('zoomed');
       lightboxImg.src = '';
+      lightboxImg.alt = 'Fish image';
       lightboxImg.style.display = 'block';
       lightboxError.style.display = 'none';
       document.removeEventListener('keydown', closeOnEscape);
