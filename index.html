@@ -180,7 +180,7 @@
     }
     .social-buttons {
       position: fixed;
-      top: 3rem;
+      top: 1.5rem;
       right: 1rem;
       display: flex;
       flex-direction: column;
@@ -503,7 +503,7 @@
             ${fish.length > 0
               ? fish.map(f => `
                 <li class="fish-item">
-                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)} in</a>
+                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
                 </li>
               `).join('')
               : '<li class="fish-item">No fish submitted</li>'
