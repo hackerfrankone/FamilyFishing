@@ -443,7 +443,7 @@
   </style>
   <script>
     const monthCodes = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const RESET_TOKEN = "your-secret-token-here"; // Replace with a secure token
+    const RESET_TOKEN = "7b9c8d4e2f1a3b5c7d9e0f1a2b3c4d5e";
 
     function getTournamentCode(year, month) {
       if (year === 2025 && month === 6) return "VUM";
@@ -501,7 +501,6 @@
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const fish = await response.json();
         if (!Array.isArray(fish)) return [];
-        // Validate fish data
         return fish
           .filter(f => f.image_url && typeof f.image_url === 'string' && f.length && !isNaN(parseFloat(f.length)))
           .map(f => ({
