@@ -498,7 +498,7 @@
         const li = document.createElement('li');
         li.className = 'angler-item';
         li.innerHTML = `
-          <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'} ${totalLength.toFixed(2)}" ${name}</span>
+          <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'} ${totalLength.toFixed(2)}" <span class="angler-name">${name}</span></span>
           <ul class="fish-list" id="fishList-${name.replace(/\s+/g, '-')}">
             ${fish.length > 0
               ? fish.map(f => `
@@ -509,7 +509,6 @@
               : '<li class="fish-item">No fish submitted</li>'
             }
           </ul>
-          <div class="angler-total">Total: ${totalLength.toFixed(2)} in</div>
         `;
         anglerList.appendChild(li);
         console.log(`Rendered fish for ${name}:`, li.querySelector('.fish-list').innerHTML);
