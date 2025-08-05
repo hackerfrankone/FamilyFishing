@@ -160,6 +160,7 @@
       color: #FFD700;
       font-size: 1rem;
       transition: color 0.3s ease;
+      cursor: pointer;
     }
     .fish-length:hover {
       color: #ffeb3b;
@@ -292,6 +293,39 @@
     .learn-more-button:hover {
       background-color: #ffeb3b;
     }
+    #lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    #lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      transform: scale(1);
+      transition: transform 0.2s ease;
+      cursor: zoom-in;
+    }
+    #lightbox.zoomed img {
+      transform: scale(1.5);
+      cursor: zoom-out;
+    }
+    #lightbox-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
     @media (max-width: 768px) {
       .identifier-container {
         position: static;
@@ -401,6 +435,10 @@
         font-size: 0.8rem;
         padding: 0.4rem 0.8rem;
       }
+      #lightbox img {
+        max-width: 95%;
+        max-height: 95%;
+      }
     }
   </style>
   <script>
@@ -469,6 +507,28 @@
       }
     }
 
+    function showLightbox(imageUrl) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      lightboxImg.src = imageUrl;
+      lightbox.style.display = 'flex';
+      lightboxImg.onclick = () => {
+        lightbox.classList.toggle('zoomed');
+      };
+      document.addEventListener('keydown', closeOnEscape);
+    }
+
+    function closeLightbox() {
+      const lightbox = document.getElementById('lightbox');
+      lightbox.style.display = 'none';
+      lightbox.classList.remove('zoomed');
+      document.removeEventListener('keydown', closeOnEscape);
+    }
+
+    function closeOnEscape(e) {
+      if (e.key === 'Escape') closeLightbox();
+    }
+
     async function loadAnglerList() {
       const anglerList = document.getElementById('anglerList');
       if (!anglerList) {
@@ -479,21 +539,18 @@
       const anglers = await fetchAnglerList();
       const anglerData = [];
 
-      // Fetch fish for all anglers and calculate totals
       for (const name of anglers) {
         const fish = await fetchFishForAngler(name);
         const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
         anglerData.push({ name, fish, totalLength });
       }
 
-      // Sort anglers by total length (descending) and assign ranks
       anglerData.sort((a, b) => b.totalLength - a.totalLength);
       const rankedAnglers = anglerData.map((angler, index) => ({
         ...angler,
         rank: index + 1
       }));
 
-      // Render sorted anglers with rank and total
       for (const { name, fish, totalLength, rank } of rankedAnglers) {
         const li = document.createElement('li');
         li.className = 'angler-item';
@@ -504,7 +561,7 @@
             ${fish.length > 0
               ? fish.map(f => `
                 <li class="fish-item">
-                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)} in</a>
+                  <span class="fish-length" onclick="showLightbox('${f.image_url}')">${Number(f.length).toFixed(2)} in</span>
                 </li>
               `).join('')
               : '<li class="fish-item">No fish submitted</li>'
@@ -622,6 +679,10 @@
       <p class="bible-reference" id="bibleReference">Loading reference...</p>
     </div>
     <a href="#" class="learn-more-button" onclick="alert('Coming Soon'); return false;">Learn More</a>
+  </div>
+  <div id="lightbox">
+    <span id="lightbox-close" onclick="closeLightbox()">×</span>
+    <img id="lightbox-img" src="" alt="Fish image">
   </div>
 </body>
 </html>
