@@ -235,6 +235,17 @@
         }
         anglerSelect.innerHTML = '<option value="">Select your name</option>' + 
           anglers.map(name => `<option value="${name}">${name}</option>`).join('');
+
+        // Auto-select angler if PIN exists in localStorage
+        const storedAngler = Object.keys(localStorage)
+          .find(key => key.startsWith('angler_pin_') && anglers.find(a => a.toLowerCase() === key.replace('angler_pin_', '')));
+        if (storedAngler) {
+          const anglerName = anglers.find(a => a.toLowerCase() === storedAngler.replace('angler_pin_', ''));
+          if (anglerName) {
+            anglerSelect.value = anglerName;
+            validateForm();
+          }
+        }
       } catch (error) {
         anglerSelect.disabled = false;
         anglerSelect.innerHTML = '<option value="">Error loading anglers</option>';
@@ -453,35 +464,35 @@
     </select>
     
     <div id="fishEntry1" class="fish-entry">
-      <label for="fishPhoto1">Fish 1 Photo (JPEG/PNG, max 5MB):</label>
+      <label for="fishPhoto1">Fish 1 Photo:</label>
       <input type="file" id="fishPhoto1" name="fishPhoto1" accept="image/jpeg,image/png">
       <img id="preview1" class="preview-image" style="display: none;" alt="Fish 1 Preview">
       <label for="fishLength1">Fish 1 Length (inches):</label>
       <input type="number" id="fishLength1" name="fishLength1" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry2" class="fish-entry" style="display: none;">
-      <label for="fishPhoto2">Fish 2 Photo (JPEG/PNG, max 5MB):</label>
+      <label for="fishPhoto2">Fish 2 Photo:</label>
       <input type="file" id="fishPhoto2" name="fishPhoto2" accept="image/jpeg,image/png">
       <img id="preview2" class="preview-image" style="display: none;" alt="Fish 2 Preview">
       <label for="fishLength2">Fish 2 Length (inches):</label>
       <input type="number" id="fishLength2" name="fishLength2" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry3" class="fish-entry" style="display: none;">
-      <label for="fishPhoto3">Fish 3 Photo (JPEG/PNG, max 5MB):</label>
+      <label for="fishPhoto3">Fish 3 Photo:</label>
       <input type="file" id="fishPhoto3" name="fishPhoto3" accept="image/jpeg,image/png">
       <img id="preview3" class="preview-image" style="display: none;" alt="Fish 3 Preview">
       <label for="fishLength3">Fish 3 Length (inches):</label>
       <input type="number" id="fishLength3" name="fishLength3" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry4" class="fish-entry" style="display: none;">
-      <label for="fishPhoto4">Fish 4 Photo (JPEG/PNG, max 5MB):</label>
+      <label for="fishPhoto4">Fish 4 Photo:</label>
       <input type="file" id="fishPhoto4" name="fishPhoto4" accept="image/jpeg,image/png">
       <img id="preview4" class="preview-image" style="display: none;" alt="Fish 4 Preview">
       <label for="fishLength4">Fish 4 Length (inches):</label>
       <input type="number" id="fishLength4" name="fishLength4" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry5" class="fish-entry" style="display: none;">
-      <label for="fishPhoto5">Fish 5 Photo (JPEG/PNG, max 5MB):</label>
+      <label for="fishPhoto5">Fish 5 Photo:</label>
       <input type="file" id="fishPhoto5" name="fishPhoto5" accept="image/jpeg,image/png">
       <img id="preview5" class="preview-image" style="display: none;" alt="Fish 5 Preview">
       <label for="fishLength5">Fish 5 Length (inches):</label>
