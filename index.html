@@ -472,7 +472,10 @@
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const anglers = await response.json();
         if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
-        return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
+        return anglers.map(angler => ({
+          name: angler.name.replace(/[<>]/g, ''),
+          pin: angler.pin || null
+        })).filter(angler => angler.name.length > 0);
       } catch (error) {
         console.error('Fetch angler list error:', error.message);
         return [];
@@ -496,6 +499,23 @@
       }
     }
 
+    async function updateAnglerPin(anglerName, pin) {
+      try {
+        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/update_pin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: anglerName, pin: pin })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        const result = await response.json();
+        console.log(`PIN updated for ${anglerName}:`, result);
+        return true;
+      } catch (error) {
+        console.error(`Failed to update PIN for ${anglerName}:`, error.message);
+        return false;
+      }
+    }
+
     async function loadAnglerList() {
       const anglerList = document.getElementById('anglerList');
       if (!anglerList) {
@@ -506,11 +526,15 @@
       const anglers = await fetchAnglerList();
       const anglerData = [];
 
+      // Retrieve previous angler list from localStorage
+      const previousAnglers = JSON.parse(localStorage.getItem('previousAnglers') || '[]');
+      const previousAnglerNames = previousAnglers.map(a => a.name);
+
       // Fetch fish for all anglers and calculate totals
-      for (const name of anglers) {
+      for (const { name, pin } of anglers) {
         const fish = await fetchFishForAngler(name);
         const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
-        anglerData.push({ name, fish, totalLength });
+        anglerData.push({ name, fish, totalLength, pin });
       }
 
       // Sort anglers by total length (descending) and assign ranks
@@ -519,6 +543,31 @@
         ...angler,
         rank: index + 1
       }));
+
+      // Check for new anglers and prompt for PIN
+      for (const { name, pin } of rankedAnglers) {
+        if (!previousAnglerNames.includes(name) && !pin && !localStorage.getItem(`angler_pin_${name}`)) {
+          let validPin = false;
+          let pinInput;
+          while (!validPin) {
+            pinInput = prompt(`Welcome, ${name}! Please choose a 6-digit PIN:`);
+            if (pinInput && /^\d{6}$/.test(pinInput)) {
+              validPin = true;
+              localStorage.setItem(`angler_pin_${name}`, pinInput);
+              const success = await updateAnglerPin(name, pinInput);
+              if (!success) {
+                alert('Failed to save PIN. Please try again.');
+                localStorage.removeItem(`angler_pin_${name}`);
+              }
+            } else {
+              alert('Please enter a valid 6-digit PIN.');
+            }
+          }
+        }
+      }
+
+      // Save current angler list to localStorage
+      localStorage.setItem('previousAnglers', JSON.stringify(rankedAnglers));
 
       // Render sorted anglers with rank and total
       for (const { name, fish, totalLength, rank } of rankedAnglers) {
@@ -607,7 +656,6 @@
       initTournament();
     });
 
-    // Load angler list on initial page load and manual refresh
     window.addEventListener('load', loadAnglerList);
   </script>
 </head>
