@@ -374,48 +374,36 @@
           let validPin = false;
           const promptMessage = isFirstSubmission 
             ? `Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:` 
-            : `Please enter or set your 6-digit PIN for ${anglerName}:`;
+            : `No PIN found for ${anglerName}. Please set a new 6-digit PIN:`;
           while (!validPin) {
             pin = prompt(promptMessage);
-            if (pin && /^\d{6}$/.test(pin)) {
-              if (isFirstSubmission) {
-                const pinSaved = await savePin(anglerName, pin);
-                if (!pinSaved) {
-                  errorMessage.textContent = 'Failed to save PIN to database. Please try again.';
-                  errorMessage.style.display = 'block';
-                  throw new Error('Failed to save PIN');
-                }
-                localStorage.setItem(pinKey, pin);
-                console.log(`Stored PIN in localStorage: ${pinKey} = ${pin}`);
-                alert('PIN saved successfully! Proceeding with submission.');
-                storedPin = pin;
-                validPin = true;
-              } else {
-                const pinResult = await verifyPin(anglerName, pin);
-                if (pinResult === "no_pin") {
-                  const pinSaved = await savePin(anglerName, pin);
-                  if (!pinSaved) {
-                    errorMessage.textContent = 'Failed to save new PIN to database. Please try again.';
-                    errorMessage.style.display = 'block';
-                    throw new Error('Failed to save PIN');
-                  }
-                  localStorage.setItem(pinKey, pin);
-                  console.log(`Stored new PIN in localStorage: ${pinKey} = ${pin}`);
-                  alert('New PIN saved successfully! Proceeding with submission.');
-                  storedPin = pin;
-                  validPin = true;
-                } else if (!pinResult) {
-                  alert('Invalid PIN. Please try again or contact support to reset your PIN.');
-                } else {
-                  localStorage.setItem(pinKey, pin);
-                  console.log(`Stored verified PIN in localStorage: ${pinKey} = ${pin}`);
-                  alert('PIN verified successfully! Proceeding with submission.');
-                  storedPin = pin;
-                  validPin = true;
-                }
-              }
-            } else {
+            if (!pin || !/^\d{6}$/.test(pin)) {
               alert('Please enter a valid 6-digit PIN (numbers only).');
+              continue;
+            }
+            const pinResult = isFirstSubmission ? true : await verifyPin(anglerName, pin);
+            if (pinResult === true) {
+              // PIN verified (for non-first submission with existing PIN)
+              localStorage.setItem(pinKey, pin);
+              console.log(`Stored verified PIN in localStorage: ${pinKey} = ${pin}`);
+              alert('PIN verified successfully! Proceeding with submission.');
+              storedPin = pin;
+              validPin = true;
+            } else if (pinResult === "no_pin") {
+              // No PIN set in database, save new PIN
+              const pinSaved = await savePin(anglerName, pin);
+              if (!pinSaved) {
+                errorMessage.textContent = 'Failed to save new PIN to database. Please try again.';
+                errorMessage.style.display = 'block';
+                throw new Error('Failed to save PIN');
+              }
+              localStorage.setItem(pinKey, pin);
+              console.log(`Stored new PIN in localStorage: ${pinKey} = ${pin}`);
+              alert('New PIN saved successfully! Proceeding with submission.');
+              storedPin = pin;
+              validPin = true;
+            } else {
+              alert('Invalid PIN. Please try again or contact support to reset your PIN.');
             }
           }
         }
