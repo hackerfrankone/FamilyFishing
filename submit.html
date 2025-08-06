@@ -192,7 +192,7 @@
           });
           const data = await response.json();
           if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
-          console.log(`PIN saved successfully for ${anglerName}`);
+          console.log(`PIN saved successfully for ${anglerName}: ${pin}`);
           return true;
         } catch (error) {
           console.error(`Attempt ${attempt} failed to save PIN for ${anglerName}:`, error.message);
@@ -200,7 +200,32 @@
             console.error('All retries failed for PIN save');
             return false;
           }
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+      return false;
+    }
+
+    async function verifyPin(anglerName, pin, retries = 3) {
+      for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+          console.log(`Attempt ${attempt} to verify PIN for ${anglerName}`);
+          const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/verify_pin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: anglerName, pin })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+          console.log(`PIN verification for ${anglerName}: ${data.isValid}`);
+          return data.isValid;
+        } catch (error) {
+          console.error(`Attempt ${attempt} failed to verify PIN for ${anglerName}:`, error.message);
+          if (attempt === retries) {
+            console.error('All retries failed for PIN verification');
+            return false;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
       return false;
@@ -219,7 +244,7 @@
         return data.isFirstSubmission;
       } catch (error) {
         console.error(`Failed to check first submission for ${anglerName}:`, error.message);
-        return false; // Assume not first submission to prompt for PIN
+        return true; // Fallback to prompt PIN
       }
     }
 
@@ -344,31 +369,43 @@
         const isFirstSubmission = await checkFirstSubmission(anglerName);
         console.log(`Stored PIN for ${anglerName}: ${storedPin}, isFirstSubmission: ${isFirstSubmission}`);
         
-        if (isFirstSubmission && !storedPin) {
+        if (!storedPin) {
           let pin;
           let validPin = false;
+          const promptMessage = isFirstSubmission 
+            ? `Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:` 
+            : `Please enter your existing 6-digit PIN for ${anglerName}:`;
           while (!validPin) {
-            pin = prompt(`Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:`);
+            pin = prompt(promptMessage);
             if (pin && /^\d{6}$/.test(pin)) {
-              validPin = true;
+              if (isFirstSubmission) {
+                const pinSaved = await savePin(anglerName, pin);
+                if (!pinSaved) {
+                  errorMessage.textContent = 'Failed to save PIN to database. Please try again.';
+                  errorMessage.style.display = 'block';
+                  throw new Error('Failed to save PIN');
+                }
+                localStorage.setItem(pinKey, pin);
+                console.log(`Stored PIN in localStorage: ${pinKey} = ${pin}`);
+                alert('PIN saved successfully! Proceeding with submission.');
+                storedPin = pin;
+                validPin = true;
+              } else {
+                const pinVerified = await verifyPin(anglerName, pin);
+                if (!pinVerified) {
+                  alert('Invalid PIN. Please try again or contact support to reset your PIN.');
+                } else {
+                  localStorage.setItem(pinKey, pin);
+                  console.log(`Stored verified PIN in localStorage: ${pinKey} = ${pin}`);
+                  alert('PIN verified successfully! Proceeding with submission.');
+                  storedPin = pin;
+                  validPin = true;
+                }
+              }
             } else {
               alert('Please enter a valid 6-digit PIN (numbers only).');
             }
           }
-          const pinSaved = await savePin(anglerName, pin);
-          if (!pinSaved) {
-            errorMessage.textContent = 'Failed to save PIN to database. Please try again.';
-            errorMessage.style.display = 'block';
-            throw new Error('Failed to save PIN');
-          }
-          localStorage.setItem(pinKey, pin);
-          console.log(`Stored PIN in localStorage: ${pinKey} = ${pin}`);
-          alert('PIN saved successfully! Proceeding with submission.');
-          storedPin = pin;
-        } else if (!isFirstSubmission && !storedPin) {
-          errorMessage.textContent = 'PIN required for submission. Contact support to reset your PIN.';
-          errorMessage.style.display = 'block';
-          throw new Error('No PIN found in localStorage');
         }
 
         const formData = new FormData();
