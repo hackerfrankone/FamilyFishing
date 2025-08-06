@@ -194,7 +194,7 @@
       transition: filter 0.3s ease;
     }
     .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
-    .discord-button, .archive-button, .rules-button, .tackle-button {
+    .discord-button, .archive-button, .tackle-button, .rules-button, .privacy-button {
       width: 80px;
       height: 80px;
       border-radius: 50%;
@@ -228,11 +228,11 @@
       background-color: #FFA500;
       color: white;
     }
-    .rules-button {
+    .rules-button, .privacy-button {
       background-color: #cc0000;
       color: white;
     }
-    .rules-button:hover {
+    .rules-button:hover, .privacy-button:hover {
       background-color: #ff0000;
     }
     .discord-button { background-color: #5865F2; color: white; }
@@ -242,7 +242,7 @@
     .submit-fish-button:hover { filter: brightness(75%); }
     .bible-verse-container {
       position: fixed;
-      bottom: 4rem;
+      bottom: 1rem;
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
@@ -290,25 +290,6 @@
     }
     .learn-more-button:hover {
       background-color: #ffeb3b;
-    }
-    .privacy-policy-container {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      padding: 0.5rem 1rem;
-      text-align: center;
-    }
-    .privacy-policy {
-      color: #ffffff;
-      font-weight: bold;
-      font-size: 1rem;
-      text-decoration: none;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-    }
-    .privacy-policy:hover {
-      color: #00ffff;
     }
     @media (max-width: 768px) {
       .identifier-container {
@@ -382,7 +363,7 @@
         width: 100%;
         justify-content: center;
       }
-      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .rules-button, .tackle-button {
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .tackle-button, .rules-button, .privacy-button {
         width: 70px;
         height: 70px;
         font-size: 11px;
@@ -394,7 +375,7 @@
       }
       .bible-verse-container {
         position: static;
-        margin: 2rem auto 4rem;
+        margin: 2rem auto 1rem;
         padding: 0.5rem;
         max-width: 95%;
         transform: none;
@@ -418,15 +399,6 @@
       .learn-more-button {
         font-size: 0.8rem;
         padding: 0.4rem 0.8rem;
-      }
-      .privacy-policy-container {
-        position: static;
-        margin: 1rem auto 2rem;
-        transform: none;
-        padding: 0.5rem;
-      }
-      .privacy-policy {
-        font-size: 0.9rem;
       }
     }
   </style>
@@ -472,10 +444,7 @@
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const anglers = await response.json();
         if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
-        return anglers.map(angler => ({
-          name: angler.name.replace(/[<>]/g, ''),
-          pin: angler.pin || null
-        })).filter(angler => angler.name.length > 0);
+        return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
         console.error('Fetch angler list error:', error.message);
         return [];
@@ -499,23 +468,6 @@
       }
     }
 
-    async function updateAnglerPin(anglerName, pin) {
-      try {
-        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/update_pin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: anglerName, pin: pin })
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-        const result = await response.json();
-        console.log(`PIN updated for ${anglerName}:`, result);
-        return true;
-      } catch (error) {
-        console.error(`Failed to update PIN for ${anglerName}:`, error.message);
-        return false;
-      }
-    }
-
     async function loadAnglerList() {
       const anglerList = document.getElementById('anglerList');
       if (!anglerList) {
@@ -526,15 +478,11 @@
       const anglers = await fetchAnglerList();
       const anglerData = [];
 
-      // Retrieve previous angler list from localStorage
-      const previousAnglers = JSON.parse(localStorage.getItem('previousAnglers') || '[]');
-      const previousAnglerNames = previousAnglers.map(a => a.name);
-
       // Fetch fish for all anglers and calculate totals
-      for (const { name, pin } of anglers) {
+      for (const name of anglers) {
         const fish = await fetchFishForAngler(name);
         const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
-        anglerData.push({ name, fish, totalLength, pin });
+        anglerData.push({ name, fish, totalLength });
       }
 
       // Sort anglers by total length (descending) and assign ranks
@@ -543,31 +491,6 @@
         ...angler,
         rank: index + 1
       }));
-
-      // Check for new anglers and prompt for PIN
-      for (const { name, pin } of rankedAnglers) {
-        if (!previousAnglerNames.includes(name) && !pin && !localStorage.getItem(`angler_pin_${name}`)) {
-          let validPin = false;
-          let pinInput;
-          while (!validPin) {
-            pinInput = prompt(`Welcome, ${name}! Please choose a 6-digit PIN:`);
-            if (pinInput && /^\d{6}$/.test(pinInput)) {
-              validPin = true;
-              localStorage.setItem(`angler_pin_${name}`, pinInput);
-              const success = await updateAnglerPin(name, pinInput);
-              if (!success) {
-                alert('Failed to save PIN. Please try again.');
-                localStorage.removeItem(`angler_pin_${name}`);
-              }
-            } else {
-              alert('Please enter a valid 6-digit PIN.');
-            }
-          }
-        }
-      }
-
-      // Save current angler list to localStorage
-      localStorage.setItem('previousAnglers', JSON.stringify(rankedAnglers));
 
       // Render sorted anglers with rank and total
       for (const { name, fish, totalLength, rank } of rankedAnglers) {
@@ -650,13 +573,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      setInterval(loadAnglerList, 3600000); // Auto-refresh every 1 hour
+      loadAnglerList();
+      setInterval(loadAnglerList, 180000);
       loadBibleVerse();
       setInterval(loadBibleVerse, 8 * 3600000);
       initTournament();
     });
-
-    window.addEventListener('load', loadAnglerList);
   </script>
 </head>
 <body>
@@ -679,6 +601,7 @@
     <ul id="anglerList"><li>Loading...</li></ul>
   </div>
   <div class="social-buttons">
+    <a href="PDFs/PRIVACY-POLICY.pdf" target="_blank" rel="noopener" class="privacy-button">📄 Privacy</a>
     <a href="PDFs/rules.pdf?v=2" target="_blank" rel="noopener" class="rules-button">📄 Rules</a>
     <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button">
       <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook logo" width="80" height="80">
@@ -697,9 +620,6 @@
       <p class="bible-reference" id="bibleReference">Loading reference...</p>
     </div>
     <a href="#" class="learn-more-button" onclick="alert('Coming Soon'); return false;">Learn More</a>
-  </div>
-  <div class="privacy-policy-container">
-    <a href="PDFs/PRIVACY-POLICY.pdf" target="_blank" rel="noopener" class="privacy-policy">Privacy Policy</a>
   </div>
 </body>
 </html>
