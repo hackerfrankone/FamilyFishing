@@ -106,9 +106,7 @@
     }
     .preview-image {
       max-width: 100px;
-      max
-
--height: 100px;
+      max-height: 100px;
       object-fit: cover;
       border-radius: 4px;
       margin-top: 0.5rem;
@@ -184,6 +182,23 @@
         preview.style.display = 'block';
       };
       reader.readAsDataURL(file);
+    }
+
+    // Save PIN to Worker
+    async function savePin(anglerName, pin) {
+      try {
+        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/update_pin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: anglerName, pin })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to save PIN');
+        return true;
+      } catch (error) {
+        console.error('PIN save error:', error.message);
+        return false;
+      }
     }
 
     async function fetchAnglerList() {
@@ -301,7 +316,8 @@
       
       try {
         const formData = new FormData();
-        formData.append('name', document.getElementById('anglerName').value);
+        const anglerName = document.getElementById('anglerName').value;
+        formData.append('name', anglerName);
         formData.append('fishCount', document.getElementById('fishCount').value);
         
         const fishCount = parseInt(document.getElementById('fishCount').value) || 0;
@@ -313,6 +329,12 @@
             formData.append(`fishPhoto${i}`, resizedFile);
             formData.append(`fishLength${i}`, document.getElementById(`fishLength${i}`).value);
           }
+        }
+
+        // Append PIN if it exists in localStorage
+        const storedPin = localStorage.getItem(`angler_pin_${anglerName.toLowerCase()}`);
+        if (storedPin) {
+          formData.append('pin', storedPin);
         }
         
         const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/submit_fish', {
@@ -328,6 +350,30 @@
         
         successMessage.textContent = 'Fish submitted successfully!';
         successMessage.style.display = 'block';
+        
+        // Prompt for PIN on first submission if not already set
+        if (result.isFirstSubmission && !storedPin) {
+          let validPin = false;
+          let pin;
+          while (!validPin) {
+            pin = prompt(`Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:`);
+            if (pin && /^\d{6}$/.test(pin)) {
+              validPin = true;
+              localStorage.setItem(`angler_pin_${anglerName.toLowerCase()}`, pin);
+              const pinSaved = await savePin(anglerName, pin);
+              if (!pinSaved) {
+                errorMessage.textContent = 'Failed to save PIN. Please try submitting again.';
+                errorMessage.style.display = 'block';
+                localStorage.removeItem(`angler_pin_${anglerName.toLowerCase()}`);
+              } else {
+                alert('PIN saved successfully! Use this PIN for future submissions.');
+              }
+            } else {
+              alert('Please enter a valid 6-digit PIN.');
+            }
+          }
+        }
+        
         alert('Submission successful! Your fish have been uploaded.');
         form.reset();
         document.getElementById('anglerName').value = '';
