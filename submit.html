@@ -218,7 +218,7 @@
           const data = await response.json();
           if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
           console.log(`PIN verification for ${anglerName}: ${data.isValid}`);
-          return data.isValid;
+          return data.isValid ? true : data.error === "No PIN set for this angler" ? "no_pin" : false;
         } catch (error) {
           console.error(`Attempt ${attempt} failed to verify PIN for ${anglerName}:`, error.message);
           if (attempt === retries) {
@@ -374,7 +374,7 @@
           let validPin = false;
           const promptMessage = isFirstSubmission 
             ? `Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:` 
-            : `Please enter your existing 6-digit PIN for ${anglerName}:`;
+            : `Please enter or set your 6-digit PIN for ${anglerName}:`;
           while (!validPin) {
             pin = prompt(promptMessage);
             if (pin && /^\d{6}$/.test(pin)) {
@@ -391,8 +391,20 @@
                 storedPin = pin;
                 validPin = true;
               } else {
-                const pinVerified = await verifyPin(anglerName, pin);
-                if (!pinVerified) {
+                const pinResult = await verifyPin(anglerName, pin);
+                if (pinResult === "no_pin") {
+                  const pinSaved = await savePin(anglerName, pin);
+                  if (!pinSaved) {
+                    errorMessage.textContent = 'Failed to save new PIN to database. Please try again.';
+                    errorMessage.style.display = 'block';
+                    throw new Error('Failed to save PIN');
+                  }
+                  localStorage.setItem(pinKey, pin);
+                  console.log(`Stored new PIN in localStorage: ${pinKey} = ${pin}`);
+                  alert('New PIN saved successfully! Proceeding with submission.');
+                  storedPin = pin;
+                  validPin = true;
+                } else if (!pinResult) {
                   alert('Invalid PIN. Please try again or contact support to reset your PIN.');
                 } else {
                   localStorage.setItem(pinKey, pin);
