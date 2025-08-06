@@ -217,7 +217,7 @@
         return data.isFirstSubmission;
       } catch (error) {
         console.error('Check first submission error:', error.message);
-        return false;
+        return true; // Fallback to assume first submission on error
       }
     }
 
@@ -228,10 +228,15 @@
           cache: 'no-cache',
           headers: { 'Accept': 'application/json' }
         });
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
         const anglers = await response.json();
-        if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
         console.log('Anglers fetched:', anglers);
+        if (!Array.isArray(anglers)) {
+          throw new Error('Invalid angler list format');
+        }
         return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
         console.error('Failed to load anglers:', error.message);
@@ -248,6 +253,7 @@
       anglerSelect.innerHTML = '<option value="">Loading anglers...</option>';
       try {
         const anglers = await fetchAnglerList();
+        console.log(`Populating dropdown with ${anglers.length} anglers`);
         anglerSelect.disabled = false;
         if (anglers.length === 0) {
           anglerSelect.innerHTML = '<option value="">No anglers registered</option>';
@@ -355,32 +361,27 @@
         console.log(`Submitting for angler: ${anglerName}`);
         let storedPin = localStorage.getItem(`angler_pin_${anglerName.toLowerCase()}`);
 
-        // Check if PIN exists or if this is the first submission
+        // Prompt for PIN if none exists in localStorage
         if (!storedPin) {
-          const isFirstSubmission = await checkFirstSubmission(anglerName);
-          console.log(`isFirstSubmission for ${anglerName}: ${isFirstSubmission}`);
-          if (isFirstSubmission) {
-            let validPin = false;
-            let pin;
-            while (!validPin) {
-              pin = prompt(`Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:`);
-              if (pin && /^\d{6}$/.test(pin)) {
-                validPin = true;
-                localStorage.setItem(`angler_pin_${anglerName.toLowerCase()}`, pin);
-                const pinSaved = await savePin(anglerName, pin);
-                if (!pinSaved) {
-                  console.error(`Failed to save PIN for ${anglerName}`);
-                  errorMessage.textContent = 'Failed to save PIN. Please try again.';
-                  errorMessage.style.display = 'block';
-                  localStorage.removeItem(`angler_pin_${anglerName.toLowerCase()}`);
-                  throw new Error('Failed to save PIN');
-                }
-                console.log(`PIN saved for ${anglerName}: ${pin}`);
-                alert('PIN saved successfully! Proceeding with fish submission.');
-                storedPin = pin;
-              } else {
-                alert('Please enter a valid 6-digit PIN.');
+          let validPin = false;
+          let pin;
+          while (!validPin) {
+            pin = prompt(`Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:`);
+            if (pin && /^\d{6}$/.test(pin)) {
+              validPin = true;
+              const pinSaved = await savePin(anglerName, pin);
+              if (!pinSaved) {
+                console.error(`Failed to save PIN for ${anglerName}`);
+                errorMessage.textContent = 'Failed to save PIN. Please try again.';
+                errorMessage.style.display = 'block';
+                throw new Error('Failed to save PIN');
               }
+              localStorage.setItem(`angler_pin_${anglerName.toLowerCase()}`, pin);
+              console.log(`PIN saved for ${anglerName}: ${pin}`);
+              alert('PIN saved successfully! Proceeding with fish submission.');
+              storedPin = pin;
+            } else {
+              alert('Please enter a valid 6-digit PIN.');
             }
           }
         }
@@ -492,7 +493,7 @@
       <option value="">Loading anglers...</option>
     </select>
     <p id="successMessage" class="success-message"></p>
-    <p id="errorMessage" class="-error-message"></p>
+    <p id="errorMessage" class="error-message"></p>
     
     <label for="fishCount">Number of Fish (1-5):</label>
     <select id="fishCount" name="fishCount" required>
