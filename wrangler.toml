@@ -1,6 +1,8 @@
-name = "fish-submit"
-main = "fish-submit.js"
-compatibility_date = "2025-08-02"  # Update to today's date
+name = "angler-list"
+main = "angler-list.js"
+compatibility_date = "2025-08-06"
 
-[d1_databases]
-db = { binding = "DB", database_name = "fff-db", database_id = "8a81751d-2ac5-4c6b-be9e-6a528468d16d" }
+[[d1_databases]]
+binding = "FFF_DB"
+database_name = "fff-db"
+database_id = "8a81751d-2ac5-4c6b-be9e-6a528468d16d"
