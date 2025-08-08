@@ -155,7 +155,7 @@
 
     async function fetchAnglerList() {
       try {
-        console.log('Fetching angler list');
+        console.log('Fetching angler list from /angler_list');
         const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/angler_list', { 
           cache: 'no-cache', 
           headers: { 
@@ -163,12 +163,12 @@
             'Content-Type': 'application/json'
           } 
         });
-        console.log(`Angler list response: status=${response.status}`);
+        console.log(`Angler list response: status=${response.status}, statusText="${response.statusText}"`);
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         const anglers = await response.json();
         console.log(`Angler list: ${JSON.stringify(anglers)}`);
         if (!Array.isArray(anglers)) throw new Error('Expected array');
-        const filteredAnglers = anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
+        const filteredAnglers = anglers.map(name => name.replace(/[.\s]+$/, '')).filter(name => name.length > 0);
         console.log(`Filtered anglers: ${JSON.stringify(filteredAnglers)}`);
         return filteredAnglers;
       } catch (error) {
@@ -202,6 +202,10 @@
             anglerSelect.value = anglerName; 
             console.log(`Auto-selected: ${anglerName}`);
             validateForm(); 
+          } else {
+            console.log(`Stored angler ${storedAngler} not found in DB`);
+            errorMessage.textContent = 'Selected angler not found in database. Please select another.';
+            errorMessage.style.display = 'block';
           }
         }
       } catch (error) {
@@ -256,14 +260,16 @@
       submitButton.disabled = true;
       try {
         const anglerName = document.getElementById('anglerName').value;
-        const pinKey = `angler_pin_${anglerName.toLowerCase()}`;
+        const normalizedAnglerName = anglerName.replace(/[.\s]+$/, '');
+        console.log(`Submitting for angler: "${anglerName}", normalized: "${normalizedAnglerName}"`);
+        const pinKey = `angler_pin_${normalizedAnglerName.toLowerCase()}`;
         localStorage.removeItem(pinKey);
         console.log(`Cleared localStorage: ${pinKey}`);
         let storedPin = localStorage.getItem(pinKey);
         console.log(`Stored PIN: ${storedPin}`);
         
         let pinCheck = await verifyPin(anglerName, storedPin || '000000');
-        console.log(`Initial PIN check: ${pinCheck}`);
+        console.log(`Initial PIN check for ${anglerName}: ${pinCheck}`);
         
         let pin;
         if (pinCheck === "no_pin") {
@@ -322,7 +328,7 @@
             } else {
               attempts++;
               console.log(`Incorrect PIN attempt ${attempts}`);
-              alert(`Incorrect PIN. ${maxAttempts - attempts} attempts left.`);
+              alert('Incorrect PIN. Try again.');
             }
           }
           if (!validPin) {
@@ -338,7 +344,7 @@
         formData.append('fishCount', document.getElementById('fishCount').value);
         formData.append('pin', storedPin);
         const fishCount = parseInt(document.getElementById('fishCount').value) || 0;
-        console.log(`Preparing submission: angler=${anglerName}, fishCount=${fishCount}, pin=${storedPin}`);
+        console.log(`Preparing submission: angler="${anglerName}", fishCount=${fishCount}, pin="${storedPin}"`);
         for (let i = 1; i <= fishCount; i++) {
           const photoInput = document.getElementById(`fishPhoto${i}`);
           const file = photoInput.files[0];
@@ -360,7 +366,7 @@
           body: formData, 
           headers: { 'Accept': 'application/json' } 
         });
-        console.log(`Submission response: status=${response.status}`);
+        console.log(`Submission response: status=${response.status}, statusText="${response.statusText}"`);
         const result = await response.json();
         console.log(`Submission result: ${JSON.stringify(result)}`);
         if (!response.ok) throw new Error(`${result.error || 'Unknown error'} (HTTP ${response.status})`);
