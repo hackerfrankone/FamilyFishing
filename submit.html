@@ -127,9 +127,10 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: anglerName, pin })
           });
+          console.log(`Verify PIN response status: ${response.status}`);
           const data = await response.json();
-          console.log(`Verify PIN response for ${anglerName}:`, data);
-          if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+          console.log(`Verify PIN response data: ${JSON.stringify(data)}`);
+          if (!response.ok) throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
           return data.isValid ? true : data.error === "No PIN set for this angler" ? "no_pin" : false;
         } catch (error) {
           console.error(`Attempt ${attempt} failed to verify PIN for ${anglerName}: ${error.message}`);
@@ -247,6 +248,9 @@
       try {
         const anglerName = document.getElementById('anglerName').value;
         const pinKey = `angler_pin_${anglerName.toLowerCase()}`;
+        // Clear stored PIN to avoid stale data
+        localStorage.removeItem(pinKey);
+        console.log(`Cleared localStorage for ${pinKey}`);
         let storedPin = localStorage.getItem(pinKey);
         console.log(`Stored PIN for ${anglerName}: ${storedPin}`);
         
@@ -345,6 +349,7 @@
         console.log(`Submitting form for ${anglerName} with PIN ${storedPin}`);
         const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/submit_fish', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
         const result = await response.json();
+        console.log(`Submission response: ${JSON.stringify(result)}`);
         if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
         successMessage.textContent = 'Fish submitted successfully! Redirecting to leaderboard...';
         successMessage.style.display = 'block';
