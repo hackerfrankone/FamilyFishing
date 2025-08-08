@@ -105,6 +105,7 @@
             body: JSON.stringify({ name: anglerName, pin })
           });
           const data = await response.json();
+          console.log(`Save PIN response for ${anglerName}:`, data);
           if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
           console.log(`PIN saved successfully for ${anglerName}`);
           return true;
@@ -120,37 +121,26 @@
     async function verifyPin(anglerName, pin, retries = 5, delay = 1500) {
       for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-          console.log(`Attempt ${attempt} to verify PIN for ${anglerName}`);
+          console.log(`Attempt ${attempt} to verify PIN for ${anglerName}, PIN: ${pin}`);
           const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/verify_pin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: anglerName, pin })
           });
           const data = await response.json();
+          console.log(`Verify PIN response for ${anglerName}:`, data);
           if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
-          console.log(`PIN verification for ${anglerName}: ${data.isValid}`);
           return data.isValid ? true : data.error === "No PIN set for this angler" ? "no_pin" : false;
         } catch (error) {
           console.error(`Attempt ${attempt} failed to verify PIN for ${anglerName}: ${error.message}`);
-          if (attempt === retries) return false;
+          if (attempt === retries) {
+            console.error(`All retries failed for PIN verification for ${anglerName}`);
+            return false;
+          }
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
       return false;
-    }
-
-    async function checkFirstSubmission(anglerName) {
-      try {
-        console.log(`Checking first submission for ${anglerName}`);
-        const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/check_first_submission?angler=${encodeURIComponent(anglerName)}`, { cache: 'no-cache', headers: { 'Accept': 'application/json' } });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        console.log(`First submission check for ${anglerName}: ${data.isFirstSubmission}`);
-        return data.isValid ? true : data.error === "No PIN set for this angler" ? "no_pin" : false;
-      } catch (error) {
-        console.error(`Failed to check first submission for ${anglerName}: ${error.message}`);
-        return true;
-      }
     }
 
     async function fetchAnglerList() {
@@ -243,8 +233,8 @@
         console.log(`Stored PIN for ${anglerName}: ${storedPin}`);
         
         // Check if PIN exists in fff-db
-        const pinCheck = await verifyPin(anglerName, storedPin || '000000'); // Use dummy PIN if none in localStorage
-        console.log(`PIN check result for ${anglerName}: ${pinCheck}`);
+        let pinCheck = await verifyPin(anglerName, storedPin || '000000'); // Use dummy PIN if none in localStorage
+        console.log(`Initial PIN check result for ${anglerName}: ${pinCheck}`);
         
         let pin;
         if (pinCheck === "no_pin") {
@@ -279,7 +269,9 @@
         } else if (pinCheck === false || !storedPin) {
           // PIN exists in fff-db, verify it
           let validPin = false;
-          while (!validPin) {
+          let attempts = 0;
+          const maxAttempts = 3;
+          while (!validPin && attempts < maxAttempts) {
             pin = prompt(`Please enter your 6-digit PIN for ${anglerName}:`);
             if (pin === null) {
               console.log(`PIN prompt cancelled for ${anglerName}`);
@@ -289,18 +281,27 @@
             }
             if (!/^\d{6}$/.test(pin)) {
               alert('Please enter a valid 6-digit PIN (numbers only).');
+              attempts++;
               continue;
             }
             console.log(`Verifying PIN for ${anglerName}: ${pin}`);
             const isValidPin = await verifyPin(anglerName, pin);
-            if (!isValidPin) {
-              alert('Incorrect PIN. Please try again.');
-              continue;
+            if (isValidPin === true) {
+              localStorage.setItem(pinKey, pin);
+              console.log(`Stored verified PIN in localStorage: ${pinKey} = ${pin}`);
+              storedPin = pin;
+              validPin = true;
+            } else {
+              attempts++;
+              console.log(`Incorrect PIN attempt ${attempts} for ${anglerName}`);
+              alert(`Incorrect PIN. ${maxAttempts - attempts} attempts remaining.`);
             }
-            localStorage.setItem(pinKey, pin);
-            console.log(`Stored verified PIN in localStorage: ${pinKey} = ${pin}`);
-            storedPin = pin;
-            validPin = true;
+          }
+          if (!validPin) {
+            console.log(`Max PIN attempts exceeded for ${anglerName}`);
+            errorMessage.textContent = 'Too many incorrect PIN attempts. Please try again later or contact support.';
+            errorMessage.style.display = 'block';
+            throw new Error('Too many incorrect PIN attempts');
           }
         }
         
@@ -334,7 +335,8 @@
         document.getElementById('anglerName').value = anglerName;
         document.getElementById('fishCount').value = '';
         for (let i = 1; i <= 5; i++) {
-          document.getElementById(`fishEntry${i}`).style.display = 'none';
+          const entry = document.getElementById(`fishEntry${i}`);
+          entry.style.display = 'none';
           document.getElementById(`preview${i}`).style.display = 'none';
           document.getElementById(`preview${i}`).src = '';
         }
