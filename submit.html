@@ -70,10 +70,10 @@
 
     function validateFile(file) {
       const validTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/heif', 'image/bmp', 'image/webp', 'image/gif'];
-      const maxSize = 5 * 1024 * 1024;
+      const maxSize = 10 * 1024 * 1024; // 10MB
       console.log(`Validating ${file.name}: Type=${file.type}, Size=${file.size}`);
       if (!validTypes.includes(file.type)) return `Unsupported image format: ${file.type}. Please use JPEG, PNG, or HEIC.`;
-      if (file.size > maxSize) return 'File size exceeds 5MB limit.';
+      if (file.size > maxSize) return 'File size exceeds 10MB limit.';
       return null;
     }
 
@@ -376,35 +376,35 @@
     <label for="fishCount">Number of Fish (1-5):</label>
     <select id="fishCount" name="fishCount" required><option value="">Select number of fish</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
     <div id="fishEntry1" class="fish-entry">
-      <label for="fishPhoto1">Fish 1 Photo (max 5MB):</label>
+      <label for="fishPhoto1">Fish 1 Photo (max 10MB):</label>
       <input type="file" id="fishPhoto1" name="fishPhoto1" accept="image/*">
       <img id="preview1" class="preview-image" style="display: none;" alt="Fish 1 Preview">
       <label for="fishLength1">Fish 1 Length (inches):</label>
       <input type="number" id="fishLength1" name="fishLength1" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry2" class="fish-entry" style="display: none;">
-      <label for="fishPhoto2">Fish 2 Photo (max 5MB):</label>
+      <label for="fishPhoto2">Fish 2 Photo (max 10MB):</label>
       <input type="file" id="fishPhoto2" name="fishPhoto2" accept="image/*">
       <img id="preview2" class="preview-image" style="display: none;" alt="Fish 2 Preview">
       <label for="fishLength2">Fish 2 Length (inches):</label>
       <input type="number" id="fishLength2" name="fishLength2" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry3" class="fish-entry" style="display: none;">
-      <label for="fishPhoto3">Fish 3 Photo (max 5MB):</label>
+      <label for="fishPhoto3">Fish 3 Photo (max 10MB):</label>
       <input type="file" id="fishPhoto3" name="fishPhoto3" accept="image/*">
       <img id="preview3" class="preview-image" style="display: none;" alt="Fish 3 Preview">
       <label for="fishLength3">Fish 3 Length (inches):</label>
       <input type="number" id="fishLength3" name="fishLength3" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry4" class="fish-entry" style="display: none;">
-      <label for="fishPhoto4">Fish 4 Photo (max 5MB):</label>
+      <label for="fishPhoto4">Fish 4 Photo (max 10MB):</label>
       <input type="file" id="fishPhoto4" name="fishPhoto4" accept="image/*">
       <img id="preview4" class="preview-image" style="display: none;" alt="Fish 4 Preview">
       <label for="fishLength4">Fish 4 Length (inches):</label>
       <input type="number" id="fishLength4" name="fishLength4" step="0.25" min="0" placeholder="example: 12.75">
     </div>
     <div id="fishEntry5" class="fish-entry" style="display: none;">
-      <label for="fishPhoto5">Fish 5 Photo (max 5MB):</label>
+      <label for="fishPhoto5">Fish 5 Photo (max 10MB):</label>
       <input type="file" id="fishPhoto5" name="fishPhoto5" accept="image/*">
       <img id="preview5" class="preview-image" style="display: none;" alt="Fish 5 Preview">
       <label for="fishLength5">Fish 5 Length (inches):</label>
