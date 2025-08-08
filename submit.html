@@ -30,6 +30,10 @@
     @media (max-width: 768px) { .submit-form { padding: 0.5rem; } h1 { font-size: 1.5rem; } select, input[type="file"], input[type="number"], input[type="submit"] { font-size: 0.9rem; } .preview-image { max-width: 80px; max-height: 80px; } }
   </style>
   <script>
+    function normalizeName(name) {
+      return name ? name.trim().replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, ' ') : '';
+    }
+
     async function resizeImage(file, maxDimension = 1920, quality = 0.8) {
       if (file.size < 1024 * 1024) {
         console.log(`Skipping resize for ${file.name}: size ${file.size} < 1MB`);
@@ -119,23 +123,24 @@
     }
 
     async function verifyPin(anglerName, pin, retries = 5, delay = 1500) {
+      const normalizedAnglerName = normalizeName(anglerName);
       for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-          console.log(`Attempt ${attempt} to verify PIN for ${anglerName}, PIN: ${pin}`);
+          console.log(`Attempt ${attempt} to verify PIN for ${anglerName}, normalized: ${normalizedAnglerName}, PIN: ${pin}`);
           const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/verify_pin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: anglerName, pin })
+            body: JSON.stringify({ name: normalizedAnglerName, pin })
           });
           console.log(`Verify PIN response: status=${response.status}, statusText="${response.statusText}"`);
           const data = await response.json();
           console.log(`Verify PIN data: ${JSON.stringify(data)}`);
           if (!response.ok) throw new Error(`${data.error || 'Unknown error'} (HTTP ${response.status})`);
           if (data.isValid === true) {
-            console.log(`PIN verified for ${anglerName}`);
+            console.log(`PIN verified for ${normalizedAnglerName}`);
             return true;
           } else if (data.error === "No PIN set for this angler") {
-            console.log(`No PIN set for ${anglerName}`);
+            console.log(`No PIN set for ${normalizedAnglerName}`);
             return "no_pin";
           } else {
             console.log(`PIN verification failed: ${data.error}`);
@@ -144,7 +149,7 @@
         } catch (error) {
           console.error(`Attempt ${attempt} failed: ${error.message}`);
           if (attempt === retries) {
-            console.error(`All retries failed for ${anglerName}`);
+            console.error(`All retries failed for ${normalizedAnglerName}`);
             return false;
           }
           await new Promise(resolve => setTimeout(resolve, delay));
@@ -168,7 +173,7 @@
         const anglers = await response.json();
         console.log(`Angler list: ${JSON.stringify(anglers)}`);
         if (!Array.isArray(anglers)) throw new Error('Expected array');
-        const filteredAnglers = anglers.map(name => name.replace(/[.\s]+$/, '')).filter(name => name.length > 0);
+        const filteredAnglers = anglers.map(name => normalizeName(name)).filter(name => name.length > 0);
         console.log(`Filtered anglers: ${JSON.stringify(filteredAnglers)}`);
         return filteredAnglers;
       } catch (error) {
@@ -260,7 +265,7 @@
       submitButton.disabled = true;
       try {
         const anglerName = document.getElementById('anglerName').value;
-        const normalizedAnglerName = anglerName.replace(/[.\s]+$/, '');
+        const normalizedAnglerName = normalizeName(anglerName);
         console.log(`Submitting for angler: "${anglerName}", normalized: "${normalizedAnglerName}"`);
         const pinKey = `angler_pin_${normalizedAnglerName.toLowerCase()}`;
         localStorage.removeItem(pinKey);
@@ -269,7 +274,7 @@
         console.log(`Stored PIN: ${storedPin}`);
         
         let pinCheck = await verifyPin(anglerName, storedPin || '000000');
-        console.log(`Initial PIN check for ${anglerName}: ${pinCheck}`);
+        console.log(`Initial PIN check for ${normalizedAnglerName}: ${pinCheck}`);
         
         let pin;
         if (pinCheck === "no_pin") {
@@ -286,8 +291,8 @@
               alert('Enter a 6-digit PIN (numbers only).');
               continue;
             }
-            console.log(`Saving new PIN for ${anglerName}`);
-            const pinSaved = await savePin(anglerName, pin);
+            console.log(`Saving new PIN for ${normalizedAnglerName}`);
+            const pinSaved = await savePin(normalizedAnglerName, pin);
             if (!pinSaved) {
               console.error('Failed to save PIN');
               errorMessage.textContent = 'Failed to save PIN. Try again or contact support.';
@@ -340,11 +345,11 @@
         }
         
         const formData = new FormData();
-        formData.append('name', anglerName);
+        formData.append('name', normalizedAnglerName);
         formData.append('fishCount', document.getElementById('fishCount').value);
         formData.append('pin', storedPin);
         const fishCount = parseInt(document.getElementById('fishCount').value) || 0;
-        console.log(`Preparing submission: angler="${anglerName}", fishCount=${fishCount}, pin="${storedPin}"`);
+        console.log(`Preparing submission: angler="${normalizedAnglerName}", fishCount=${fishCount}, pin="${storedPin}"`);
         for (let i = 1; i <= fishCount; i++) {
           const photoInput = document.getElementById(`fishPhoto${i}`);
           const file = photoInput.files[0];
