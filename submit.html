@@ -100,18 +100,19 @@
     }
 
     async function savePin(anglerName, pin, retries = 5, delay = 1500) {
+      const normalizedAnglerName = normalizeName(anglerName);
       for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-          console.log(`Attempt ${attempt} to save PIN for ${anglerName}`);
+          console.log(`Attempt ${attempt} to save PIN for ${normalizedAnglerName}`);
           const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/update_pin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: anglerName, pin })
+            body: JSON.stringify({ name: normalizedAnglerName, pin })
           });
           const data = await response.json();
           console.log(`Save PIN response: ${JSON.stringify(data)}`);
           if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
-          console.log(`PIN saved successfully for ${anglerName}`);
+          console.log(`PIN saved successfully for ${normalizedAnglerName}`);
           return true;
         } catch (error) {
           console.error(`Attempt ${attempt} failed to save PIN: ${error.message}`);
@@ -135,7 +136,12 @@
           console.log(`Verify PIN response: status=${response.status}, statusText="${response.statusText}"`);
           const data = await response.json();
           console.log(`Verify PIN data: ${JSON.stringify(data)}`);
-          if (!response.ok) throw new Error(`${data.error || 'Unknown error'} (HTTP ${response.status})`);
+          if (!response.ok) {
+            if (response.status === 404) {
+              throw new Error('PIN verification endpoint not found. Please contact support.');
+            }
+            throw new Error(`${data.error || 'Unknown error'} (HTTP ${response.status})`);
+          }
           if (data.isValid === true) {
             console.log(`PIN verified for ${normalizedAnglerName}`);
             return true;
