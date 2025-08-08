@@ -146,7 +146,7 @@
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         console.log(`First submission check for ${anglerName}: ${data.isFirstSubmission}`);
-        return data.isFirstSubmission;
+        return data.isValid ? true : data.error === "No PIN set for this angler" ? "no_pin" : false;
       } catch (error) {
         console.error(`Failed to check first submission for ${anglerName}: ${error.message}`);
         return true;
@@ -187,7 +187,11 @@
       const storedAngler = Object.keys(localStorage).find(key => key.startsWith('angler_pin_') && anglers.find(a => a.toLowerCase() === key.replace('angler_pin_', '')));
       if (storedAngler) {
         const anglerName = anglers.find(a => a.toLowerCase() === storedAngler.replace('angler_pin_', ''));
-        if (anglerName) { anglerSelect.value = anglerName; console.log(`Auto-selected angler: ${anglerName}`); validateForm(); }
+        if (anglerName) { 
+          anglerSelect.value = anglerName; 
+          console.log(`Auto-selected angler: ${anglerName}`);
+          validateForm(); 
+        }
       }
     }
 
@@ -236,14 +240,18 @@
         const anglerName = document.getElementById('anglerName').value;
         const pinKey = `angler_pin_${anglerName.toLowerCase()}`;
         let storedPin = localStorage.getItem(pinKey);
-        const isFirstSubmission = await checkFirstSubmission(anglerName);
-        console.log(`Stored PIN for ${anglerName}: ${storedPin}, isFirstSubmission: ${isFirstSubmission}`);
-        if (!storedPin) {
-          let pin;
+        console.log(`Stored PIN for ${anglerName}: ${storedPin}`);
+        
+        // Check if PIN exists in fff-db
+        const pinCheck = await verifyPin(anglerName, storedPin || '000000'); // Use dummy PIN if none in localStorage
+        console.log(`PIN check result for ${anglerName}: ${pinCheck}`);
+        
+        let pin;
+        if (pinCheck === "no_pin") {
+          // No PIN in fff-db, prompt for new PIN
           let validPin = false;
-          const promptMessage = isFirstSubmission ? `Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:` : `No PIN found for ${anglerName}. Please set a new 6-digit PIN:`;
           while (!validPin) {
-            pin = prompt(promptMessage);
+            pin = prompt(`Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:`);
             if (pin === null) {
               console.log(`PIN prompt cancelled for ${anglerName}`);
               errorMessage.textContent = 'Submission cancelled. Please provide a PIN to proceed.';
@@ -254,7 +262,7 @@
               alert('Please enter a valid 6-digit PIN (numbers only).');
               continue;
             }
-            console.log(`Attempting to save PIN for ${anglerName}: ${pin}`);
+            console.log(`Attempting to save new PIN for ${anglerName}: ${pin}`);
             const pinSaved = await savePin(anglerName, pin);
             if (!pinSaved) {
               console.error('Failed to save PIN after retries');
@@ -268,7 +276,34 @@
             storedPin = pin;
             validPin = true;
           }
+        } else if (pinCheck === false || !storedPin) {
+          // PIN exists in fff-db, verify it
+          let validPin = false;
+          while (!validPin) {
+            pin = prompt(`Please enter your 6-digit PIN for ${anglerName}:`);
+            if (pin === null) {
+              console.log(`PIN prompt cancelled for ${anglerName}`);
+              errorMessage.textContent = 'Submission cancelled. Please provide a PIN to proceed.';
+              errorMessage.style.display = 'block';
+              throw new Error('PIN prompt cancelled');
+            }
+            if (!/^\d{6}$/.test(pin)) {
+              alert('Please enter a valid 6-digit PIN (numbers only).');
+              continue;
+            }
+            console.log(`Verifying PIN for ${anglerName}: ${pin}`);
+            const isValidPin = await verifyPin(anglerName, pin);
+            if (!isValidPin) {
+              alert('Incorrect PIN. Please try again.');
+              continue;
+            }
+            localStorage.setItem(pinKey, pin);
+            console.log(`Stored verified PIN in localStorage: ${pinKey} = ${pin}`);
+            storedPin = pin;
+            validPin = true;
+          }
         }
+        
         const formData = new FormData();
         formData.append('name', anglerName);
         formData.append('fishCount', document.getElementById('fishCount').value);
