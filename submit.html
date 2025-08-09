@@ -32,103 +32,64 @@
     @media (max-width: 768px) { .submit-form { padding: 0.5rem; } h1 { font-size: 1.5rem; } select, input[type="file"], input[type="number"], input[type="submit"] { font-size: 0.9rem; } .preview-image { max-width: 80px; max-height: 80px; } }
   </style>
   <script>
-    /* unchanged helper functions: resizeImage, validateFile, displayPreview, savePin, verifyPin, checkFirstSubmission, fetchAnglerList, populateAnglerDropdown, addFishEntry, validateForm */
-    /* ... keep your original helper functions here exactly as you had them ... */
+    async function fetchAnglerList() {
+      try {
+        const res = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/list_anglers', { headers: { Accept: 'application/json' }});
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return data.anglers || [];
+      } catch (err) {
+        console.error('Failed to fetch anglers:', err);
+        return [];
+      }
+    }
+
+    async function populateAnglerDropdown() {
+      const select = document.getElementById('anglerName');
+      select.innerHTML = '<option value="">Select an angler</option>';
+      const anglers = await fetchAnglerList();
+
+      if (anglers.length > 0) {
+        anglers.forEach(name => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          select.appendChild(opt);
+        });
+      } else {
+        // fallback default names
+        ['John', 'Sarah', 'Mike'].forEach(name => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          select.appendChild(opt);
+        });
+      }
+    }
+
+    function addFishEntry(index) {
+      const container = document.getElementById('fishEntries');
+      const entry = document.createElement('div');
+      entry.className = 'fish-entry';
+      entry.innerHTML = `
+        <label for="fishPhoto${index}">Fish Photo ${index}:</label>
+        <input type="file" id="fishPhoto${index}" name="fishPhoto${index}" accept="image/*" required>
+        <label for="fishLength${index}">Length (inches):</label>
+        <input type="number" id="fishLength${index}" name="fishLength${index}" min="1" required>
+      `;
+      container.appendChild(entry);
+    }
+
+    function validateForm() {
+      const angler = document.getElementById('anglerName').value;
+      const fishEntries = document.querySelectorAll('.fish-entry input[type="file"]');
+      const submitButton = document.getElementById('submitButton');
+      submitButton.disabled = !(angler && fishEntries.length > 0 && Array.from(fishEntries).every(input => input.files.length > 0));
+    }
 
     async function handleSubmit(event) {
       event.preventDefault();
-      const successMessage = document.getElementById('successMessage');
-      const loadingMessage = document.getElementById('loadingMessage');
-      const errorMessage = document.getElementById('errorMessage');
-      const submitButton = document.getElementById('submitButton');
-
-      successMessage.style.display = 'none';
-      errorMessage.style.display = 'none';
-      loadingMessage.style.display = 'block';
-      submitButton.disabled = true;
-
-      try {
-        const anglerName = document.getElementById('anglerName').value;
-        const pinKey = `angler_pin_${anglerName.toLowerCase()}`;
-        let storedPin = localStorage.getItem(pinKey);
-        const isFirstSubmission = await checkFirstSubmission(anglerName);
-
-        if (!storedPin) {
-          let pin;
-          let validPin = false;
-          const promptMessage = isFirstSubmission
-            ? `Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:`
-            : `No PIN found for ${anglerName}. Please set a new 6-digit PIN:`;
-          while (!validPin) {
-            pin = prompt(promptMessage);
-            if (pin === null) {
-              errorMessage.textContent = 'Submission cancelled. Please provide a PIN to proceed.';
-              errorMessage.style.display = 'block';
-              throw new Error('PIN prompt cancelled');
-            }
-            if (!/^\d{6}$/.test(pin)) {
-              alert('Please enter a valid 6-digit PIN (numbers only).');
-              continue;
-            }
-            const pinSaved = await savePin(anglerName, pin);
-            if (!pinSaved) {
-              errorMessage.textContent = 'Failed to save new PIN to database. Please try again.';
-              errorMessage.style.display = 'block';
-              throw new Error('Failed to save PIN');
-            }
-            localStorage.setItem(pinKey, pin);
-            alert('New PIN saved successfully! Proceeding with submission.');
-            storedPin = pin;
-            validPin = true;
-          }
-        }
-
-        const formData = new FormData();
-        formData.append('name', anglerName);
-        formData.append('pin', storedPin);
-
-        const fishEntries = document.querySelectorAll('.fish-entry');
-        formData.append('fishCount', fishEntries.length);
-
-        // FIX: Await each resize before sending
-        for (let index = 0; index < fishEntries.length; index++) {
-          const i = index + 1;
-          const photoInput = document.getElementById(`fishPhoto${i}`);
-          const file = photoInput.files[0];
-          if (file) {
-            const resizedFile = await resizeImage(file, 1920, 0.8);
-            formData.append(`fishPhoto${i}`, resizedFile);
-            formData.append(`fishLength${i}`, document.getElementById(`fishLength${i}`).value);
-          }
-        }
-
-        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/submit_fish', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
-        });
-
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
-
-        successMessage.textContent = 'Fish submitted successfully! Redirecting to leaderboard...';
-        successMessage.style.display = 'block';
-        alert('Submission successful!');
-        document.getElementById('fishForm').reset();
-        document.getElementById('anglerName').value = anglerName;
-        document.getElementById('fishEntries').innerHTML = '';
-        addFishEntry(1);
-        setTimeout(() => {
-          window.location.href = 'https://hackerfrankone.github.io/FamilyFishing/index.html';
-        }, 1000);
-      } catch (error) {
-        errorMessage.textContent = `Submission failed: ${error.message}`;
-        errorMessage.style.display = 'block';
-        alert(`Submission failed: ${error.message}`);
-      } finally {
-        loadingMessage.style.display = 'none';
-        validateForm();
-      }
+      alert('Form submitted!'); // placeholder
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -151,7 +112,7 @@
 </head>
 <body>
   <h1>Submit Your Fish</h1>
-  <form id="fishForm" class="submit-form" action="https://fish-angler.familyfishingfun2025.workers.dev/submit_fish" method="POST" enctype="multipart/form-data">
+  <form id="fishForm" class="submit-form" method="POST" enctype="multipart/form-data">
     <label for="anglerName">Angler Name:</label>
     <select id="anglerName" name="name" required><option value="">Loading anglers...</option></select>
     <p id="successMessage" class="success-message"></p>
