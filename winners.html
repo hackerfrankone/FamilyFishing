@@ -137,7 +137,7 @@
     .fish-length:hover {
       color: #ffeb3b;
     }
-    .error-message {
+    .error-message, .placeholder-message {
       color: #ff0000;
       font-size: 1rem;
       text-align: center;
@@ -218,9 +218,17 @@
           rank: index + 1
         }));
 
+        // Save to server
+        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/save_winners', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ year, month, winners: rankedAnglers })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        // Update UI
         const winnersList = document.getElementById(`winners-${year}-${month}`);
         if (!winnersList) return;
-
         winnersList.innerHTML = rankedAnglers.length > 0
           ? rankedAnglers.map(angler => `
               <li class="winner-item">
@@ -242,12 +250,10 @@
               </li>
             `).join('')
           : '<li class="winner-item">No winners recorded</li>';
-
-        localStorage.setItem(`winners_${year}_${month}`, JSON.stringify(rankedAnglers));
       } catch (error) {
         console.error(`Failed to save winners for ${monthCodes[month - 1]} ${year}:`, error.message);
         const errorMessage = document.getElementById('errorMessage');
-        errorMessage.textContent = `Failed to load winners for ${monthCodes[month - 1]} ${year}. Please try again later.`;
+        errorMessage.textContent = `Failed to save winners for ${monthCodes[month - 1]} ${year}. Please try again later.`;
         errorMessage.style.display = 'block';
       }
     }
@@ -269,7 +275,7 @@
         const section = document.createElement('div');
         section.className = 'year-section';
         let months = [];
-        let startMonth = (y === 2025) ? 8 : 1; // August for 2025, January for others
+        let startMonth = (y === 2025) ? 8 : 1;
         let endMonth = (y === year) ? month : 12;
 
         if (y === 2025 && is2025Complete) {
@@ -287,16 +293,20 @@
 
           // Load winners for selected 2025 month
           const select = section.querySelector('select');
-          select.addEventListener('change', () => {
+          select.addEventListener('change', async () => {
             const month = parseInt(select.value);
             if (!month) {
               document.getElementById('winners-2025').innerHTML = '';
               return;
             }
-            const savedWinners = localStorage.getItem(`winners_2025_${month}`);
-            const winnersDiv = document.getElementById('winners-2025');
-            if (savedWinners) {
-              const rankedAnglers = JSON.parse(savedWinners);
+            try {
+              const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/winners?year=2025&month=${month}`, {
+                cache: 'no-cache',
+                headers: { 'Accept': 'application/json' }
+              });
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              const rankedAnglers = await response.json();
+              const winnersDiv = document.getElementById('winners-2025');
               winnersDiv.innerHTML = `
                 <ul class="winners-list" id="winners-2025-${month}">
                   ${rankedAnglers.length > 0
@@ -323,8 +333,9 @@
                   }
                 </ul>
               `;
-            } else {
-              winnersDiv.innerHTML = '<p>No winners recorded for this month.</p>';
+            } catch (error) {
+              console.error(`Failed to load winners for ${monthCodes[month - 1]} 2025:`, error.message);
+              document.getElementById('winners-2025').innerHTML = '<p class="placeholder-message">No winners recorded for this month.</p>';
             }
           });
         } else {
@@ -338,10 +349,22 @@
             `;
             winnersContainer.appendChild(monthSection);
 
-            // Load saved winners
-            const savedWinners = localStorage.getItem(`winners_${y}_${m}`);
-            if (savedWinners) {
-              const rankedAnglers = JSON.parse(savedWinners);
+            // Check if tournament has ended
+            const target = new Date(Date.UTC(y, m, 1, 0, 0, 0));
+            if (now < target && y === year && m === month) {
+              const winnersList = document.getElementById(`winners-${y}-${m}`);
+              winnersList.innerHTML = '<p class="placeholder-message">Tournament ongoing, winners will be announced after the tournament ends.</p>';
+              continue;
+            }
+
+            // Load winners from server
+            try {
+              const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/winners?year=${y}&month=${m}`, {
+                cache: 'no-cache',
+                headers: { 'Accept': 'application/json' }
+              });
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              const rankedAnglers = await response.json();
               const winnersList = document.getElementById(`winners-${y}-${m}`);
               winnersList.innerHTML = rankedAnglers.length > 0
                 ? rankedAnglers.map(angler => `
@@ -364,6 +387,10 @@
                     </li>
                   `).join('')
                 : '<li class="winner-item">No winners recorded</li>';
+            } catch (error) {
+              console.error(`Failed to load winners for ${monthCodes[m - 1]} ${y}:`, error.message);
+              const winnersList = document.getElementById(`winners-${y}-${m}`);
+              winnersList.innerHTML = '<p class="placeholder-message">No winners recorded for this month.</p>';
             }
           }
         }
@@ -386,15 +413,14 @@
         const currentTime = await fetchCurrentTime();
         if (currentTime >= target && year >= 2025 && month >= 8) {
           await saveWinners(year, month);
-          // Reload winners to update the UI (e.g., switch to dropdown if December 2025 ended)
           document.getElementById('winnersContainer').innerHTML = '';
-          loadWinners();
+          await loadWinners();
           clearInterval(interval);
         }
       };
 
       const interval = setInterval(checkTournamentEnd, 60000); // Check every minute
-      checkTournamentEnd(); // Initial check
+      await checkTournamentEnd();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
