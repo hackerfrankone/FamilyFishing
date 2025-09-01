@@ -168,40 +168,6 @@
       const currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
 
-      // Hardcoded August 2025 data
-      const august2025Winners = [
-        { rank: 1, name: 'Jesse Jr', totalLength: 99.00, fish: [
-          { length: 21.50, image_url: 'https://example.com/fish-jessejr-1.jpg' },
-          { length: 19.75, image_url: 'https://example.com/fish-jessejr-2.jpg' },
-          { length: 19.50, image_url: 'https://example.com/fish-jessejr-3.jpg' },
-          { length: 19.25, image_url: 'https://example.com/fish-jessejr-4.jpg' },
-          { length: 19.00, image_url: 'https://example.com/fish-jessejr-5.jpg' }
-        ]},
-        { rank: 2, name: 'FishMan', totalLength: 97.75, fish: [
-          { length: 23.75, image_url: 'https://example.com/fish-fishman-1.jpg' },
-          { length: 20.25, image_url: 'https://example.com/fish-fishman-2.jpg' },
-          { length: 18.50, image_url: 'https://example.com/fish-fishman-3.jpg' },
-          { length: 17.75, image_url: 'https://example.com/fish-fishman-4.jpg' },
-          { length: 17.50, image_url: 'https://example.com/fish-fishman-5.jpg' }
-        ]},
-        { rank: 3, name: 'Frank E', totalLength: 88.00, fish: [
-          { length: 18.00, image_url: 'https://example.com/fish-franke-1.jpg' },
-          { length: 18.00, image_url: 'https://example.com/fish-franke-2.jpg' },
-          { length: 17.50, image_url: 'https://example.com/fish-franke-3.jpg' },
-          { length: 17.25, image_url: 'https://example.com/fish-franke-4.jpg' },
-          { length: 17.25, image_url: 'https://example.com/fish-franke-5.jpg' }
-        ]},
-        { rank: 4, name: 'Matthew H.', totalLength: 82.50, fish: [
-          { length: 18.00, image_url: 'https://example.com/fish-matthewh-1.jpg' },
-          { length: 17.00, image_url: 'https://example.com/fish-matthewh-2.jpg' },
-          { length: 16.75, image_url: 'https://example.com/fish-matthewh-3.jpg' },
-          { length: 15.50, image_url: 'https://example.com/fish-matthewh-4.jpg' },
-          { length: 15.25, image_url: 'https://example.com/fish-matthewh-5.jpg' }
-        ]},
-        { rank: 5, name: 'Jamie L.', totalLength: 0.00, fish: [] },
-        { rank: 6, name: 'Kevin', totalLength: 0.00, fish: [] }
-      ];
-
       for (let y = 2025; y <= currentYear; y++) {
         const startMonth = y === 2025 ? 8 : 1;
         const endMonth = y === currentYear ? currentMonth : 12;
@@ -214,36 +180,6 @@
             winnersList.innerHTML = `
               <summary>${monthCodes[m - 1]} ${y}</summary>
               <p>Tournament is ONgoing</p>
-            `;
-            winnersContainer.appendChild(winnersList);
-            continue;
-          }
-
-          if (y === 2025 && m === 8) {
-            // Hardcoded August 2025
-            winnersList.innerHTML = `
-              <summary>${monthCodes[m - 1]} ${y}</summary>
-              <ul>
-                ${august2025Winners.map(angler => `
-                  <li class="winner-item">
-                    <div class="winner-header">
-                      <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
-                      <span class="winner-name">${angler.name}</span>
-                      <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
-                    </div>
-                    <ul class="fish-list">
-                      ${angler.fish.length > 0
-                        ? angler.fish.map(f => `
-                            <li class="fish-item">
-                              <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
-                            </li>
-                          `).join('')
-                        : '<li class="fish-item">No fish submitted</li>'
-                      }
-                    </ul>
-                  </li>
-                `).join('')}
-              </ul>
             `;
             winnersContainer.appendChild(winnersList);
             continue;
@@ -386,7 +322,7 @@
 </head>
 <body>
   <button class="back-button" onclick="window.close()">Back to Home</button>
-  <h1>FFF Monthly History</h1>
+  <h1>Tournament Winners</h1>
   <p id="errorMessage" class="error-message"></p>
   <div class="winners-container" id="winnersContainer"></div>
 </body>
