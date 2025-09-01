@@ -589,7 +589,7 @@
             const percentage = percentages[place - 1];
             const amount = (percentage / 100) * placePot;
             const suffix = place === 1 ? 'st' : place === 2 ? 'nd' : 'rd';
-            const prizeText = `${place}${suffix} = $${amount.toFixed(2)} (${percentage.toFixed(2)}%)`;
+            const prizeText = `${place}${suffix} = $${amount.toFixed(2)}`;
             const p = document.createElement('p');
             p.className = 'prize-text';
             p.textContent = prizeText;
