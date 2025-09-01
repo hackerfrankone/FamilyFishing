@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>FFF Winners - Family Fishing Fun</title>
+  <title>FFF Winners</title>
   <base href="https://www.familyfishing.fun/">
   <link rel="icon" type="image/x-icon" href="images/favicon.jpg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://worldtimeapi.org; form-action 'self'; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.workers.dev https://*.amazonaws.com https://storage.googleapis.com https://*.googleapis.com data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://*.workers.dev https://worldtimeapi.org; form-action 'self'; object-src 'none'; base-uri 'self';">
   <style>
     body {
       background-image: url('images/background.png?v=2');
@@ -44,8 +44,8 @@
   <script>
     const monthCodes = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    // Restrict access to winners.html
     if (document.referrer !== 'https://www.familyfishing.fun/' && document.referrer !== 'https://www.familyfishing.fun/index.html') {
+      console.log('Invalid referrer:', document.referrer);
       window.location.href = 'index.html';
     }
 
@@ -57,8 +57,11 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        return new Date(data.utc_datetime);
-      } catch {
+        const utcDate = new Date(data.utc_datetime);
+        if (isNaN(utcDate)) throw new Error('Invalid date');
+        return utcDate;
+      } catch (error) {
+        console.error('Failed to fetch time:', error.message);
         return new Date();
       }
     }
@@ -85,25 +88,16 @@
           headers: { 'Accept': 'application/json' }
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
+        const fish = await response.json();
+        console.log(`Fish for ${anglerName}:`, fish);
+        return fish;
       } catch (error) {
         console.error(`Failed to fetch fish for ${anglerName}:`, error.message);
         return [];
       }
     }
 
-    async function saveWinners(year, month) {
-      try {
-        // Check if winners already exist
-        const checkResponse = await fetch(`https://winners-familyfishingfun2025.workers.dev/winners?year=${year}&month=${month}`, {
-          cache: 'no-cache',
-          headers: { 'Accept': 'application/json' }
-        });
-        if (checkResponse.ok) {
-          console.log(`Winners already saved for ${monthCodes[month - 1]} ${year}`);
-          return;
-        }
-      } catch {}
+    async function saveWinners(year, month, retries = 3) {
       try {
         console.log(`Saving winners for ${monthCodes[month - 1]} ${year}`);
         const anglers = await fetchAnglerList();
@@ -125,7 +119,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ year, month, winners: rankedAnglers })
         });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        console.log(`Winners saved successfully for ${monthCodes[month - 1]} ${year}`);
         const winnersList = document.getElementById(`winners-${year}-${month}`);
         if (!winnersList) return;
         winnersList.innerHTML = rankedAnglers.length > 0
@@ -138,11 +133,14 @@
                 </div>
                 <ul class="fish-list">
                   ${angler.fish.length > 0
-                    ? angler.fish.map(f => `
-                      <li class="fish-item">
-                        <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
-                      </li>
-                    `).join('')
+                    ? angler.fish.map(f => {
+                        console.log(`Attempting to load fish image: ${f.image_url}`);
+                        return `
+                          <li class="fish-item">
+                            <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                          </li>
+                        `;
+                      }).join('')
                     : '<li class="fish-item">No fish submitted</li>'
                   }
                 </ul>
@@ -150,10 +148,33 @@
             `).join('')
           : `<h2>${monthCodes[month - 1]} ${year}</h2><p>No winners recorded</p>`;
       } catch (error) {
+        if (retries > 0) {
+          console.warn(`Retrying saveWinners (${retries} attempts left): ${error.message}`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          return saveWinners(year, month, retries - 1);
+        }
         console.error(`Failed to save winners for ${monthCodes[month - 1]} ${year}:`, error.message);
         const errorMessage = document.getElementById('errorMessage');
-        errorMessage.textContent = `Failed to save winners for ${monthCodes[month - 1]} ${year}. Please try again later.`;
+        errorMessage.textContent = `Failed to save winners for ${monthCodes[month - 1]} ${year}. Showing placeholder data.`;
         errorMessage.style.display = 'block';
+        const winnersList = document.getElementById(`winners-${year}-${month}`);
+        if (winnersList) {
+          winnersList.innerHTML = `
+            <h2>${monthCodes[month - 1]} ${year}</h2>
+            <p class="placeholder-message">Unable to load winners. Sample data:</p>
+            <li class="winner-item">
+              <div class="winner-header">
+                <span class="winner-rank">1st</span>
+                <span class="winner-name">Sample Angler</span>
+                <span class="winner-total">30.50"</span>
+              </div>
+              <ul class="fish-list">
+                <li class="fish-item"><a class="fish-length" href="https://example.com/fish.jpg" target="_blank" rel="noopener">15.25"</a></li>
+                <li class="fish-item"><a class="fish-length" href="https://example.com/fish2.jpg" target="_blank" rel="noopener">15.25"</a></li>
+              </ul>
+            </li>
+          `;
+        }
       }
     }
 
@@ -171,39 +192,73 @@
           const winnersList = document.createElement('div');
           winnersList.id = `winners-${y}-${m}`;
           winnersList.className = 'month-winners';
-          winnersList.innerHTML = `<h2>${monthCodes[m - 1]} ${y}</h2>`;
+          winnersList.innerHTML = `<h2>${monthCodes[m - 1]} ${y}</h2><p>Loading...</p>`;
           winnersContainer.appendChild(winnersList);
-          try {
-            const response = await fetch(`https://winners-familyfishingfun2025.workers.dev/winners?year=${y}&month=${m}`, {
-              cache: 'no-cache',
-              headers: { 'Accept': 'application/json' }
-            });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const rankedAnglers = await response.json();
-            winnersList.innerHTML = rankedAnglers.length > 0
-              ? rankedAnglers.map(angler => `
+          let retries = 3;
+          while (retries > 0) {
+            try {
+              console.log(`Fetching winners for ${monthCodes[m - 1]} ${y}`);
+              const response = await fetch(`https://winners-familyfishingfun2025.workers.dev/winners?year=${y}&month=${m}`, {
+                cache: 'no-cache',
+                headers: { 'Accept': 'application/json' }
+              });
+              if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+              const rankedAnglers = await response.json();
+              console.log(`Winners fetched for ${monthCodes[m - 1]} ${y}:`, rankedAnglers);
+              winnersList.innerHTML = rankedAnglers.length > 0
+                ? rankedAnglers.map(angler => {
+                    console.log(`Rendering angler ${angler.name}, fish:`, angler.fish);
+                    return `
+                      <li class="winner-item">
+                        <div class="winner-header">
+                          <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
+                          <span class="winner-name">${angler.name}</span>
+                          <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
+                        </div>
+                        <ul class="fish-list">
+                          ${angler.fish.length > 0
+                            ? angler.fish.map(f => {
+                                console.log(`Attempting to load fish image: ${f.image_url}`);
+                                return `
+                                  <li class="fish-item">
+                                    <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                                  </li>
+                                `;
+                              }).join('')
+                            : '<li class="fish-item">No fish submitted</li>'
+                          }
+                        </ul>
+                      </li>
+                    `;
+                  }).join('')
+                : `<h2>${monthCodes[m - 1]} ${y}</h2><p>No winners recorded</p>`;
+              break;
+            } catch (error) {
+              retries--;
+              if (retries === 0) {
+                console.error(`Failed to load winners for ${monthCodes[m - 1]} ${y}:`, error.message);
+                winnersList.innerHTML = `
+                  <h2>${monthCodes[m - 1]} ${y}</h2>
+                  <p class="placeholder-message">Failed to load winners. Sample data:</p>
                   <li class="winner-item">
                     <div class="winner-header">
-                      <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
-                      <span class="winner-name">${angler.name}</span>
-                      <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
+                      <span class="winner-rank">1st</span>
+                      <span class="winner-name">Sample Angler</span>
+                      <span class="winner-total">30.50"</span>
                     </div>
                     <ul class="fish-list">
-                      ${angler.fish.length > 0
-                        ? angler.fish.map(f => `
-                          <li class="fish-item">
-                            <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
-                          </li>
-                        `).join('')
-                        : '<li class="fish-item">No fish submitted</li>'
-                      }
+                      <li class="fish-item"><a class="fish-length" href="https://example.com/fish.jpg" target="_blank" rel="noopener">15.25"</a></li>
+                      <li class="fish-item"><a class="fish-length" href="https://example.com/fish2.jpg" target="_blank" rel="noopener">15.25"</a></li>
                     </ul>
                   </li>
-                `).join('')
-              : `<h2>${monthCodes[m - 1]} ${y}</h2><p>No winners recorded</p>`;
-          } catch (error) {
-            console.error(`Failed to load winners for ${monthCodes[m - 1]} ${y}:`, error.message);
-            winnersList.innerHTML += '<p class="placeholder-message">No winners recorded for this month.</p>';
+                `;
+                errorMessage.textContent = `Failed to load winners for ${monthCodes[m - 1]} ${y}. Showing placeholder data.`;
+                errorMessage.style.display = 'block';
+              } else {
+                console.warn(`Retrying loadWinners for ${monthCodes[m - 1]} ${y} (${retries} attempts left): ${error.message}`);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+              }
+            }
           }
         }
       }
@@ -217,19 +272,29 @@
       const checkTournamentEnd = async () => {
         const currentTime = await fetchCurrentTime();
         if (currentTime >= target && year >= 2025 && month >= 8) {
+          console.log('Tournament ended, saving winners');
           await saveWinners(year, month);
           document.getElementById('winnersContainer').innerHTML = '';
           await loadWinners();
           clearInterval(interval);
         }
       };
-      const interval = setInterval(checkTournamentEnd, 86400000);
       await checkTournamentEnd();
+      const interval = setInterval(checkTournamentEnd, 86400000);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      console.log('Loading winners page, CSP:', document.querySelector('meta[http-equiv="Content-Security-Policy"]').content);
       loadWinners();
       initTournamentListener();
+    });
+
+    document.addEventListener('securitypolicyviolation', (e) => {
+      console.error('CSP violation:', {
+        blockedURI: e.blockedURI,
+        violatedDirective: e.violatedDirective,
+        originalPolicy: e.originalPolicy
+      });
     });
   </script>
 </head>
