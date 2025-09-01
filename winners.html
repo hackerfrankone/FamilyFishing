@@ -28,8 +28,10 @@
     .back-button:hover { background: #2cc75b; }
     .winners-container { background: rgba(0, 0, 0, 0.7); padding: 1rem; border-radius: 8px; max-width: 800px; width: 100%; }
     .month-winners { margin-bottom: 1rem; }
-    .month-winners h2 { color: #FFD700; font-size: 1.5rem; }
-    .winner-item { margin-bottom: 0.5rem; }
+    .month-winners summary { color: #FFD700; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+    .month-winners summary:hover { color: #ffeb3b; }
+    .month-winners[open] summary { border-bottom: 1px solid #FFD700; }
+    .winner-item { margin-bottom: 0.5rem; padding: 0.5rem; }
     .winner-header { display: flex; gap: 0.5rem; align-items: center; }
     .winner-rank { color: #FF4500; font-size: 1.2rem; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
     .winner-name { color: #FFD700; font-size: 1.2rem; font-weight: bold; }
@@ -118,9 +120,9 @@
           const allFish = await fetchFishForAngler(name);
           const fish = filterFishByMonth(allFish, year, month);
           const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
-          anglerData.push({ name, fish, totalLength }); // Include all anglers
+          anglerData.push({ name, fish, totalLength });
         }
-        anglerData.sort((a, b) => b.totalLength - a.totalLength || a.name.localeCompare(b.name)); // Sort by totalLength, then name
+        anglerData.sort((a, b) => b.totalLength - a.totalLength || a.name.localeCompare(b.name));
         return anglerData.map((angler, index) => ({
           name: angler.name,
           fish: angler.fish,
@@ -165,20 +167,92 @@
       winnersContainer.innerHTML = '';
       const currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
+
+      // Hardcoded August 2025 data
+      const august2025Winners = [
+        { rank: 1, name: 'Jesse Jr', totalLength: 99.00, fish: [
+          { length: 21.50, image_url: 'https://example.com/fish-jessejr-1.jpg' },
+          { length: 19.75, image_url: 'https://example.com/fish-jessejr-2.jpg' },
+          { length: 19.50, image_url: 'https://example.com/fish-jessejr-3.jpg' },
+          { length: 19.25, image_url: 'https://example.com/fish-jessejr-4.jpg' },
+          { length: 19.00, image_url: 'https://example.com/fish-jessejr-5.jpg' }
+        ]},
+        { rank: 2, name: 'FishMan', totalLength: 97.75, fish: [
+          { length: 23.75, image_url: 'https://example.com/fish-fishman-1.jpg' },
+          { length: 20.25, image_url: 'https://example.com/fish-fishman-2.jpg' },
+          { length: 18.50, image_url: 'https://example.com/fish-fishman-3.jpg' },
+          { length: 17.75, image_url: 'https://example.com/fish-fishman-4.jpg' },
+          { length: 17.50, image_url: 'https://example.com/fish-fishman-5.jpg' }
+        ]},
+        { rank: 3, name: 'Frank E', totalLength: 88.00, fish: [
+          { length: 18.00, image_url: 'https://example.com/fish-franke-1.jpg' },
+          { length: 18.00, image_url: 'https://example.com/fish-franke-2.jpg' },
+          { length: 17.50, image_url: 'https://example.com/fish-franke-3.jpg' },
+          { length: 17.25, image_url: 'https://example.com/fish-franke-4.jpg' },
+          { length: 17.25, image_url: 'https://example.com/fish-franke-5.jpg' }
+        ]},
+        { rank: 4, name: 'Matthew H.', totalLength: 82.50, fish: [
+          { length: 18.00, image_url: 'https://example.com/fish-matthewh-1.jpg' },
+          { length: 17.00, image_url: 'https://example.com/fish-matthewh-2.jpg' },
+          { length: 16.75, image_url: 'https://example.com/fish-matthewh-3.jpg' },
+          { length: 15.50, image_url: 'https://example.com/fish-matthewh-4.jpg' },
+          { length: 15.25, image_url: 'https://example.com/fish-matthewh-5.jpg' }
+        ]},
+        { rank: 5, name: 'Jamie L.', totalLength: 0.00, fish: [] },
+        { rank: 6, name: 'Kevin', totalLength: 0.00, fish: [] }
+      ];
+
       for (let y = 2025; y <= currentYear; y++) {
         const startMonth = y === 2025 ? 8 : 1;
         const endMonth = y === currentYear ? currentMonth : 12;
         for (let m = startMonth; m <= endMonth; m++) {
           const isCurrentMonth = (y === currentYear && m === currentMonth);
-          const winnersList = document.createElement('div');
+          const winnersList = document.createElement('details');
           winnersList.id = `winners-${y}-${m}`;
           winnersList.className = 'month-winners';
           if (isCurrentMonth) {
-            winnersList.innerHTML = `<h2>${monthCodes[m - 1]} ${y}</h2><p>Tournament is ONgoing</p>`;
+            winnersList.innerHTML = `
+              <summary>${monthCodes[m - 1]} ${y}</summary>
+              <p>Tournament is ONgoing</p>
+            `;
             winnersContainer.appendChild(winnersList);
             continue;
           }
-          winnersList.innerHTML = `<h2>${monthCodes[m - 1]} ${y}</h2><p>Loading...</p>`;
+
+          if (y === 2025 && m === 8) {
+            // Hardcoded August 2025
+            winnersList.innerHTML = `
+              <summary>${monthCodes[m - 1]} ${y}</summary>
+              <ul>
+                ${august2025Winners.map(angler => `
+                  <li class="winner-item">
+                    <div class="winner-header">
+                      <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
+                      <span class="winner-name">${angler.name}</span>
+                      <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
+                    </div>
+                    <ul class="fish-list">
+                      ${angler.fish.length > 0
+                        ? angler.fish.map(f => `
+                            <li class="fish-item">
+                              <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                            </li>
+                          `).join('')
+                        : '<li class="fish-item">No fish submitted</li>'
+                      }
+                    </ul>
+                  </li>
+                `).join('')}
+              </ul>
+            `;
+            winnersContainer.appendChild(winnersList);
+            continue;
+          }
+
+          winnersList.innerHTML = `
+            <summary>${monthCodes[m - 1]} ${y}</summary>
+            <p>Loading...</p>
+          `;
           winnersContainer.appendChild(winnersList);
           let retries = 3;
           let loaded = false;
@@ -192,60 +266,66 @@
               if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
               const rankedAnglers = await response.json();
               console.log(`Winners fetched for ${monthCodes[m - 1]} ${y}:`, rankedAnglers);
-              winnersList.innerHTML = rankedAnglers.length > 0
-                ? rankedAnglers.map(angler => {
-                    console.log(`Rendering angler ${angler.name}, fish:`, angler.fish);
-                    return `
-                      <li class="winner-item">
-                        <div class="winner-header">
-                          <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
-                          <span class="winner-name">${angler.name}</span>
-                          <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
-                        </div>
-                        <ul class="fish-list">
-                          ${angler.fish.length > 0
-                            ? angler.fish.map(f => {
-                                console.log(`Attempting to load fish image: ${f.image_url}`);
-                                return `
+              winnersList.innerHTML = `
+                <summary>${monthCodes[m - 1]} ${y}</summary>
+                <ul>
+                  ${rankedAnglers.length > 0
+                    ? rankedAnglers.map(angler => `
+                        <li class="winner-item">
+                          <div class="winner-header">
+                            <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
+                            <span class="winner-name">${angler.name}</span>
+                            <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
+                          </div>
+                          <ul class="fish-list">
+                            ${angler.fish.length > 0
+                              ? angler.fish.map(f => `
                                   <li class="fish-item">
                                     <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
                                   </li>
-                                `;
-                              }).join('')
-                            : '<li class="fish-item">No fish submitted</li>'
-                          }
-                        </ul>
-                      </li>
-                    `;
-                  }).join('')
-                : `<p>No winners recorded</p>`;
+                                `).join('')
+                              : '<li class="fish-item">No fish submitted</li>'
+                            }
+                          </ul>
+                        </li>
+                      `).join('')
+                    : '<p>No winners recorded</p>'
+                  }
+                </ul>
+              `;
               loaded = true;
             } catch (error) {
               retries--;
               if (retries === 0) {
                 console.log(`Failed to load saved winners, computing on the fly for ${monthCodes[m - 1]} ${y}`);
                 const rankedAnglers = await computeWinners(y, m);
-                winnersList.innerHTML = rankedAnglers.length > 0
-                  ? rankedAnglers.map(angler => `
-                      <li class="winner-item">
-                        <div class="winner-header">
-                          <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
-                          <span class="winner-name">${angler.name}</span>
-                          <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
-                        </div>
-                        <ul class="fish-list">
-                          ${angler.fish.length > 0
-                            ? angler.fish.map(f => `
-                                <li class="fish-item">
-                                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
-                                </li>
-                              `).join('')
-                            : '<li class="fish-item">No fish submitted</li>'
-                          }
-                        </ul>
-                      </li>
-                    `).join('')
-                  : `<p>No winners recorded</p>`;
+                winnersList.innerHTML = `
+                  <summary>${monthCodes[m - 1]} ${y}</summary>
+                  <ul>
+                    ${rankedAnglers.length > 0
+                      ? rankedAnglers.map(angler => `
+                          <li class="winner-item">
+                            <div class="winner-header">
+                              <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
+                              <span class="winner-name">${angler.name}</span>
+                              <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
+                            </div>
+                            <ul class="fish-list">
+                              ${angler.fish.length > 0
+                                ? angler.fish.map(f => `
+                                    <li class="fish-item">
+                                      <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                                    </li>
+                                  `).join('')
+                                : '<li class="fish-item">No fish submitted</li>'
+                              }
+                            </ul>
+                          </li>
+                        `).join('')
+                      : '<p>No winners recorded</p>'
+                    }
+                  </ul>
+                `;
               } else {
                 console.warn(`Retrying loadWinners for ${monthCodes[m - 1]} ${y} (${retries} attempts left): ${error.message}`);
                 await new Promise(resolve => setTimeout(resolve, 2000));
