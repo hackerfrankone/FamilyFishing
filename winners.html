@@ -6,7 +6,7 @@
   <base href="https://www.familyfishing.fun/">
   <link rel="icon" type="image/x-icon" href="images/favicon.jpg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.workers.dev https://*.amazonaws.com https://storage.googleapis.com https://*.googleapis.com data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://*.workers.dev https://worldtimeapi.org; form-action 'self'; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.workers.dev https://*.amazonaws.com https://storage.googleapis.com https://*.googleapis.com https://imagedelivery.net data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://*.workers.dev https://worldtimeapi.org; form-action 'self'; object-src 'none'; base-uri 'self';">
   <style>
     body {
       background-image: url('images/background.png?v=2');
@@ -38,8 +38,7 @@
     .winner-total { color: #FFD700; font-size: 1.2rem; }
     .fish-list { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem; border: 1px solid #FFD700; list-style: none; }
     .fish-item { flex: 0 0 auto; list-style: none; }
-    .fish-length { color: #FFD700; font-size: 1rem; text-decoration: none; }
-    .fish-length:hover { color: #ffeb3b; }
+    .fish-length { color: #FFD700; font-size: 1rem; }
     .placeholder-message { color: #fff; font-style: italic; }
     .error-message { color: #ff0000; font-weight: bold; display: none; margin-bottom: 1rem; }
   </style>
@@ -168,35 +167,35 @@
       const currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
 
-      // Hardcoded August 2025 data
+      // Hardcoded August 2025 data with non-clickable fish lengths
       const august2025Winners = [
         { rank: 1, name: 'Jesse Jr', totalLength: 99.00, fish: [
-          { length: 21.50, image_url: 'https://www.familyfishing.fun/images/fish-jessejr-1.jpg' },
-          { length: 19.75, image_url: 'https://www.familyfishing.fun/images/fish-jessejr-2.jpg' },
-          { length: 19.50, image_url: 'https://www.familyfishing.fun/images/fish-jessejr-3.jpg' },
-          { length: 19.25, image_url: 'https://www.familyfishing.fun/images/fish-jessejr-4.jpg' },
-          { length: 19.00, image_url: 'https://www.familyfishing.fun/images/fish-jessejr-5.jpg' }
+          { length: 21.50 },
+          { length: 19.75 },
+          { length: 19.50 },
+          { length: 19.25 },
+          { length: 19.00 }
         ]},
         { rank: 2, name: 'FishMan', totalLength: 97.75, fish: [
-          { length: 23.75, image_url: 'https://www.familyfishing.fun/images/fish-fishman-1.jpg' },
-          { length: 20.25, image_url: 'https://www.familyfishing.fun/images/fish-fishman-2.jpg' },
-          { length: 18.50, image_url: 'https://www.familyfishing.fun/images/fish-fishman-3.jpg' },
-          { length: 17.75, image_url: 'https://www.familyfishing.fun/images/fish-fishman-4.jpg' },
-          { length: 17.50, image_url: 'https://www.familyfishing.fun/images/fish-fishman-5.jpg' }
+          { length: 23.75 },
+          { length: 20.25 },
+          { length: 18.50 },
+          { length: 17.75 },
+          { length: 17.50 }
         ]},
         { rank: 3, name: 'Frank E', totalLength: 88.00, fish: [
-          { length: 18.00, image_url: 'https://www.familyfishing.fun/images/fish-franke-1.jpg' },
-          { length: 18.00, image_url: 'https://www.familyfishing.fun/images/fish-franke-2.jpg' },
-          { length: 17.50, image_url: 'https://www.familyfishing.fun/images/fish-franke-3.jpg' },
-          { length: 17.25, image_url: 'https://www.familyfishing.fun/images/fish-franke-4.jpg' },
-          { length: 17.25, image_url: 'https://www.familyfishing.fun/images/fish-franke-5.jpg' }
+          { length: 18.00 },
+          { length: 18.00 },
+          { length: 17.50 },
+          { length: 17.25 },
+          { length: 17.25 }
         ]},
         { rank: 4, name: 'Matthew H.', totalLength: 82.50, fish: [
-          { length: 18.00, image_url: 'https://www.familyfishing.fun/images/fish-matthewh-1.jpg' },
-          { length: 17.00, image_url: 'https://www.familyfishing.fun/images/fish-matthewh-2.jpg' },
-          { length: 16.75, image_url: 'https://www.familyfishing.fun/images/fish-matthewh-3.jpg' },
-          { length: 15.50, image_url: 'https://www.familyfishing.fun/images/fish-matthewh-4.jpg' },
-          { length: 15.25, image_url: 'https://www.familyfishing.fun/images/fish-matthewh-5.jpg' }
+          { length: 18.00 },
+          { length: 17.00 },
+          { length: 16.75 },
+          { length: 15.50 },
+          { length: 15.25 }
         ]},
         { rank: 5, name: 'Jamie L.', totalLength: 0.00, fish: [] },
         { rank: 6, name: 'Kevin', totalLength: 0.00, fish: [] }
@@ -220,7 +219,7 @@
           }
 
           if (y === 2025 && m === 8) {
-            // Hardcoded August 2025
+            // Hardcoded August 2025 with non-clickable lengths
             winnersList.innerHTML = `
               <summary>${monthCodes[m - 1]} ${y}</summary>
               <ul>
@@ -235,7 +234,7 @@
                       ${angler.fish.length > 0
                         ? angler.fish.map(f => `
                             <li class="fish-item">
-                              <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                              <span class="fish-length">${Number(f.length).toFixed(2)}"</span>
                             </li>
                           `).join('')
                         : '<li class="fish-item">No fish submitted</li>'
