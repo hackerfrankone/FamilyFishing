@@ -6,7 +6,7 @@
   <base href="https://www.familyfishing.fun/">
   <link rel="icon" type="image/x-icon" href="images/favicon.jpg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.workers.dev https://*.amazonaws.com https://storage.googleapis.com https://*.googleapis.com https://imagedelivery.net data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://*.workers.dev https://worldtimeapi.org; form-action 'self'; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.workers.dev https://*.amazonaws.com https://storage.googleapis.com https://*.googleapis.com data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://*.workers.dev https://worldtimeapi.org; form-action 'self'; object-src 'none'; base-uri 'self';">
   <style>
     body {
       background-image: url('images/background.png?v=2');
@@ -38,8 +38,7 @@
     .angler-total-length { color: #FFD700; font-size: 1.2rem; }
     .fish-list { display: flex; gap: 0.75rem; overflow-x: auto; padding: 0.5rem; border: 1px solid #FFD700; list-style: none; }
     .fish-item { flex: 0 0 auto; list-style: none; }
-    .fish-length { color: #FFD700; font-size: 1rem; text-decoration: none; }
-    .fish-length:hover { color: #ffeb3b; }
+    .fish-length { color: #FFD700; font-size: 1rem; }
     .placeholder-message { color: #fff; font-style: italic; }
   </style>
   <script>
@@ -80,7 +79,7 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const fish = await response.json();
-        return fish.filter(f => f.image_url && (f.image_url.startsWith('https://imagedelivery.net/') || f.image_url.startsWith('https://www.familyfishing.fun/images/')));
+        return fish.map(f => ({ length: f.length, timestamp: f.timestamp }));
       } catch (error) {
         console.error(`Fish fetch error for ${anglerName}:`, error);
         return [];
@@ -90,10 +89,13 @@
     function filterFishByMonth(fish, year, month) {
       const monthStart = new Date(Date.UTC(year, month - 1, 1));
       const monthEnd = new Date(Date.UTC(year, month, 1));
-      return fish.filter(f => {
-        const timestamp = new Date(f.timestamp);
-        return timestamp >= monthStart && timestamp < monthEnd;
-      });
+      return fish
+        .filter(f => {
+          const timestamp = new Date(f.timestamp);
+          return timestamp >= monthStart && timestamp < monthEnd;
+        })
+        .sort((a, b) => parseFloat(b.length) - parseFloat(a.length))
+        .slice(0, 5);
     }
 
     async function loadWinners() {
@@ -151,7 +153,7 @@
                           ${angler.fish.length > 0
                             ? angler.fish.map(f => `
                               <li class="fish-item">
-                                <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                                <span class="fish-length">${Number(f.length).toFixed(2)}"</span>
                               </li>
                             `).join('')
                             : '<li class="fish-item">No fish submitted</li>'
