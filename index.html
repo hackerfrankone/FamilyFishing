@@ -564,21 +564,46 @@
     }
 
     async function loadPrizeAmounts() {
-      const firstPrizeElement = document.getElementById('firstPrize');
-      const bigBassPrizeElement = document.getElementById('bigBassPrize');
-      if (!firstPrizeElement || !bigBassPrizeElement) {
-        console.error('Prize elements not found');
+      const prizeContainer = document.querySelector('.prize-container');
+      if (!prizeContainer) {
+        console.error('Prize container not found');
         return;
       }
       try {
         const anglers = await fetchAnglerList();
         const anglerCount = anglers.length;
-        firstPrizeElement.textContent = `1st = $${(anglerCount * 20).toFixed(2)}`;
-        bigBassPrizeElement.textContent = `Big Bass = $${(anglerCount * 5).toFixed(2)}`;
+        const placePot = anglerCount * 20;
+        const bigBassPot = anglerCount * 5;
+        prizeContainer.innerHTML = '';
+
+        let n = Math.min(3, Math.max(1, 1 + Math.floor((anglerCount - 5) / 5)));
+        if (anglerCount === 0) {
+          const p = document.createElement('p');
+          p.className = 'prize-text';
+          p.textContent = 'No anglers yet';
+          prizeContainer.appendChild(p);
+        } else {
+          const percentages = n === 1 ? [100] : n === 2 ? [70, 30] : [70, 20, 10];
+
+          for (let place = 1; place <= n; place++) {
+            const percentage = percentages[place - 1];
+            const amount = (percentage / 100) * placePot;
+            const suffix = place === 1 ? 'st' : place === 2 ? 'nd' : 'rd';
+            const prizeText = `${place}${suffix} = $${amount.toFixed(2)} (${percentage.toFixed(2)}%)`;
+            const p = document.createElement('p');
+            p.className = 'prize-text';
+            p.textContent = prizeText;
+            prizeContainer.appendChild(p);
+          }
+        }
+
+        const bigP = document.createElement('p');
+        bigP.className = 'prize-text';
+        bigP.textContent = `Big Bass = $${bigBassPot.toFixed(2)}`;
+        prizeContainer.appendChild(bigP);
       } catch (error) {
         console.error('Failed to load prize amounts:', error.message);
-        firstPrizeElement.textContent = '1st = $0.00';
-        bigBassPrizeElement.textContent = 'Big Bass = $0.00';
+        prizeContainer.innerHTML = '<p class="prize-text">Error loading prizes</p>';
       }
     }
 
@@ -726,8 +751,6 @@
     </div>
   </div>
   <div class="prize-container">
-    <p class="prize-text" id="firstPrize">1st = $0</p>
-    <p class="prize-text" id="bigBassPrize">Big Bass $0</p>
   </div>
   <div class="angler-sidebar">
     <h3>Registered Anglers</h3>
