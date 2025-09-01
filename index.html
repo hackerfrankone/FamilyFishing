@@ -487,9 +487,11 @@
           cache: 'no-cache',
           headers: { 'Accept': 'application/json' }
         });
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        return new Date(data.utc_datetime);
+        const utcDate = new Date(data.utc_datetime);
+        if (isNaN(utcDate)) throw new Error('Invalid date from API');
+        return utcDate;
       } catch (error) {
         console.error("Failed to fetch server time:", error.message);
         return new Date();
@@ -504,7 +506,10 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const anglers = await response.json();
-        if (!Array.isArray(anglers) || anglers.length === 0) throw new Error('Empty or invalid angler list');
+        if (!Array.isArray(anglers) || anglers.length === 0) {
+          console.warn('Empty or invalid angler list');
+          return [];
+        }
         return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
         console.error('Fetch angler list error:', error.message);
@@ -565,12 +570,16 @@
         console.error('Prize elements not found');
         return;
       }
-      const anglers = await fetchAnglerList();
-      const anglerCount = anglers.length;
-      const firstPrize = (anglerCount * 20).toFixed(2);
-      const bigBassPrize = (anglerCount * 5).toFixed(2);
-      firstPrizeElement.textContent = `1st = $${firstPrize}`;
-      bigBassPrizeElement.textContent = `Big Bass = $${bigBassPrize}`;
+      try {
+        const anglers = await fetchAnglerList();
+        const anglerCount = anglers.length;
+        firstPrizeElement.textContent = `1st = $${(anglerCount * 20).toFixed(2)}`;
+        bigBassPrizeElement.textContent = `Big Bass = $${(anglerCount * 5).toFixed(2)}`;
+      } catch (error) {
+        console.error('Failed to load prize amounts:', error.message);
+        firstPrizeElement.textContent = '1st = $0.00';
+        bigBassPrizeElement.textContent = 'Big Bass = $0.00';
+      }
     }
 
     async function loadAnglerList() {
@@ -579,42 +588,48 @@
         console.error('Angler list element not found');
         return;
       }
-      anglerList.innerHTML = '';
-      const anglers = await fetchAnglerList();
-      const anglerData = [];
-
-      for (const name of anglers) {
-        const fish = await fetchFishForAngler(name);
-        const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
-        anglerData.push({ name, fish, totalLength });
+      anglerList.innerHTML = '<li>Loading...</li>';
+      try {
+        const anglers = await fetchAnglerList();
+        if (anglers.length === 0) {
+          anglerList.innerHTML = '<li>No anglers registered</li>';
+          return;
+        }
+        const anglerData = [];
+        for (const name of anglers) {
+          const fish = await fetchFishForAngler(name);
+          const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
+          anglerData.push({ name, fish, totalLength });
+        }
+        anglerData.sort((a, b) => b.totalLength - a.totalLength);
+        const rankedAnglers = anglerData.map((angler, index) => ({
+          ...angler,
+          rank: index + 1
+        }));
+        anglerList.innerHTML = '';
+        for (const { name, fish, totalLength, rank } of rankedAnglers) {
+          const li = document.createElement('li');
+          li.className = 'angler-item';
+          li.innerHTML = `
+            <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'}</span> <span class="angler-total-length">${totalLength.toFixed(2)}"</span> <span class="angler-name">${name}</span>
+            <ul class="fish-list" id="fishList-${name.replace(/\s+/g, '-')}">
+              ${fish.length > 0
+                ? fish.map(f => `
+                  <li class="fish-item">
+                    <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                  </li>
+                `).join('')
+                : '<li class="fish-item">No fish submitted</li>'
+              }
+            </ul>
+          `;
+          anglerList.appendChild(li);
+        }
+        console.log('Anglers loaded:', rankedAnglers);
+      } catch (error) {
+        console.error('Failed to load anglers:', error.message);
+        anglerList.innerHTML = '<li>Error loading anglers</li>';
       }
-
-      anglerData.sort((a, b) => b.totalLength - a.totalLength);
-      const rankedAnglers = anglerData.map((angler, index) => ({
-        ...angler,
-        rank: index + 1
-      }));
-
-      for (const { name, fish, totalLength, rank } of rankedAnglers) {
-        const li = document.createElement('li');
-        li.className = 'angler-item';
-        li.innerHTML = `
-          <span class="angler-rank">${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'}</span> <span class="angler-total-length">${totalLength.toFixed(2)}"</span> <span class="angler-name">${name}</span>
-          <ul class="fish-list" id="fishList-${name.replace(/\s+/g, '-')}">
-            ${fish.length > 0
-              ? fish.map(f => `
-                <li class="fish-item">
-                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
-                </li>
-              `).join('')
-              : '<li class="fish-item">No fish submitted</li>'
-            }
-          </ul>
-        `;
-        anglerList.appendChild(li);
-        console.log(`Rendered fish for ${name}:`, li.querySelector('.fish-list').innerHTML);
-      }
-      console.log('Anglers loaded:', rankedAnglers);
     }
 
     async function loadBibleVerse() {
@@ -629,11 +644,11 @@
           cache: 'no-cache',
           headers: { 'Accept': 'application/json' }
         });
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const verse = await response.json();
-        verseElement.textContent = verse.text;
-        referenceElement.textContent = verse.reference;
-      }cean catch (error) {
+        verseElement.textContent = verse.text || 'In the beginning God created the heavens and the earth.';
+        referenceElement.textContent = verse.reference || 'Genesis 1:1';
+      } catch (error) {
         console.error('Failed to fetch Bible verse:', error.message);
         verseElement.textContent = 'In the beginning God created the heavens and the earth.';
         referenceElement.textContent = 'Genesis 1:1';
@@ -645,7 +660,10 @@
       const countdownElement = document.getElementById('countdown');
       const monthElement = document.getElementById('month');
       const codeElement = document.getElementById('month-code');
-      if (!timerElement || !countdownElement || !monthElement || !codeElement) return;
+      if (!timerElement || !countdownElement || !monthElement || !codeElement) {
+        console.error('Tournament elements not found');
+        return;
+      }
 
       const now = await fetchCurrentTime();
       const year = now.getFullYear();
@@ -674,11 +692,10 @@
           const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
           const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
           timerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-          if (days <= 7) countdownElement.classList.add('countdown-red');
-          else countdownElement.classList.remove('countdown-red');
+          countdownElement.classList.toggle('countdown-red', days <= 7);
         }
       };
-      checkTournamentEnd();
+      await checkTournamentEnd();
       const interval = setInterval(checkTournamentEnd, 2000);
     }
 
