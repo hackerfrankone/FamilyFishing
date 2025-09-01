@@ -24,7 +24,7 @@
       align-items: center;
     }
     h1 { color: #FFD700; font-size: 2rem; text-align: center; }
-    .back-button { position: fixed; top: 1rem; left: 1rem; background: #28a745; color: #fff; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; }
+    .back-button { position: fixed; top: 1rem; left: 1rem; background: #28a745; color: #fff; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; border: none; cursor: pointer; }
     .back-button:hover { background: #2cc75b; }
     .winners-container { background: rgba(0, 0, 0, 0.7); padding: 1rem; border-radius: 8px; max-width: 800px; width: 100%; }
     .month-winners { margin-bottom: 1rem; }
@@ -97,23 +97,52 @@
       }
     }
 
-    async function saveWinners(year, month, retries = 3) {
+    function filterFishByMonth(fish, year, month) {
+      const monthStart = new Date(Date.UTC(year, month - 1, 1));
+      const monthEnd = new Date(Date.UTC(year, month, 1));
+      return fish.filter(f => {
+        const match = f.image_url.match(/fish-(\d+)-/);
+        if (!match) return false;
+        const timestamp = parseInt(match[1]);
+        const submitDate = new Date(timestamp);
+        return submitDate >= monthStart && submitDate < monthEnd;
+      });
+    }
+
+    async function computeWinners(year, month, retries = 3) {
       try {
-        console.log(`Saving winners for ${monthCodes[month - 1]} ${year}`);
+        console.log(`Computing winners for ${monthCodes[month - 1]} ${year}`);
         const anglers = await fetchAnglerList();
         const anglerData = [];
         for (const name of anglers) {
-          const fish = await fetchFishForAngler(name);
+          const allFish = await fetchFishForAngler(name);
+          const fish = filterFishByMonth(allFish, year, month);
           const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
-          anglerData.push({ name, fish, totalLength });
+          if (totalLength > 0) {
+            anglerData.push({ name, fish, totalLength });
+          }
         }
         anglerData.sort((a, b) => b.totalLength - a.totalLength);
-        const rankedAnglers = anglerData.map((angler, index) => ({
+        return anglerData.map((angler, index) => ({
           name: angler.name,
           fish: angler.fish,
           totalLength: angler.totalLength,
           rank: index + 1
         }));
+      } catch (error) {
+        if (retries > 0) {
+          console.warn(`Retrying computeWinners (${retries} attempts left): ${error.message}`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          return computeWinners(year, month, retries - 1);
+        }
+        console.error(`Failed to compute winners for ${monthCodes[month - 1]} ${year}:`, error.message);
+        return [];
+      }
+    }
+
+    async function saveWinners(year, month, retries = 3) {
+      try {
+        const rankedAnglers = await computeWinners(year, month);
         const response = await fetch('https://winners-familyfishingfun2025.workers.dev/save_winners', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -121,32 +150,6 @@
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         console.log(`Winners saved successfully for ${monthCodes[month - 1]} ${year}`);
-        const winnersList = document.getElementById(`winners-${year}-${month}`);
-        if (!winnersList) return;
-        winnersList.innerHTML = rankedAnglers.length > 0
-          ? rankedAnglers.map(angler => `
-              <li class="winner-item">
-                <div class="winner-header">
-                  <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
-                  <span class="winner-name">${angler.name}</span>
-                  <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
-                </div>
-                <ul class="fish-list">
-                  ${angler.fish.length > 0
-                    ? angler.fish.map(f => {
-                        console.log(`Attempting to load fish image: ${f.image_url}`);
-                        return `
-                          <li class="fish-item">
-                            <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
-                          </li>
-                        `;
-                      }).join('')
-                    : '<li class="fish-item">No fish submitted</li>'
-                  }
-                </ul>
-              </li>
-            `).join('')
-          : `<h2>${monthCodes[month - 1]} ${year}</h2><p>No winners recorded</p>`;
       } catch (error) {
         if (retries > 0) {
           console.warn(`Retrying saveWinners (${retries} attempts left): ${error.message}`);
@@ -154,48 +157,34 @@
           return saveWinners(year, month, retries - 1);
         }
         console.error(`Failed to save winners for ${monthCodes[month - 1]} ${year}:`, error.message);
-        const errorMessage = document.getElementById('errorMessage');
-        errorMessage.textContent = `Failed to save winners for ${monthCodes[month - 1]} ${year}. Showing placeholder data.`;
-        errorMessage.style.display = 'block';
-        const winnersList = document.getElementById(`winners-${year}-${month}`);
-        if (winnersList) {
-          winnersList.innerHTML = `
-            <h2>${monthCodes[month - 1]} ${year}</h2>
-            <p class="placeholder-message">Unable to load winners. Sample data:</p>
-            <li class="winner-item">
-              <div class="winner-header">
-                <span class="winner-rank">1st</span>
-                <span class="winner-name">Sample Angler</span>
-                <span class="winner-total">30.50"</span>
-              </div>
-              <ul class="fish-list">
-                <li class="fish-item"><a class="fish-length" href="https://example.com/fish.jpg" target="_blank" rel="noopener">15.25"</a></li>
-                <li class="fish-item"><a class="fish-length" href="https://example.com/fish2.jpg" target="_blank" rel="noopener">15.25"</a></li>
-              </ul>
-            </li>
-          `;
-        }
       }
     }
 
-    async function loadWinners() {
+    async function loadWinners(now) {
       const winnersContainer = document.getElementById('winnersContainer');
       const errorMessage = document.getElementById('errorMessage');
       errorMessage.style.display = 'none';
       winnersContainer.innerHTML = '';
-      const now = await fetchCurrentTime();
-      const year = now.getFullYear();
-      for (let y = 2025; y <= year; y++) {
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      for (let y = 2025; y <= currentYear; y++) {
         const startMonth = y === 2025 ? 8 : 1;
-        const endMonth = y === year ? now.getMonth() + 1 : 12;
+        const endMonth = y === currentYear ? currentMonth : 12;
         for (let m = startMonth; m <= endMonth; m++) {
+          const isCurrentMonth = (y === currentYear && m === currentMonth);
           const winnersList = document.createElement('div');
           winnersList.id = `winners-${y}-${m}`;
           winnersList.className = 'month-winners';
+          if (isCurrentMonth) {
+            winnersList.innerHTML = `<h2>${monthCodes[m - 1]} ${y}</h2><p>Tournament is ONgoing. no sample inches data ....</p>`;
+            winnersContainer.appendChild(winnersList);
+            continue;
+          }
           winnersList.innerHTML = `<h2>${monthCodes[m - 1]} ${y}</h2><p>Loading...</p>`;
           winnersContainer.appendChild(winnersList);
           let retries = 3;
-          while (retries > 0) {
+          let loaded = false;
+          while (retries > 0 && !loaded) {
             try {
               console.log(`Fetching winners for ${monthCodes[m - 1]} ${y}`);
               const response = await fetch(`https://winners-familyfishingfun2025.workers.dev/winners?year=${y}&month=${m}`, {
@@ -231,29 +220,34 @@
                       </li>
                     `;
                   }).join('')
-                : `<h2>${monthCodes[m - 1]} ${y}</h2><p>No winners recorded</p>`;
-              break;
+                : `<p>No winners recorded</p>`;
+              loaded = true;
             } catch (error) {
               retries--;
               if (retries === 0) {
-                console.error(`Failed to load winners for ${monthCodes[m - 1]} ${y}:`, error.message);
-                winnersList.innerHTML = `
-                  <h2>${monthCodes[m - 1]} ${y}</h2>
-                  <p class="placeholder-message">Failed to load winners. Sample data:</p>
-                  <li class="winner-item">
-                    <div class="winner-header">
-                      <span class="winner-rank">1st</span>
-                      <span class="winner-name">Sample Angler</span>
-                      <span class="winner-total">30.50"</span>
-                    </div>
-                    <ul class="fish-list">
-                      <li class="fish-item"><a class="fish-length" href="https://example.com/fish.jpg" target="_blank" rel="noopener">15.25"</a></li>
-                      <li class="fish-item"><a class="fish-length" href="https://example.com/fish2.jpg" target="_blank" rel="noopener">15.25"</a></li>
-                    </ul>
-                  </li>
-                `;
-                errorMessage.textContent = `Failed to load winners for ${monthCodes[m - 1]} ${y}. Showing placeholder data.`;
-                errorMessage.style.display = 'block';
+                console.log(`Failed to load saved winners, computing on the fly for ${monthCodes[m - 1]} ${y}`);
+                const rankedAnglers = await computeWinners(y, m);
+                winnersList.innerHTML = rankedAnglers.length > 0
+                  ? rankedAnglers.map(angler => `
+                      <li class="winner-item">
+                        <div class="winner-header">
+                          <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
+                          <span class="winner-name">${angler.name}</span>
+                          <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
+                        </div>
+                        <ul class="fish-list">
+                          ${angler.fish.length > 0
+                            ? angler.fish.map(f => `
+                                <li class="fish-item">
+                                  <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                                </li>
+                              `).join('')
+                            : '<li class="fish-item">No fish submitted</li>'
+                          }
+                        </ul>
+                      </li>
+                    `).join('')
+                  : `<p>No winners recorded</p>`;
               } else {
                 console.warn(`Retrying loadWinners for ${monthCodes[m - 1]} ${y} (${retries} attempts left): ${error.message}`);
                 await new Promise(resolve => setTimeout(resolve, 2000));
@@ -268,25 +262,39 @@
       const now = await fetchCurrentTime();
       const year = now.getFullYear();
       const month = now.getMonth() + 1;
-      const target = new Date(Date.UTC(year, month, 1, 0, 0, 0));
-      const checkTournamentEnd = async () => {
-        const currentTime = await fetchCurrentTime();
-        if (currentTime >= target && year >= 2025 && month >= 8) {
-          console.log('Tournament ended, saving winners');
-          await saveWinners(year, month);
-          document.getElementById('winnersContainer').innerHTML = '';
-          await loadWinners();
-          clearInterval(interval);
+      const day = now.getDate();
+
+      const checkAndSave = async (checkNow) => {
+        const checkYear = checkNow.getFullYear();
+        const checkMonth = checkNow.getMonth() + 1;
+        const checkDay = checkNow.getDate();
+        if (checkDay === 1 && checkYear >= 2025 && checkMonth >= 9) {  // Start saving from September 1 for August
+          let prevMonth = checkMonth - 1;
+          let prevYear = checkYear;
+          if (prevMonth === 0) {
+            prevMonth = 12;
+            prevYear--;
+          }
+          if ((prevYear > 2025) || (prevYear === 2025 && prevMonth >= 8)) {
+            console.log(`Beginning of month, saving winners for ${monthCodes[prevMonth - 1]} ${prevYear}`);
+            await saveWinners(prevYear, prevMonth);
+          }
         }
       };
-      await checkTournamentEnd();
-      const interval = setInterval(checkTournamentEnd, 86400000);
+
+      await checkAndSave(now);
+
+      setInterval(async () => {
+        const currentNow = await fetchCurrentTime();
+        await checkAndSave(currentNow);
+      }, 86400000);  // Check daily
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       console.log('Loading winners page, CSP:', document.querySelector('meta[http-equiv="Content-Security-Policy"]').content);
-      loadWinners();
-      initTournamentListener();
+      const now = await fetchCurrentTime();
+      await initTournamentListener();
+      await loadWinners(now);
     });
 
     document.addEventListener('securitypolicyviolation', (e) => {
@@ -299,7 +307,7 @@
   </script>
 </head>
 <body>
-  <a href="index.html" class="back-button">Back to Home</a>
+  <button class="back-button" onclick="window.close()">Back to Home</button>
   <h1>Tournament Winners</h1>
   <p id="errorMessage" class="error-message"></p>
   <div class="winners-container" id="winnersContainer"></div>
