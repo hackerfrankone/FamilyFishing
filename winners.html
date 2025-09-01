@@ -6,7 +6,7 @@
   <base href="https://www.familyfishing.fun/">
   <link rel="icon" type="image/x-icon" href="images/favicon.jpg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.workers.dev https://*.amazonaws.com https://storage.googleapis.com https://*.googleapis.com https://imagedelivery.net data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://*.workers.dev https://worldtimeapi.org; form-action 'self'; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://*.workers.dev https://*.amazonaws.com https://storage.googleapis.com https://*.googleapis.com https://imagedelivery.net data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev https://*.workers.dev https://worldtimeapi.org; form-action 'self'; object-src 'none'; base-uri 'self';">
   <style>
     body {
       background-image: url('images/background.png?v=2');
@@ -142,7 +142,7 @@
     async function saveWinners(year, month, retries = 3) {
       try {
         const rankedAnglers = await computeWinners(year, month);
-        const response = await fetch('https://winners-familyfishingfun2025.workers.dev/save_winners', {
+        const response = await fetch('https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev/save_winners', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ year, month, winners: rankedAnglers })
@@ -155,7 +155,7 @@
           await new Promise(resolve => setTimeout(resolve, 2000));
           return saveWinners(year, month, retries - 1);
         }
-        console.error(`Failed to save winners for ${monthCodes[month - 1]} ${year}:`, error.message);
+        console.error(`Failed to save winners for ${monthCodes[month - 1]} ${year}: ${error.message}. Check if the Worker domain is correct and deployed.`);
       }
     }
 
@@ -167,7 +167,7 @@
       const currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
 
-      // Hardcoded August 2025 data with non-clickable fish lengths
+      // Hardcoded August 2025 data with non-clickable fish lengths (no images)
       const august2025Winners = [
         { rank: 1, name: 'Jesse Jr', totalLength: 99.00, fish: [
           { length: 21.50 },
@@ -219,7 +219,7 @@
           }
 
           if (y === 2025 && m === 8) {
-            // Hardcoded August 2025 with non-clickable lengths
+            // Hardcoded August 2025 with non-clickable lengths (no images)
             winnersList.innerHTML = `
               <summary>${monthCodes[m - 1]} ${y}</summary>
               <ul>
@@ -258,7 +258,7 @@
           while (retries > 0 && !loaded) {
             try {
               console.log(`Fetching winners for ${monthCodes[m - 1]} ${y}`);
-              const response = await fetch(`https://winners-familyfishingfun2025.workers.dev/winners?year=${y}&month=${m}`, {
+              const response = await fetch(`https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev/winners?year=${y}&month=${m}`, {
                 cache: 'no-cache',
                 headers: { 'Accept': 'application/json' }
               });
@@ -280,7 +280,7 @@
                             ${angler.fish.length > 0
                               ? angler.fish.map(f => `
                                   <li class="fish-item">
-                                    <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                                    <span class="fish-length">${Number(f.length).toFixed(2)}"</span>
                                   </li>
                                 `).join('')
                               : '<li class="fish-item">No fish submitted</li>'
@@ -313,7 +313,7 @@
                               ${angler.fish.length > 0
                                 ? angler.fish.map(f => `
                                     <li class="fish-item">
-                                      <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                                      <span class="fish-length">${Number(f.length).toFixed(2)}"</span>
                                     </li>
                                   `).join('')
                                 : '<li class="fish-item">No fish submitted</li>'
