@@ -125,7 +125,7 @@
     }
     .angler-sidebar {
       position: fixed;
-      top: 6rem; /* Adjusted from 8rem to 6rem for larger screens */
+      top: 6rem;
       left: 1rem;
       padding: 1rem;
       background-color: rgba(0, 0, 0, 0.7);
@@ -529,6 +529,35 @@
       }
     }
 
+    async function saveWinners(year, month) {
+      try {
+        console.log(`Saving winners for ${monthCodes[month - 1]} ${year}`);
+        const anglers = await fetchAnglerList();
+        const anglerData = [];
+        for (const name of anglers) {
+          const fish = await fetchFishForAngler(name);
+          const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
+          anglerData.push({ name, fish, totalLength });
+        }
+        anglerData.sort((a, b) => b.totalLength - a.totalLength);
+        const rankedAnglers = anglerData.map((angler, index) => ({
+          name: angler.name,
+          fish: angler.fish,
+          totalLength: angler.totalLength,
+          rank: index + 1
+        }));
+        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/save_winners', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ year, month, winners: rankedAnglers })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        console.log(`Winners saved for ${monthCodes[month - 1]} ${year}`);
+      } catch (error) {
+        console.error(`Failed to save winners: ${error.message}`);
+      }
+    }
+
     async function loadPrizeAmounts() {
       const firstPrizeElement = document.getElementById('firstPrize');
       const bigBassPrizeElement = document.getElementById('bigBassPrize');
@@ -554,21 +583,18 @@
       const anglers = await fetchAnglerList();
       const anglerData = [];
 
-      // Fetch fish for all anglers and calculate totals
       for (const name of anglers) {
         const fish = await fetchFishForAngler(name);
         const totalLength = fish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
         anglerData.push({ name, fish, totalLength });
       }
 
-      // Sort anglers by total length (descending) and assign ranks
       anglerData.sort((a, b) => b.totalLength - a.totalLength);
       const rankedAnglers = anglerData.map((angler, index) => ({
         ...angler,
         rank: index + 1
       }));
 
-      // Render sorted anglers with rank and total
       for (const { name, fish, totalLength, rank } of rankedAnglers) {
         const li = document.createElement('li');
         li.className = 'angler-item';
@@ -628,12 +654,16 @@
       codeElement.textContent = getTournamentCode(year, month);
 
       const target = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
-      const update = () => {
-        const timeDiff = target - new Date();
+      const update = async () => {
+        const currentTime = await fetchCurrentTime();
+        const timeDiff = target - currentTime;
         if (timeDiff <= 0) {
-          timerElement.textContent = 'Tournament ended!';
+          timerElement.textContent = 'Tournament ended! View winners';
           countdownElement.classList.remove('countdown-red');
+          timerElement.style.cursor = 'pointer';
+          timerElement.onclick = () => window.location.href = 'winners.html';
           clearInterval(interval);
+          await saveWinners(year, month + 1);
           return;
         }
         const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
