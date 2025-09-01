@@ -31,12 +31,12 @@
     .month-winners summary { color: #FFD700; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
     .month-winners summary:hover { color: #ffeb3b; }
     .month-winners[open] summary { border-bottom: 1px solid #FFD700; }
-    .winner-item { margin-bottom: 0.5rem; padding: 0.5rem; }
-    .winner-header { display: flex; gap: 0.5rem; align-items: center; }
-    .winner-rank { color: #FF4500; font-size: 1.2rem; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
-    .winner-name { color: #FFD700; font-size: 1.2rem; font-weight: bold; }
-    .winner-total { color: #FFD700; font-size: 1.2rem; }
-    .fish-list { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem; border: 1px solid #FFD700; list-style: none; }
+    .angler-item { margin-bottom: 0.5rem; padding: 0.5rem; }
+    .angler-header { display: flex; gap: 0.5rem; align-items: center; }
+    .angler-rank { color: #FF4500; font-size: 1.2rem; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
+    .angler-name { color: #FFD700; font-size: 1.2rem; font-weight: bold; }
+    .angler-total-length { color: #FFD700; font-size: 1.2rem; }
+    .fish-list { display: flex; gap: 0.75rem; overflow-x: auto; padding: 0.5rem; border: 1px solid #FFD700; list-style: none; }
     .fish-item { flex: 0 0 auto; list-style: none; }
     .fish-length { color: #FFD700; font-size: 1rem; text-decoration: none; }
     .fish-length:hover { color: #ffeb3b; }
@@ -59,20 +59,26 @@
 
     async function fetchAnglerList() {
       try {
-        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/angler_list');
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/angler_list', {
+          cache: 'no-cache',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const anglers = await response.json();
         return anglers.map(name => name.replace(/[<>]/g, '')).filter(name => name.length > 0);
       } catch (error) {
-        console.error('Angler list error:', error);
+        console.error('Fetch angler list error:', error);
         return [];
       }
     }
 
     async function fetchFishForAngler(anglerName) {
       try {
-        const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/fish_list?angler=${encodeURIComponent(anglerName)}`);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/fish_list?angler=${encodeURIComponent(anglerName)}`, {
+          cache: 'no-cache',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         const fish = await response.json();
         return fish.filter(f => f.image_url && (f.image_url.startsWith('https://imagedelivery.net/') || f.image_url.startsWith('https://www.familyfishing.fun/images/')));
       } catch (error) {
@@ -90,47 +96,10 @@
       });
     }
 
-    async function computeWinners(year, month) {
-      try {
-        const anglers = await fetchAnglerList();
-        const anglerData = [];
-        for (const name of anglers) {
-          const fish = await fetchFishForAngler(name);
-          const monthFish = filterFishByMonth(fish, year, month);
-          const totalLength = monthFish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
-          anglerData.push({ name, fish: monthFish, totalLength });
-        }
-        anglerData.sort((a, b) => b.totalLength - a.totalLength || a.name.localeCompare(b.name));
-        return anglerData.map((angler, index) => ({
-          name: angler.name,
-          fish: angler.fish,
-          totalLength: angler.totalLength,
-          rank: index + 1
-        }));
-      } catch (error) {
-        console.error(`Compute winners error for ${monthCodes[month - 1]} ${year}:`, error);
-        return [];
-      }
-    }
-
-    async function saveWinners(year, month) {
-      try {
-        const rankedAnglers = await computeWinners(year, month);
-        const response = await fetch('https://winners-familyfishingfun2025.workers.dev/save_winners', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ year, month, winners: rankedAnglers })
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        console.log(`Winners saved for ${monthCodes[month - 1]} ${year}`);
-      } catch (error) {
-        console.error(`Save winners error for ${monthCodes[month - 1]} ${year}:`, error);
-      }
-    }
-
-    async function loadWinners(now) {
+    async function loadWinners() {
       const winnersContainer = document.getElementById('winnersContainer');
-      winnersContainer.innerHTML = '';
+      winnersContainer.innerHTML = '<p>Loading...</p>';
+      const now = await fetchCurrentTime();
       const currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
 
@@ -149,61 +118,89 @@
           }
           winnersList.innerHTML = `<summary>${monthCodes[m - 1]} ${y}</summary><p>Loading...</p>`;
           winnersContainer.appendChild(winnersList);
+
           try {
-            const response = await fetch(`https://winners-familyfishingfun2025.workers.dev/winners?year=${y}&month=${m}`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const rankedAnglers = await response.json();
+            const anglers = await fetchAnglerList();
+            const anglerData = [];
+            for (const name of anglers) {
+              const fish = await fetchFishForAngler(name);
+              const monthFish = filterFishByMonth(fish, y, m);
+              const totalLength = monthFish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
+              anglerData.push({ name, fish: monthFish, totalLength });
+            }
+            anglerData.sort((a, b) => b.totalLength - a.totalLength || a.name.localeCompare(b.name));
+            const rankedAnglers = anglerData.map((angler, index) => ({
+              name: angler.name,
+              fish: angler.fish,
+              totalLength: angler.totalLength,
+              rank: index + 1
+            }));
+
             winnersList.innerHTML = `
               <summary>${monthCodes[m - 1]} ${y}</summary>
               <ul>
                 ${rankedAnglers.length > 0
                   ? rankedAnglers.map(angler => `
-                      <li class="winner-item">
-                        <div class="winner-header">
-                          <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
-                          <span class="winner-name">${angler.name}</span>
-                          <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
+                      <li class="angler-item">
+                        <div class="angler-header">
+                          <span class="angler-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
+                          <span class="angler-total-length">${angler.totalLength.toFixed(2)}"</span>
+                          <span class="angler-name">${angler.name}</span>
                         </div>
-                        <ul class="fish-list">
+                        <ul class="fish-list" id="fishList-${angler.name.replace(/\s+/g, '-')}">
                           ${angler.fish.length > 0
-                            ? angler.fish.map(f => `<li class="fish-item"><a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a></li>`).join('')
+                            ? angler.fish.map(f => `
+                              <li class="fish-item">
+                                <a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a>
+                              </li>
+                            `).join('')
                             : '<li class="fish-item">No fish submitted</li>'
                           }
                         </ul>
                       </li>
                     `).join('')
-                  : '<p>No winners recorded</p>'
+                  : '<li>No anglers registered</li>'
                 }
               </ul>
             `;
           } catch (error) {
-            console.error(`Load winners error for ${monthCodes[m - 1]} ${y}:`, error);
-            const rankedAnglers = await computeWinners(y, m);
+            console.error(`Failed to load winners for ${monthCodes[m - 1]} ${y}:`, error);
             winnersList.innerHTML = `
               <summary>${monthCodes[m - 1]} ${y}</summary>
-              <ul>
-                ${rankedAnglers.length > 0
-                  ? rankedAnglers.map(angler => `
-                      <li class="winner-item">
-                        <div class="winner-header">
-                          <span class="winner-rank">${angler.rank}${angler.rank === 1 ? 'st' : angler.rank === 2 ? 'nd' : angler.rank === 3 ? 'rd' : 'th'}</span>
-                          <span class="winner-name">${angler.name}</span>
-                          <span class="winner-total">${angler.totalLength.toFixed(2)}"</span>
-                        </div>
-                        <ul class="fish-list">
-                          ${angler.fish.length > 0
-                            ? angler.fish.map(f => `<li class="fish-item"><a class="fish-length" href="${f.image_url}" target="_blank" rel="noopener">${Number(f.length).toFixed(2)}"</a></li>`).join('')
-                            : '<li class="fish-item">No fish submitted</li>'
-                          }
-                        </ul>
-                      </li>
-                    `).join('')
-                  : '<p>No winners recorded</p>'
-                }
-              </ul>
+              <p>Error loading winners</p>
             `;
           }
         }
+      }
+      winnersContainer.innerHTML !== '<p>Loading...</p>' || (winnersContainer.innerHTML = '<p>No winners recorded</p>');
+    }
+
+    async function saveWinners(year, month) {
+      try {
+        const anglers = await fetchAnglerList();
+        const anglerData = [];
+        for (const name of anglers) {
+          const fish = await fetchFishForAngler(name);
+          const monthFish = filterFishByMonth(fish, year, month);
+          const totalLength = monthFish.reduce((sum, f) => sum + parseFloat(f.length || 0), 0);
+          anglerData.push({ name, fish: monthFish, totalLength });
+        }
+        anglerData.sort((a, b) => b.totalLength - a.totalLength || a.name.localeCompare(b.name));
+        const rankedAnglers = anglerData.map((angler, index) => ({
+          name: angler.name,
+          fish: angler.fish,
+          totalLength: angler.totalLength,
+          rank: index + 1
+        }));
+        const response = await fetch('https://winners-familyfishingfun2025.workers.dev/save_winners', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ year, month, winners: rankedAnglers })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        console.log(`Winners saved for ${monthCodes[month - 1]} ${year}`);
+      } catch (error) {
+        console.error(`Save winners error for ${monthCodes[month - 1]} ${year}:`, error);
       }
     }
 
@@ -231,7 +228,8 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       await initTournamentListener();
-      await loadWinners(await fetchCurrentTime());
+      await loadWinners();
+      setInterval(loadWinners, 180000);
     });
   </script>
 </head>
