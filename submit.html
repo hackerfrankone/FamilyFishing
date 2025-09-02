@@ -5,12 +5,13 @@
   <title>Submit Fish - Family Fishing Fun</title>
   <base href="https://hackerfrankone.github.io/FamilyFishing/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/exifr.min.js"></script>
   <style>
     body { background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=2'); background-color: #000; background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 1rem; display: flex; flex-direction: column; align-items: center; }
     h1 { color: #FFD700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); text-align: center; }
@@ -68,13 +69,33 @@
       });
     }
 
-    function validateFile(file) {
+    async function validateFile(file) {
       const validTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/heif', 'image/bmp', 'image/webp', 'image/gif'];
       const maxSize = 10 * 1024 * 1024; // 10MB
       console.log(`Validating ${file.name}: Type=${file.type}, Size=${file.size}`);
       if (!validTypes.includes(file.type)) return `Unsupported image format: ${file.type}. Please use JPEG, PNG, or HEIC.`;
       if (file.size > maxSize) return 'File size exceeds 10MB limit.';
-      return null;
+
+      // Check EXIF timestamp
+      try {
+        const exifData = await exifr.parse(file);
+        const photoTimestamp = exifData?.DateTimeOriginal || exifData?.DateTime;
+        if (!photoTimestamp) {
+          return `No timestamp found in photo ${file.name}. Please ensure the photo includes EXIF metadata.`;
+        }
+        const photoDate = new Date(photoTimestamp);
+        if (isNaN(photoDate)) {
+          return `Invalid timestamp in photo ${file.name}.`;
+        }
+        const currentDate = new Date();
+        if (photoDate > currentDate) {
+          return `Photo timestamp for ${file.name} is in the future, which is not allowed.`;
+        }
+        return null;
+      } catch (err) {
+        console.error(`EXIF validation error for ${file.name}: ${err.message}`);
+        return `Failed to read photo metadata: ${err.message}`;
+      }
     }
 
     function displayPreview(file, previewId) {
@@ -213,7 +234,7 @@
         const length = document.getElementById(`fishLength${i}`).value;
         const lengthValid = length && !isNaN(parseFloat(length)) && parseFloat(length) > 0;
         const file = photoInput.files[0];
-        const fileError = file ? validateFile(file) : 'No photo selected.';
+        const fileError = file ? await validateFile(file) : 'No photo selected.';
         if (fileError) { isValid = false; errorMessage.textContent = `Fish ${i}: ${fileError}`; errorMessage.style.display = 'block'; break; }
         if (!lengthValid) { isValid = false; errorMessage.textContent = `Fish ${i}: Please enter a valid length.`; errorMessage.style.display = 'block'; break; }
       }
@@ -238,6 +259,22 @@
         let storedPin = localStorage.getItem(pinKey);
         const isFirstSubmission = await checkFirstSubmission(anglerName);
         console.log(`Stored PIN for ${anglerName}: ${storedPin}, isFirstSubmission: ${isFirstSubmission}`);
+        const registrationResponse = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/angler_registration?angler=${encodeURIComponent(anglerName)}`, {
+          cache: 'no-cache',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!registrationResponse.ok) {
+          const errorData = await registrationResponse.json();
+          throw new Error(errorData.error || `HTTP ${registrationResponse.status}`);
+        }
+        const { timestamp: registrationTimestamp } = await registrationResponse.json();
+        if (!registrationTimestamp) {
+          throw new Error("Registration timestamp not found");
+        }
+        const registrationDate = new Date(registrationTimestamp);
+        if (isNaN(registrationDate)) {
+          throw new Error("Invalid registration timestamp");
+        }
         if (!storedPin) {
           let pin;
           let validPin = false;
@@ -279,6 +316,25 @@
           const file = photoInput.files[0];
           if (file) {
             try {
+              const exifData = await exifr.parse(file);
+              let photoTimestamp = exifData?.DateTimeOriginal || exifData?.DateTime;
+              if (!photoTimestamp) {
+                console.warn(`No EXIF timestamp for fish ${i} photo: ${file.name}`);
+                errorMessage.textContent = `No timestamp found in photo for Fish ${i}. Please ensure the photo includes EXIF metadata.`;
+                errorMessage.style.display = 'block';
+                throw new Error(`No EXIF timestamp for Fish ${i}`);
+              }
+              const photoDate = new Date(photoTimestamp);
+              if (isNaN(photoDate)) {
+                throw new Error(`Invalid photo timestamp for Fish ${i}`);
+              }
+              const currentDate = new Date();
+              if (photoDate > currentDate) {
+                throw new Error(`Photo timestamp for Fish ${i} is in the future, which is not allowed.`);
+              }
+              if (photoDate < registrationDate) {
+                throw new Error(`Violation of tournament rules: Cannot accept Fish ${i} caught before joining the event. Please pay the entry fee before fishing. Thank you for your integrity.`);
+              }
               const resizedFile = await resizeImage(file, 1920, 0.8);
               formData.append(`fishPhoto${i}`, resizedFile);
               formData.append(`fishLength${i}`, document.getElementById(`fishLength${i}`).value);
@@ -339,7 +395,7 @@
           console.log(`Selected: ${file?.name}, Type: ${file?.type}, Size: ${file?.size}`);
           if (file) {
             try {
-              const error = validateFile(file);
+              const error = await validateFile(file);
               if (!error) {
                 displayPreview(file, `preview${i}`);
                 await validateForm();
