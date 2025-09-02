@@ -5,9 +5,12 @@
   <title>Family Fishing Fun</title>
   <base href="https://www.familyfishing.fun/">
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg">
-  <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/icon-192x192.png">
+  <link rel="manifest" href="/manifest.json">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self'; worker-src 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -250,6 +253,24 @@
       background-color: #FFA500;
       color: white;
     }
+    .install-button {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: filter 0.3s ease;
+      line-height: 1;
+      padding: 0;
+      white-space: nowrap;
+      text-align: center;
+      background-color: #00cc00;
+      color: white;
+    }
     .rules-button {
       background-color: #cc0000;
       color: white;
@@ -260,7 +281,7 @@
     .discord-button { background-color: #5865F2; color: white; }
     .archive-button { background-color: #808080; color: white; }
     .tackle-button { background-color: #006400; color: white; }
-    .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
+    .install-button:hover, .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
     .submit-fish-button:hover { filter: brightness(75%); }
     .bible-verse-container {
       position: fixed;
@@ -415,7 +436,7 @@
         width: 100%;
         justify-content: center;
       }
-      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .rules-button, .tackle-button {
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .rules-button, .tackle-button, .install-button {
         width: 70px;
         height: 70px;
         font-size: 11px;
@@ -732,6 +753,45 @@
       loadBibleVerse();
       setInterval(loadBibleVerse, 8 * 3600000);
       initTournament();
+
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('Service Worker registered:', registration);
+            })
+            .catch((error) => {
+              console.error('Service Worker registration failed:', error);
+            });
+        });
+      }
+
+      // Handle PWA install prompt
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const installButton = document.getElementById('installButton');
+        if (installButton) {
+          installButton.style.display = 'flex';
+        }
+      });
+
+      const installButton = document.getElementById('installButton');
+      if (installButton) {
+        installButton.addEventListener('click', () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('User installed the app');
+              }
+              deferredPrompt = null;
+            });
+          }
+        });
+      }
     });
   </script>
 </head>
@@ -768,6 +828,7 @@
     <a href="winners.html" target="_blank" rel="noopener" class="archive-button">Archive</a>
     <a href="/submit.html?v=6" target="_blank" rel="noopener" class="submit-fish-button">📷</a>
     <a href="pages/tackle.html" target="_blank" rel="noopener" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
+    <button id="installButton" class="install-button" style="display: none;">Install App</button>
   </div>
   <div class="bible-verse-container">
     <div class="bible-verse-content">
