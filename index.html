@@ -5,7 +5,7 @@
   <title>Family Fishing Fun</title>
   <base href="https://www.familyfishing.fun/">
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg">
-  <link rel="apple-touch-icon" href="/images/icon-192x192.png">
+  <link rel="apple-touch-icon" href="/images/app.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -219,7 +219,7 @@
       transition: filter 0.3s ease;
     }
     .facebook-button:hover img, .youtube-button:hover img { filter: brightness(150%); }
-    .discord-button, .archive-button, .rules-button, .tackle-button {
+    .discord-button, .archive-button, .rules-button, .install-button {
       width: 80px;
       height: 80px;
       border-radius: 50%;
@@ -254,20 +254,6 @@
       color: white;
     }
     .install-button {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: filter 0.3s ease;
-      line-height: 1;
-      padding: 0;
-      white-space: nowrap;
-      text-align: center;
       background-color: #00cc00;
       color: white;
     }
@@ -280,8 +266,7 @@
     }
     .discord-button { background-color: #5865F2; color: white; }
     .archive-button { background-color: #808080; color: white; }
-    .tackle-button { background-color: #006400; color: white; }
-    .install-button:hover, .discord-button:hover, .archive-button:hover, .tackle-button:hover { filter: brightness(150%); }
+    .install-button:hover, .discord-button:hover, .archive-button:hover { filter: brightness(150%); }
     .submit-fish-button:hover { filter: brightness(75%); }
     .bible-verse-container {
       position: fixed;
@@ -436,7 +421,7 @@
         width: 100%;
         justify-content: center;
       }
-      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .rules-button, .tackle-button, .install-button {
+      .facebook-button img, .youtube-button img, .discord-button, .archive-button, .rules-button, .install-button {
         width: 70px;
         height: 70px;
         font-size: 11px;
@@ -767,18 +752,23 @@
         });
       }
 
+      // Check if PWA is installed and hide Install App button
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+      const installButton = document.getElementById('installButton');
+      if (isStandalone && installButton) {
+        installButton.style.display = 'none';
+      }
+
       // Handle PWA install prompt
       let deferredPrompt;
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        const installButton = document.getElementById('installButton');
-        if (installButton) {
+        if (!isStandalone && installButton) {
           installButton.style.display = 'flex';
         }
       });
 
-      const installButton = document.getElementById('installButton');
       if (installButton) {
         installButton.addEventListener('click', () => {
           if (deferredPrompt) {
@@ -786,6 +776,7 @@
             deferredPrompt.userChoice.then((choiceResult) => {
               if (choiceResult.outcome === 'accepted') {
                 console.log('User installed the app');
+                installButton.style.display = 'none';
               }
               deferredPrompt = null;
             });
@@ -827,8 +818,7 @@
     <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
     <a href="winners.html" target="_blank" rel="noopener" class="archive-button">Archive</a>
     <a href="/submit.html?v=6" target="_blank" rel="noopener" class="submit-fish-button">📷</a>
-    <a href="pages/tackle.html" target="_blank" rel="noopener" class="tackle-button" onclick="alert('Coming soon'); return false;">Tackle</a>
-    <button id="installButton" class="install-button" style="display: none;">Install App</button>
+    <a id="installButton" class="install-button" style="display: none;">Install App</a>
   </div>
   <div class="bible-verse-container">
     <div class="bible-verse-content">
