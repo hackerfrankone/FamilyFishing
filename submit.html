@@ -174,18 +174,20 @@
         if (!anglerName) throw new Error('Please select an angler before submitting.');
         const formData = new FormData();
         formData.append('name', anglerName);
-        formData.append('fishCount', document.querySelectorAll('.fish-entry').length); // Dynamic count
         const fishEntries = document.querySelectorAll('.fish-entry');
+        if (fishEntries.length === 0) throw new Error('Please include at least one fish entry.');
         fishEntries.forEach((entry, i) => {
           const photoInput = entry.querySelector(`input[type="file"]`);
           const lengthInput = entry.querySelector(`input[type="number"]`);
           const file = photoInput.files[0];
-          if (file) {
-            formData.append(`fishPhoto${i + 1}`, file); // No resizing
-            formData.append(`fishLength${i + 1}`, lengthInput.value || 0);
+          const length = lengthInput.value;
+          if (!file || !length) {
+            throw new Error('Please include a photo and length for each fish.');
           }
+          formData.append(`fishPhoto${i + 1}`, file); // No resizing
+          formData.append(`fishLength${i + 1}`, length);
         });
-        console.log(`Submitting form for ${anglerName}`);
+        console.log(`Submitting form for ${anglerName} with ${fishEntries.length} fish`);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
         const response = await fetch('https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev/submit_fish', {
@@ -208,9 +210,9 @@
         window.close(); // Close the window instead of redirecting
       } catch (error) {
         console.error('Submission error:', error.message, 'Stack:', error.stack);
-        errorMessage.textContent = `Submission failed: ${error.message}`;
+        errorMessage.textContent = error.message;
         errorMessage.style.display = 'block';
-        alert(`Submission failed: ${error.message}`);
+        alert(error.message);
       } finally {
         loadingMessage.style.display = 'none';
         validateForm();
