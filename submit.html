@@ -206,7 +206,7 @@
         <input type="number" id="fishLength${newIndex}" name="fishLength${newIndex}" step="0.25" min="0" placeholder="example: 12.75">
       `;
       newEntry.style.display = 'block';
-      document.getElementById('fishForm').insertBefore(newEntry, document.getElementById('addFishBtn'));
+      document.getElementById('fishForm').insertBefore(newEntry, document.getElementById('submitButton')); // Place before Submit Fish
       const photoInput = document.getElementById(`fishPhoto${newIndex}`);
       photoInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
@@ -312,12 +312,17 @@
       document.getElementById('fishEntry1').style.display = 'block';
       document.getElementById('fishForm').addEventListener('submit', handleSubmit);
       document.getElementById('anglerName').addEventListener('change', validateForm);
-      const addFishButton = document.createElement('button');
-      addFishButton.type = 'button';
-      addFishButton.className = 'add-fish-btn';
-      addFishButton.textContent = 'Add more Fish';
-      addFishButton.addEventListener('click', addFishEntry);
-      document.getElementById('fishForm').insertBefore(addFishButton, document.getElementById('submitButton')); // Keep above Submit Fish
+      // Add single "Add more Fish" button above Submit Fish
+      let addFishButton = document.getElementById('addFishBtn');
+      if (!addFishButton) {
+        addFishButton = document.createElement('button');
+        addFishButton.type = 'button';
+        addFishButton.className = 'add-fish-btn';
+        addFishButton.id = 'addFishBtn';
+        addFishButton.textContent = 'Add more Fish';
+        addFishButton.addEventListener('click', addFishEntry);
+        document.getElementById('fishForm').insertBefore(addFishButton, document.getElementById('submitButton'));
+      }
       for (let i = 1; i <= 5; i++) {
         const photoInput = document.getElementById(`fishPhoto${i}`);
         photoInput?.addEventListener('change', async (e) => {
