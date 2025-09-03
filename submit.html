@@ -328,6 +328,7 @@
           body: formData,
           headers: { 'Accept': 'application/json' }
         });
+        console.log('Server response:', await response.text()); // Debug full response
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || `HTTP ${response.status}: ${JSON.stringify(result)}`);
         successMessage.textContent = 'Fish submitted successfully! Redirecting to leaderboard...';
