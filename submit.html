@@ -253,25 +253,28 @@
         if (!anglerName) throw new Error('Please select an angler before submitting.');
         const formData = new FormData();
         formData.append('name', anglerName);
-        formData.append('fishCount', document.querySelectorAll('.fish-entry').length); // Add fishCount to match Worker
+        formData.append('fishCount', document.querySelectorAll('.fish-entry').length); // Match Worker expectation
         const fishEntries = document.querySelectorAll('.fish-entry');
         if (fishEntries.length === 0) throw new Error('Please include at least one fish entry.');
         fishEntries.forEach((entry, i) => {
           const photoInput = entry.querySelector(`input[type="file"]`);
           const lengthInput = entry.querySelector(`input[type="number"]`);
-          const file = photoInput.files[0];
-          const length = lengthInput.value.trim(); // Ensure no whitespace issues
-          console.log(`Fish ${i + 1}: File=${file ? file.name : 'null'}, Length=${length}, Parsed=${parseFloat(length)}`); // Enhanced debug
+          const file = photoInput.files ? photoInput.files[0] : null; // Explicitly check files array
+          const length = lengthInput.value.trim();
+          console.log(`Fish ${i + 1}: File=${file ? file.name : 'null'}, Length=${length}, Parsed=${parseFloat(length)}`); // Debug
           if (!file) {
             throw new Error(`Please include a photo for Fish ${i + 1}.`);
           }
           if (!length || isNaN(parseFloat(length)) || parseFloat(length) <= 0) {
             throw new Error(`Please include a valid length for Fish ${i + 1}.`);
           }
-          // Simulate quarter-inch check (to match Worker)
-          const isQuarterInch = parseFloat(length) * 4 % 1 === 0;
+          // Match Worker's quarter-inch check
+          const parsedLength = parseFloat(length);
+          const isQuarterInch = parsedLength * 4 % 1 === 0;
           if (!isQuarterInch) {
-            throw new Error(`Length ${length} for Fish ${i + 1} must be in quarter-inch increments (e.g., 12.75).`);
+            const lowerQuarter = Math.floor(parsedLength * 4) / 4;
+            const upperQuarter = Math.ceil(parsedLength * 4) / 4;
+            throw new Error(`Length ${length} for Fish ${i + 1} must be in quarter-inch increments. Round to ${lowerQuarter.toFixed(2)}" or ${upperQuarter.toFixed(2)}".`);
           }
           formData.append(`fishPhoto${i + 1}`, file); // No resizing
           formData.append(`fishLength${i + 1}`, length);
