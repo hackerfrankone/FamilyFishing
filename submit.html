@@ -46,7 +46,7 @@
       return data.timestamp ? new Date(data.timestamp).getTime() : null;
     }
     async function validateFile(file) {
-      console.log(`Validating ${file.name}: Type=${file.type}, Size=${file.size}`);
+      console.log(`Validating ${file.name}: Type=${file.type}, Size=${file.size} bytes`);
       if (!file.type.startsWith('image/')) {
         console.warn(`${file.name} is not an image, submission will fail`);
         return 'Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun';
@@ -64,29 +64,11 @@
               if (joinTime && photoTime < joinTime) {
                 resolve('Violation Rule! (see rules) Picture was taken before joining tournament. Cannot accept. Thank you for your integrity.');
               } else {
-                const img = new Image();
-                img.onload = () => {
-                  if (img.width < 800 || img.height < 600) {
-                    resolve('Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun');
-                  } else {
-                    resolve(null);
-                  }
-                };
-                img.onerror = () => resolve('Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun');
-                img.src = URL.createObjectURL(file);
+                resolve(null); // No resolution check
               }
             }).catch(() => resolve('Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun'));
           } else {
-            const img = new Image();
-            img.onload = () => {
-              if (img.width < 800 || img.height < 600) {
-                resolve('Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun');
-              } else {
-                resolve(null);
-              }
-            };
-            img.onerror = () => resolve('Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun');
-            img.src = URL.createObjectURL(file);
+            resolve(null); // No resolution check if no EXIF
           }
         });
       });
@@ -375,7 +357,7 @@
         const photoInput = document.getElementById(`fishPhoto${i}`);
         photoInput?.addEventListener('change', async (e) => {
           const file = e.target.files[0];
-          console.log(`Selected: ${file?.name}, Type: ${file?.type}, Size: ${file?.size}`);
+          console.log(`Selected: ${file?.name}, Type: ${file?.type}, Size: ${file?.size} bytes`);
           if (file) {
             const anglerName = document.getElementById('anglerName').value;
             if (!anglerName) {
