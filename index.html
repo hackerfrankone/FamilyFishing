@@ -634,7 +634,9 @@
         }
         anglerData.sort((a, b) => b.totalLength - a.totalLength);
         const rankedAnglers = anglerData.map((angler, index) => ({
-          ...angler,
+          name: angler.name,
+          fish: angler.fish,
+          totalLength: angler.totalLength,
           rank: index + 1
         }));
         anglerList.innerHTML = '';
