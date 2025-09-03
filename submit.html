@@ -19,16 +19,16 @@
     label { font-weight: bold; color: #FFD700; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
     select, input[type="file"], input[type="number"] { width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc; background: #fff; color: #000; font-size: 1rem; }
     select:disabled { background: #666; cursor: not-allowed; }
-    input[type="submit"], .add-fish-btn { background-color: #28a745; color: #fff; font-weight: bold; border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; transition: filter 0.3s ease; text-align: center; }
-    input[type="submit"]:disabled, .add-fish-btn:disabled { background-color: #218838; cursor: not-allowed; filter: brightness(80%); }
-    input[type="submit"]:hover:not(:disabled), .add-fish-btn:hover:not(:disabled) { filter: brightness(120%); }
+    input[type="submit"] { background-color: #28a745; color: #fff; font-weight: bold; border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; transition: filter 0.3s ease; text-align: center; }
+    input[type="submit"]:disabled { background-color: #218838; cursor: not-allowed; filter: brightness(80%); }
+    input[type="submit"]:hover:not(:disabled) { filter: brightness(120%); }
     .fish-entry { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
     .success-message, .error-message, .loading-message { font-size: 0.9rem; text-align: center; display: none; }
     .success-message { color: #28a745; }
     .loading-message { color: #FFD700; font-weight: bold; }
     .error-message { color: #ff0000; }
     .preview-image { max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 4px; margin-top: 0.5rem; }
-    @media (max-width: 768px) { .submit-form { padding: 0.5rem; } h1 { font-size: 1.5rem; } select, input[type="file"], input[type="number"], input[type="submit"], .add-fish-btn { font-size: 0.9rem; } .preview-image { max-width: 80px; max-height: 80px; } }
+    @media (max-width: 768px) { .submit-form { padding: 0.5rem; } h1 { font-size: 1.5rem; } select, input[type="file"], input[type="number"], input[type="submit"] { font-size: 0.9rem; } .preview-image { max-width: 80px; max-height: 80px; } }
   </style>
   <script>
     async function resizeImage(file) {
@@ -177,7 +177,7 @@
         }
       }
     }
-    // Removed populateFishCountDropdown since we’re using dynamic entries with a button
+    // Removed populateFishCountDropdown since we’re using a single fish entry
     async function validateForm() {
       const anglerSelect = document.getElementById('anglerName');
       const submitButton = document.getElementById('submitButton');
@@ -191,51 +191,6 @@
       }
       submitButton.disabled = !isValid;
       return isValid;
-    }
-    function addFishEntry() {
-      const fishEntries = document.querySelectorAll('.fish-entry');
-      if (fishEntries.length >= 5) return; // Limit to 5 fish
-      const newIndex = fishEntries.length + 1;
-      const newEntry = document.createElement('div');
-      newEntry.className = 'fish-entry';
-      newEntry.innerHTML = `
-        <label for="fishPhoto${newIndex}">Fish ${newIndex} Photo:</label>
-        <input type="file" id="fishPhoto${newIndex}" name="fishPhoto${newIndex}" accept="image/*">
-        <img id="preview${newIndex}" class="preview-image" style="display: none;" alt="Fish ${newIndex} Preview">
-        <label for="fishLength${newIndex}">Fish ${newIndex} Length (inches):</label>
-        <input type="number" id="fishLength${newIndex}" name="fishLength${newIndex}" step="0.25" min="0" placeholder="example: 12.75">
-      `;
-      newEntry.style.display = 'block';
-      document.getElementById('fishForm').insertBefore(newEntry, document.getElementById('submitButton')); // Place before Submit Fish
-      const photoInput = document.getElementById(`fishPhoto${newIndex}`);
-      photoInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        console.log(`Selected: ${file?.name}, Type: ${file?.type}, Size: ${file?.size} bytes`);
-        if (file) {
-          const anglerName = document.getElementById('anglerName').value;
-          if (!anglerName) {
-            document.getElementById('errorMessage').textContent = 'Please select an angler before uploading a photo.';
-            document.getElementById('errorMessage').style.display = 'block';
-            alert('Please select an angler before uploading a photo.');
-            e.target.value = '';
-            await validateForm();
-            return;
-          }
-          const fileError = validateFile(file);
-          if (fileError) {
-            console.error(`Validation failed for ${file.name}: ${fileError}`);
-            document.getElementById('errorMessage').textContent = fileError;
-            document.getElementById('errorMessage').style.display = 'block';
-            alert(fileError);
-            e.target.value = '';
-          } else {
-            displayPreview(file, `preview${newIndex}`);
-            await validateForm();
-          }
-        }
-      });
-      document.getElementById(`fishLength${newIndex}`).addEventListener('input', validateForm);
-      validateForm();
     }
     async function handleSubmit(event) {
       event.preventDefault();
@@ -253,34 +208,30 @@
         if (!anglerName) throw new Error('Please select an angler before submitting.');
         const formData = new FormData();
         formData.append('name', anglerName);
-        const fishEntries = document.querySelectorAll('.fish-entry');
-        const visibleFishEntries = Array.from(fishEntries).filter(entry => getComputedStyle(entry).display !== 'none');
-        if (visibleFishEntries.length === 0) throw new Error('Please include at least one fish entry.');
-        formData.append('fishCount', visibleFishEntries.length); // Send only visible entries count
-        visibleFishEntries.forEach((entry, i) => {
-          const photoInput = entry.querySelector(`input[type="file"]`);
-          const lengthInput = entry.querySelector(`input[type="number"]`);
-          const file = photoInput.files ? photoInput.files[0] : null;
-          const length = lengthInput.value.trim();
-          console.log(`Fish ${i + 1}: File=${file ? file.name : 'null'}, Length=${length}, Parsed=${parseFloat(length)}`); // Debug
-          if (!file) {
-            throw new Error(`Please include a photo for Fish ${i + 1}.`);
-          }
-          if (!length || isNaN(parseFloat(length)) || parseFloat(length) <= 0) {
-            throw new Error(`Please include a valid length for Fish ${i + 1}.`);
-          }
-          // Match Worker's quarter-inch check
-          const parsedLength = parseFloat(length);
-          const isQuarterInch = parsedLength * 4 % 1 === 0;
-          if (!isQuarterInch) {
-            const lowerQuarter = Math.floor(parsedLength * 4) / 4;
-            const upperQuarter = Math.ceil(parsedLength * 4) / 4;
-            throw new Error(`Length ${length} for Fish ${i + 1} must be in quarter-inch increments. Round to ${lowerQuarter.toFixed(2)}" or ${upperQuarter.toFixed(2)}".`);
-          }
-          formData.append(`fishPhoto${i + 1}`, file); // No resizing
-          formData.append(`fishLength${i + 1}`, length);
-        });
-        console.log(`Submitting form for ${anglerName} with ${visibleFishEntries.length} visible fish`);
+        formData.append('fishCount', 1); // Fixed to 1 fish
+        const fishEntry = document.getElementById('fishEntry1');
+        const photoInput = fishEntry.querySelector('input[type="file"]');
+        const lengthInput = fishEntry.querySelector('input[type="number"]');
+        const file = photoInput.files ? photoInput.files[0] : null;
+        const length = lengthInput.value.trim();
+        console.log(`Fish 1: File=${file ? file.name : 'null'}, Length=${length}, Parsed=${parseFloat(length)}`); // Debug
+        if (!file) {
+          throw new Error('Please include a photo for Fish 1.');
+        }
+        if (!length || isNaN(parseFloat(length)) || parseFloat(length) <= 0) {
+          throw new Error('Please include a valid length for Fish 1.');
+        }
+        // Match Worker's quarter-inch check
+        const parsedLength = parseFloat(length);
+        const isQuarterInch = parsedLength * 4 % 1 === 0;
+        if (!isQuarterInch) {
+          const lowerQuarter = Math.floor(parsedLength * 4) / 4;
+          const upperQuarter = Math.ceil(parsedLength * 4) / 4;
+          throw new Error(`Length ${length} for Fish 1 must be in quarter-inch increments. Round to ${lowerQuarter.toFixed(2)}" or ${upperQuarter.toFixed(2)}".`);
+        }
+        formData.append('fishPhoto1', file); // No resizing
+        formData.append('fishLength1', length);
+        console.log(`Submitting form for ${anglerName} with 1 fish`);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
         const response = await fetch('https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev/submit_fish', {
@@ -297,19 +248,13 @@
         }
         const result = await response.json();
         if (!result.success) throw new Error(`Submission failed: ${JSON.stringify(result)}`);
-        successMessage.textContent = 'Fish submitted successfully! Redirecting to leaderboard...';
+        successMessage.textContent = 'Fish submitted successfully!';
         successMessage.style.display = 'block';
-        alert('Submission successful! Your fish have been uploaded.');
+        alert('Submission successful! Your fish has been uploaded.');
         form.reset();
         document.getElementById('anglerName').value = anglerName;
-        for (let i = 1; i <= 5; i++) {
-          document.getElementById(`fishEntry${i}`).style.display = 'none';
-          document.getElementById(`preview${i}`).style.display = 'none';
-          document.getElementById(`preview${i}`).src = '';
-        }
-        setTimeout(() => {
-          window.location.href = 'https://www.familyfishing.fun/index.html';
-        }, 1000);
+        document.getElementById('preview1').style.display = 'none';
+        document.getElementById('preview1').src = '';
       } catch (error) {
         console.error('Submission error:', error.message, 'Stack:', error.stack);
         errorMessage.textContent = `Submission failed: ${error.message}`;
@@ -326,46 +271,40 @@
       document.getElementById('fishEntry1').style.display = 'block';
       document.getElementById('fishForm').addEventListener('submit', handleSubmit);
       document.getElementById('anglerName').addEventListener('change', validateForm);
-      // Add single "Add more Fish" button above Submit Fish
-      let addFishButton = document.getElementById('addFishBtn');
-      if (!addFishButton) {
-        addFishButton = document.createElement('button');
-        addFishButton.type = 'button';
-        addFishButton.className = 'add-fish-btn';
-        addFishButton.id = 'addFishBtn';
-        addFishButton.textContent = 'Add more Fish';
-        addFishButton.addEventListener('click', addFishEntry);
-        document.getElementById('fishForm').insertBefore(addFishButton, document.getElementById('submitButton'));
-      }
       for (let i = 1; i <= 5; i++) {
         const photoInput = document.getElementById(`fishPhoto${i}`);
-        photoInput?.addEventListener('change', async (e) => {
-          const file = e.target.files[0];
-          console.log(`Selected: ${file?.name}, Type: ${file?.type}, Size: ${file?.size}`);
-          if (file) {
-            const anglerName = document.getElementById('anglerName').value;
-            if (!anglerName) {
-              document.getElementById('errorMessage').textContent = 'Please select an angler before uploading a photo.';
-              document.getElementById('errorMessage').style.display = 'block';
-              alert('Please select an angler before uploading a photo.');
-              e.target.value = '';
-              await validateForm();
-              return;
+        if (photoInput) {
+          photoInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            console.log(`Selected: ${file?.name}, Type: ${file?.type}, Size: ${file?.size}`);
+            if (file) {
+              const anglerName = document.getElementById('anglerName').value;
+              if (!anglerName) {
+                document.getElementById('errorMessage').textContent = 'Please select an angler before uploading a photo.';
+                document.getElementById('errorMessage').style.display = 'block';
+                alert('Please select an angler before uploading a photo.');
+                e.target.value = '';
+                await validateForm();
+                return;
+              }
+              const fileError = validateFile(file);
+              if (fileError) {
+                console.error(`Validation failed for ${file.name}: ${fileError}`);
+                document.getElementById('errorMessage').textContent = fileError;
+                document.getElementById('errorMessage').style.display = 'block';
+                alert(fileError);
+                e.target.value = '';
+              } else {
+                displayPreview(file, `preview${i}`);
+                await validateForm();
+              }
             }
-            const fileError = validateFile(file);
-            if (fileError) {
-              console.error(`Validation failed for ${file.name}: ${fileError}`);
-              document.getElementById('errorMessage').textContent = fileError;
-              document.getElementById('errorMessage').style.display = 'block';
-              alert(fileError);
-              e.target.value = '';
-            } else {
-              displayPreview(file, `preview${i}`);
-              await validateForm();
-            }
-          }
-        });
-        document.getElementById(`fishLength${i}`)?.addEventListener('input', validateForm);
+          });
+        }
+        const lengthInput = document.getElementById(`fishLength${i}`);
+        if (lengthInput) {
+          lengthInput.addEventListener('input', validateForm);
+        }
       }
     });
   </script>
@@ -378,41 +317,13 @@
     <p id="successMessage" class="success-message"></p>
     <p id="errorMessage" class="error-message"></p>
     <div id="fishEntry1" class="fish-entry">
-      <label for="fishPhoto1">Fish 1 Photo:</label>
+      <label for="fishPhoto1">Fish Photo:</label>
       <input type="file" id="fishPhoto1" name="fishPhoto1" accept="image/*">
       <img id="preview1" class="preview-image" style="display: none;" alt="Fish 1 Preview">
-      <label for="fishLength1">Fish 1 Length (inches):</label>
+      <label for="fishLength1">Fish Length (inches):</label>
       <input type="number" id="fishLength1" name="fishLength1" step="0.25" min="0" placeholder="example: 12.75">
     </div>
-    <div id="fishEntry2" class="fish-entry" style="display: none;">
-      <label for="fishPhoto2">Fish 2 Photo:</label>
-      <input type="file" id="fishPhoto2" name="fishPhoto2" accept="image/*">
-      <img id="preview2" class="preview-image" style="display: none;" alt="Fish 2 Preview">
-      <label for="fishLength2">Fish 2 Length (inches):</label>
-      <input type="number" id="fishLength2" name="fishLength2" step="0.25" min="0" placeholder="example: 12.75">
-    </div>
-    <div id="fishEntry3" class="fish-entry" style="display: none;">
-      <label for="fishPhoto3">Fish 3 Photo:</label>
-      <input type="file" id="fishPhoto3" name="fishPhoto3" accept="image/*">
-      <img id="preview3" class="preview-image" style="display: none;" alt="Fish 3 Preview">
-      <label for="fishLength3">Fish 3 Length (inches):</label>
-      <input type="number" id="fishLength3" name="fishLength3" step="0.25" min="0" placeholder="example: 12.75">
-    </div>
-    <div id="fishEntry4" class="fish-entry" style="display: none;">
-      <label for="fishPhoto4">Fish 4 Photo:</label>
-      <input type="file" id="fishPhoto4" name="fishPhoto4" accept="image/*">
-      <img id="preview4" class="preview-image" style="display: none;" alt="Fish 4 Preview">
-      <label for="fishLength4">Fish 4 Length (inches):</label>
-      <input type="number" id="fishLength4" name="fishLength4" step="0.25" min="0" placeholder="example: 12.75">
-    </div>
-    <div id="fishEntry5" class="fish-entry" style="display: none;">
-      <label for="fishPhoto5">Fish 5 Photo:</label>
-      <input type="file" id="fishPhoto5" name="fishPhoto5" accept="image/*">
-      <img id="preview5" class="preview-image" style="display: none;" alt="Fish 5 Preview">
-      <label for="fishLength5">Fish 5 Length (inches):</label>
-      <input type="number" id="fishLength5" name="fishLength5" step="0.25" min="0" placeholder="example: 12.75">
-    </div>
-    <button type="button" class="add-fish-btn" id="addFishBtn">Add more Fish</button>
+    <!-- Removed Fish 2-5 entries since only one fish is allowed -->
     <input type="submit" id="submitButton" value="Submit Fish" disabled>
     <p id="loadingMessage" class="loading-message">Please do not close, uploading picture...</p>
   </form>
