@@ -5,13 +5,12 @@
   <title>Submit Fish - Family Fishing Fun</title>
   <base href="https://www.familyfishing.fun/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/exifr.min.js"></script>
   <style>
     body { background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=2'); background-color: #000; background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 1rem; display: flex; flex-direction: column; align-items: center; }
     h1 { color: #FFD700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); text-align: center; }
@@ -68,7 +67,7 @@
         reader.readAsDataURL(file);
       });
     }
-    async function validateFile(file, regTimestamp) {
+    function validateFile(file) {
       const validTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/heif', 'image/bmp', 'image/webp', 'image/gif'];
       const maxSize = 10 * 1024 * 1024; // 10MB
       const minSize = 50 * 1024; // 50KB
@@ -76,26 +75,7 @@
       if (!validTypes.includes(file.type)) return `Unsupported image format: ${file.type}. Please use JPEG, PNG, or HEIC.`;
       if (file.size > maxSize) return 'File size exceeds 10MB limit.';
       if (file.size < minSize) return 'Please submit original photo.';
-      if (typeof exifr === 'undefined') {
-        console.warn(`EXIF library not loaded for ${file.name}. Skipping EXIF validation.`);
-        return null; // Allow photo if exifr is not defined
-      }
-      try {
-        const exifData = await exifr.parse(file);
-        const photoTimestamp = exifData?.DateTimeOriginal || exifData?.DateTime;
-        if (!photoTimestamp) return `No timestamp found in photo ${file.name}. Please ensure EXIF metadata is present.`;
-        const photoDate = new Date(photoTimestamp);
-        if (isNaN(photoDate)) return `Invalid timestamp in photo ${file.name}.`;
-        const regDate = new Date(regTimestamp);
-        if (isNaN(regDate)) return 'Invalid registration timestamp.';
-        if (photoDate < regDate) return 'Rule violation. Cannot accept fish due to fish caught before joining the tournament. Thanks for your integrity.';
-        const currentDate = new Date();
-        if (photoDate > currentDate) return `Photo timestamp for ${file.name} is in the future, which is not allowed.`;
-        return null;
-      } catch (err) {
-        console.error(`EXIF validation error for ${file.name}: ${err.message}`);
-        return `Failed to read photo metadata: ${err.message}`;
-      }
+      return null;
     }
     function displayPreview(file, previewId) {
       console.log(`Displaying preview for ${file.name}`);
@@ -226,32 +206,13 @@
         const length = document.getElementById(`fishLength${i}`).value;
         const lengthValid = length && !isNaN(parseFloat(length)) && parseFloat(length) > 0;
         const file = photoInput.files[0];
-        if (file && anglerValid) {
-          const regTimestamp = await getRegistrationTimestamp(anglerSelect.value);
-          const fileError = await validateFile(file, regTimestamp);
+        if (file) {
+          const fileError = validateFile(file);
           if (fileError) { isValid = false; errorMessage.textContent = `Fish ${i}: ${fileError}`; errorMessage.style.display = 'block'; break; }
         } else if (!lengthValid) { isValid = false; errorMessage.textContent = `Fish ${i}: Please enter a valid length or upload a photo.`; errorMessage.style.display = 'block'; break; }
       }
       submitButton.disabled = !isValid;
       return isValid;
-    }
-    async function getRegistrationTimestamp(anglerName) {
-      if (!anglerName) {
-        console.error('No angler name provided for registration timestamp');
-        return new Date().toISOString(); // Fallback to current time
-      }
-      try {
-        const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/angler_registration?angler=${encodeURIComponent(anglerName)}`, {
-          cache: 'no-cache',
-          headers: { 'Accept': 'application/json' }
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        return data.timestamp || new Date().toISOString(); // Fallback if no timestamp
-      } catch (error) {
-        console.error(`Failed to get registration timestamp for ${anglerName}: ${error.message}`);
-        return new Date().toISOString(); // Fallback to current time
-      }
     }
     async function handleSubmit(event) {
       event.preventDefault();
@@ -271,22 +232,6 @@
         let storedPin = localStorage.getItem(pinKey);
         const isFirstSubmission = await checkFirstSubmission(anglerName);
         console.log(`Stored PIN for ${anglerName}: ${storedPin}, isFirstSubmission: ${isFirstSubmission}`);
-        const registrationResponse = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/angler_registration?angler=${encodeURIComponent(anglerName)}`, {
-          cache: 'no-cache',
-          headers: { 'Accept': 'application/json' }
-        });
-        if (!registrationResponse.ok) {
-          const errorData = await registrationResponse.json();
-          throw new Error(errorData.error || `HTTP ${registrationResponse.status}`);
-        }
-        const { timestamp: registrationTimestamp } = await registrationResponse.json();
-        if (!registrationTimestamp) {
-          throw new Error("Registration timestamp not found");
-        }
-        const registrationDate = new Date(registrationTimestamp);
-        if (isNaN(registrationDate)) {
-          throw new Error("Invalid registration timestamp");
-        }
         if (!storedPin) {
           let pin;
           let validPin = false;
@@ -328,8 +273,7 @@
           const file = photoInput.files[0];
           if (file) {
             const resizedFile = await resizeImage(file, 1920, 0.8);
-            const regTimestamp = await getRegistrationTimestamp(anglerName);
-            const fileError = await validateFile(resizedFile, regTimestamp);
+            const fileError = validateFile(resizedFile);
             if (fileError) {
               throw new Error(`Fish ${i}: ${fileError}`);
             }
@@ -366,10 +310,6 @@
       }
     }
     document.addEventListener('DOMContentLoaded', () => {
-      // Check if exifr is loaded
-      if (typeof exifr === 'undefined') {
-        console.warn('EXIFR library failed to load. EXIF validation will be skipped.');
-      }
       populateAnglerDropdown();
       populateFishCountDropdown();
       document.getElementById('fishForm').addEventListener('submit', handleSubmit);
@@ -399,8 +339,7 @@
               await validateForm();
               return;
             }
-            const regTimestamp = await getRegistrationTimestamp(anglerName);
-            const fileError = await validateFile(file, regTimestamp);
+            const fileError = validateFile(file);
             if (!fileError) {
               displayPreview(file, `preview${i}`);
               await validateForm();
