@@ -177,7 +177,7 @@
         }
       }
     }
-    // Removed populateFishCountDropdown since we’re using dynamic entries
+    // Removed populateFishCountDropdown since we’re using dynamic entries with a button
     async function validateForm() {
       const anglerSelect = document.getElementById('anglerName');
       const submitButton = document.getElementById('submitButton');
@@ -259,9 +259,9 @@
           const photoInput = entry.querySelector(`input[type="file"]`);
           const lengthInput = entry.querySelector(`input[type="number"]`);
           const file = photoInput.files[0];
-          const length = lengthInput.value;
-          if (!file || !length) {
-            throw new Error('Please include a photo and length for each fish.');
+          const length = lengthInput.value.trim(); // Ensure no whitespace issues
+          if (!file || !length || isNaN(parseFloat(length)) || parseFloat(length) <= 0) {
+            throw new Error('Please include a photo and a valid length for each fish.');
           }
           formData.append(`fishPhoto${i + 1}`, file); // No resizing
           formData.append(`fishLength${i + 1}`, length);
@@ -317,7 +317,7 @@
       addFishButton.className = 'add-fish-btn';
       addFishButton.textContent = 'Add more Fish';
       addFishButton.addEventListener('click', addFishEntry);
-      document.getElementById('fishForm').insertBefore(addFishButton, document.getElementById('submitButton'));
+      document.getElementById('fishForm').insertBefore(addFishButton, document.getElementById('submitButton')); // Keep above Submit Fish
       for (let i = 1; i <= 5; i++) {
         const photoInput = document.getElementById(`fishPhoto${i}`);
         photoInput?.addEventListener('change', async (e) => {
@@ -393,8 +393,8 @@
       <label for="fishLength5">Fish 5 Length (inches):</label>
       <input type="number" id="fishLength5" name="fishLength5" step="0.25" min="0" placeholder="example: 12.75">
     </div>
-    <input type="submit" id="submitButton" value="Submit Fish" disabled>
     <button type="button" class="add-fish-btn" id="addFishBtn">Add more Fish</button>
+    <input type="submit" id="submitButton" value="Submit Fish" disabled>
     <p id="loadingMessage" class="loading-message">Please do not close, uploading picture...</p>
   </form>
 </body>
