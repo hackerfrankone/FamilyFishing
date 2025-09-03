@@ -35,48 +35,6 @@
       console.log(`Using original ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
       return file;
     }
-    async function savePin(anglerName, pin, retries = 5, delay = 1500) {
-      for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-          console.log(`Attempt ${attempt} to save PIN for ${anglerName}`);
-          const response = await fetch('https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev/update_pin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: anglerName, pin })
-          });
-          const data = await response.json();
-          if (!response.ok) throw new Error(data.error || `HTTP ${response.status}: ${JSON.stringify(data)}`);
-          console.log(`PIN saved successfully for ${anglerName}`);
-          return true;
-        } catch (error) {
-          console.error(`Attempt ${attempt} failed to save PIN for ${anglerName}: ${error.message}`);
-          if (attempt === retries) return false;
-          await new Promise(resolve => setTimeout(resolve, delay));
-        }
-      }
-      return false;
-    }
-    async function verifyPin(anglerName, pin, retries = 5, delay = 1500) {
-      for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-          console.log(`Attempt ${attempt} to verify PIN for ${anglerName}`);
-          const response = await fetch('https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev/verify_pin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: anglerName, pin })
-          });
-          const data = await response.json();
-          if (!response.ok) throw new Error(data.error || `HTTP ${response.status}: ${JSON.stringify(data)}`);
-          console.log(`PIN verification for ${anglerName}: ${data.isValid}`);
-          return data.isValid ? true : data.error === 'No PIN set for this angler' ? 'no_pin' : false;
-        } catch (error) {
-          console.error(`Attempt ${attempt} failed to verify PIN for ${anglerName}: ${error.message}`);
-          if (attempt === retries) return false;
-          await new Promise(resolve => setTimeout(resolve, delay));
-        }
-      }
-      return false;
-    }
     async function checkFirstSubmission(anglerName) {
       try {
         console.log(`Checking first submission for ${anglerName}`);
@@ -214,45 +172,9 @@
       try {
         const anglerName = document.getElementById('anglerName').value;
         if (!anglerName) throw new Error('Please select an angler before submitting.');
-        const pinKey = `angler_pin_${anglerName.toLowerCase()}`;
-        let storedPin = localStorage.getItem(pinKey);
-        const isFirstSubmission = await checkFirstSubmission(anglerName);
-        console.log(`Stored PIN for ${anglerName}: ${storedPin}, isFirstSubmission: ${isFirstSubmission}`);
-        if (!storedPin) {
-          let pin;
-          let validPin = false;
-          const promptMessage = isFirstSubmission ? `Welcome, ${anglerName}! Please choose a 6-digit PIN to secure your submissions:` : `No PIN found for ${anglerName}. Please set a new 6-digit PIN:`;
-          while (!validPin) {
-            pin = prompt(promptMessage);
-            if (pin === null) {
-              console.log(`PIN prompt cancelled for ${anglerName}`);
-              errorMessage.textContent = 'Submission cancelled. Please provide a PIN to proceed.';
-              errorMessage.style.display = 'block';
-              throw new Error('PIN prompt cancelled');
-            }
-            if (!/^\d{6}$/.test(pin)) {
-              alert('Please enter a valid 6-digit PIN (numbers only).');
-              continue;
-            }
-            console.log(`Attempting to save PIN for ${anglerName}: ${pin}`);
-            const pinSaved = await savePin(anglerName, pin);
-            if (!pinSaved) {
-              console.error('Failed to save PIN after retries');
-              errorMessage.textContent = 'Failed to save new PIN to database. Please try again or contact support.';
-              errorMessage.style.display = 'block';
-              throw new Error('Failed to save PIN');
-            }
-            localStorage.setItem(pinKey, pin);
-            console.log(`Stored new PIN in localStorage: ${pinKey} = ${pin}`);
-            alert('New PIN saved successfully! Proceeding with submission.');
-            storedPin = pin;
-            validPin = true;
-          }
-        }
         const formData = new FormData();
         formData.append('name', anglerName);
         formData.append('fishCount', document.querySelectorAll('.fish-entry').length); // Dynamic count
-        formData.append('pin', storedPin);
         const fishEntries = document.querySelectorAll('.fish-entry');
         fishEntries.forEach((entry, i) => {
           const photoInput = entry.querySelector(`input[type="file"]`);
@@ -263,7 +185,7 @@
             formData.append(`fishLength${i + 1}`, lengthInput.value || 0);
           }
         });
-        console.log(`Submitting form for ${anglerName} with PIN ${storedPin}`);
+        console.log(`Submitting form for ${anglerName}`);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
         const response = await fetch('https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev/submit_fish', {
@@ -293,50 +215,6 @@
         loadingMessage.style.display = 'none';
         validateForm();
       }
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      populateAnglerDropdown();
-      document.getElementById('fishForm').addEventListener('submit', handleSubmit);
-      document.getElementById('anglerName').addEventListener('change', validateForm);
-      const addFishButton = document.getElementById('addFishBtn'); // Single button
-      addFishButton.addEventListener('click', addFishEntry);
-      validateForm();
-    });
-    function addFishEntry() {
-      const fishEntries = document.querySelectorAll('.fish-entry');
-      if (fishEntries.length >= 5) return; // Limit to 5 fish
-      const newIndex = fishEntries.length + 1;
-      const newEntry = document.createElement('div');
-      newEntry.className = 'fish-entry';
-      newEntry.innerHTML = `
-        <label for="fishPhoto${newIndex}">Fish Photo:</label>
-        <input type="file" id="fishPhoto${newIndex}" name="fishPhoto${newIndex}" accept="image/*">
-        <img id="preview${newIndex}" class="preview-image" style="display: none;" alt="Fish ${newIndex} Preview">
-        <label for="fishLength${newIndex}">Fish Length (inches):</label>
-        <input type="number" id="fishLength${newIndex}" name="fishLength${newIndex}" step="0.25" min="0" placeholder="example: 12.75">
-      `;
-      newEntry.style.display = 'block';
-      document.getElementById('fishForm').insertBefore(newEntry, addFishButton);
-      const photoInput = document.getElementById(`fishPhoto${newIndex}`);
-      photoInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        console.log(`Selected: ${file?.name}, Type: ${file?.type}, Size: ${file?.size} bytes`);
-        if (file) {
-          const anglerName = document.getElementById('anglerName').value;
-          if (!anglerName) {
-            document.getElementById('errorMessage').textContent = 'Please select an angler before uploading a photo.';
-            document.getElementById('errorMessage').style.display = 'block';
-            alert('Please select an angler before uploading a photo.');
-            e.target.value = '';
-            await validateForm();
-            return;
-          }
-          await displayPreview(file, `preview${newIndex}`);
-          await validateForm();
-        }
-      });
-      document.getElementById(`fishLength${newIndex}`).addEventListener('input', validateForm);
-      validateForm();
     }
     function displayPreview(file, previewId) {
       console.log(`Displaying preview for ${file.name}`);
@@ -370,7 +248,7 @@
     <p id="successMessage" class="success-message"></p>
     <p id="errorMessage" class="error-message"></p>
     <input type="submit" id="submitButton" value="Submit Fish" disabled>
-    <button type="button" class="add-fish-btn" id="addFishBtn">Add more Fish +</button>
+    <button type="button" class="add-fish-btn" id="addFishBtn">Add more Fish</button>
     <p id="loadingMessage" class="loading-message">Please do not close, uploading picture...</p>
   </form>
 </body>
