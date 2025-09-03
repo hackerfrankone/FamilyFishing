@@ -71,7 +71,7 @@
     async function validateFile(file, regTimestamp) {
       const validTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/heif', 'image/bmp', 'image/webp', 'image/gif'];
       const maxSize = 10 * 1024 * 1024; // 10MB
-      const minSize = 1 * 1024 * 1024; // 1MB (1024KB)
+      const minSize = 50 * 1024; // 50KB
       console.log(`Validating ${file.name}: Type=${file.type}, Size=${file.size}`);
       if (!validTypes.includes(file.type)) return `Unsupported image format: ${file.type}. Please use JPEG, PNG, or HEIC.`;
       if (file.size > maxSize) return 'File size exceeds 10MB limit.';
@@ -222,7 +222,7 @@
         const length = document.getElementById(`fishLength${i}`).value;
         const lengthValid = length && !isNaN(parseFloat(length)) && parseFloat(length) > 0;
         const file = photoInput.files[0];
-        if (file) {
+        if (file && anglerValid) {
           const regTimestamp = await getRegistrationTimestamp(anglerSelect.value);
           const fileError = await validateFile(file, regTimestamp);
           if (fileError) { isValid = false; errorMessage.textContent = `Fish ${i}: ${fileError}`; errorMessage.style.display = 'block'; break; }
@@ -232,6 +232,10 @@
       return isValid;
     }
     async function getRegistrationTimestamp(anglerName) {
+      if (!anglerName) {
+        console.error('No angler name provided for registration timestamp');
+        return new Date().toISOString(); // Fallback to current time
+      }
       try {
         const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/angler_registration?angler=${encodeURIComponent(anglerName)}`, {
           cache: 'no-cache',
@@ -258,6 +262,7 @@
       submitButton.disabled = true;
       try {
         const anglerName = document.getElementById('anglerName').value;
+        if (!anglerName) throw new Error('Please select an angler before submitting.');
         const pinKey = `angler_pin_${anglerName.toLowerCase()}`;
         let storedPin = localStorage.getItem(pinKey);
         const isFirstSubmission = await checkFirstSubmission(anglerName);
@@ -377,16 +382,25 @@
           const file = e.target.files[0];
           console.log(`Selected: ${file?.name}, Type: ${file?.type}, Size: ${file?.size}`);
           if (file) {
-            const regTimestamp = await getRegistrationTimestamp(document.getElementById('anglerName').value);
+            const anglerName = document.getElementById('anglerName').value;
+            if (!anglerName) {
+              document.getElementById('errorMessage').textContent = 'Please select an angler before uploading a photo.';
+              document.getElementById('errorMessage').style.display = 'block';
+              e.target.value = '';
+              await validateForm();
+              return;
+            }
+            const regTimestamp = await getRegistrationTimestamp(anglerName);
             const fileError = await validateFile(file, regTimestamp);
             if (!fileError) {
               displayPreview(file, `preview${i}`);
               await validateForm();
             } else {
               console.log(`Validation failed for ${file.name}: ${fileError}`);
-              e.target.value = '';
               document.getElementById('errorMessage').textContent = fileError;
               document.getElementById('errorMessage').style.display = 'block';
+              alert(fileError);
+              e.target.value = '';
               document.getElementById(`preview${i}`).style.display = 'none';
               await validateForm();
             }
