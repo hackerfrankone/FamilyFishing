@@ -36,13 +36,16 @@
       return file;
     }
     function validateFile(file) {
-      // Accept only images, warn for non-images
+      // Accept only images, enforce minimum size of 50KB
       console.log(`Validating ${file.name}: Type=${file.type}, Size=${file.size}`);
       if (!file.type.startsWith('image/')) {
         console.warn(`${file.name} is not an image, submission will fail`);
         return 'Please upload an image file (e.g., JPEG, PNG, HEIC).';
       }
-      return null; // No size checks
+      if (file.size < 50 * 1024) { // 50KB minimum
+        return 'Image too small, please submit an original photo (minimum 50KB).';
+      }
+      return null;
     }
     function displayPreview(file, previewId) {
       console.log(`Displaying preview for ${file.name}`);
