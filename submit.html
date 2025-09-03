@@ -253,13 +253,14 @@
         if (!anglerName) throw new Error('Please select an angler before submitting.');
         const formData = new FormData();
         formData.append('name', anglerName);
-        formData.append('fishCount', document.querySelectorAll('.fish-entry').length); // Match Worker expectation
         const fishEntries = document.querySelectorAll('.fish-entry');
-        if (fishEntries.length === 0) throw new Error('Please include at least one fish entry.');
-        fishEntries.forEach((entry, i) => {
+        const visibleFishEntries = Array.from(fishEntries).filter(entry => getComputedStyle(entry).display !== 'none');
+        if (visibleFishEntries.length === 0) throw new Error('Please include at least one fish entry.');
+        formData.append('fishCount', visibleFishEntries.length); // Send only visible entries count
+        visibleFishEntries.forEach((entry, i) => {
           const photoInput = entry.querySelector(`input[type="file"]`);
           const lengthInput = entry.querySelector(`input[type="number"]`);
-          const file = photoInput.files ? photoInput.files[0] : null; // Explicitly check files array
+          const file = photoInput.files ? photoInput.files[0] : null;
           const length = lengthInput.value.trim();
           console.log(`Fish ${i + 1}: File=${file ? file.name : 'null'}, Length=${length}, Parsed=${parseFloat(length)}`); // Debug
           if (!file) {
@@ -279,7 +280,7 @@
           formData.append(`fishPhoto${i + 1}`, file); // No resizing
           formData.append(`fishLength${i + 1}`, length);
         });
-        console.log(`Submitting form for ${anglerName} with ${fishEntries.length} fish`);
+        console.log(`Submitting form for ${anglerName} with ${visibleFishEntries.length} visible fish`);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
         const response = await fetch('https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev/submit_fish', {
