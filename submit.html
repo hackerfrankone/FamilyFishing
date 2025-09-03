@@ -11,7 +11,7 @@
   <meta http-equiv="Referrer-Policy" content="no-referrer">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg"> <!-- Added browser icon -->
+  <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg"> <!-- Browser icon -->
   <style>
     body { background-image: url('https://hackerfrankone.github.io/FamilyFishing/images/background.png?v=2'); background-color: #000; background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 1rem; display: flex; flex-direction: column; align-items: center; }
     h1 { color: #FFD700; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); text-align: center; }
@@ -41,22 +41,22 @@
       console.log(`Validating ${file.name}: Type=${file.type}, Size=${file.size}`);
       if (!file.type.startsWith('image/')) {
         console.warn(`${file.name} is not an image, submission will fail`);
-        return 'Please upload an image file (e.g., JPEG, PNG, HEIC).'; // User-friendly message
+        return 'Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun';
       }
       if (file.size < 50 * 1024) { // 50KB minimum
-        return 'Please upload a higher-quality photo (minimum 50KB).'; // User-friendly message
+        return 'Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun';
       }
       // Approximate resolution check
       return new Promise((resolve) => {
         const img = new Image();
         img.onload = () => {
           if (img.width < 800 || img.height < 600) {
-            resolve('Please upload a higher-resolution photo (minimum 800x600).'); // User-friendly message
+            resolve('Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun');
           } else {
             resolve(null);
           }
         };
-        img.onerror = () => resolve('Failed to validate photo, please try another.');
+        img.onerror = () => resolve('Please submit original photo or contact admin if problem continues. Admin - usa@familyfishing.fun');
         img.src = URL.createObjectURL(file);
       });
     }
