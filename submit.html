@@ -253,6 +253,7 @@
         if (!anglerName) throw new Error('Please select an angler before submitting.');
         const formData = new FormData();
         formData.append('name', anglerName);
+        formData.append('fishCount', document.querySelectorAll('.fish-entry').length); // Add fishCount to match Worker
         const fishEntries = document.querySelectorAll('.fish-entry');
         if (fishEntries.length === 0) throw new Error('Please include at least one fish entry.');
         fishEntries.forEach((entry, i) => {
@@ -260,8 +261,17 @@
           const lengthInput = entry.querySelector(`input[type="number"]`);
           const file = photoInput.files[0];
           const length = lengthInput.value.trim(); // Ensure no whitespace issues
-          if (!file || !length || isNaN(parseFloat(length)) || parseFloat(length) <= 0) {
-            throw new Error('Please include a photo and a valid length for each fish.');
+          console.log(`Fish ${i + 1}: File=${file ? file.name : 'null'}, Length=${length}, Parsed=${parseFloat(length)}`); // Enhanced debug
+          if (!file) {
+            throw new Error(`Please include a photo for Fish ${i + 1}.`);
+          }
+          if (!length || isNaN(parseFloat(length)) || parseFloat(length) <= 0) {
+            throw new Error(`Please include a valid length for Fish ${i + 1}.`);
+          }
+          // Simulate quarter-inch check (to match Worker)
+          const isQuarterInch = parseFloat(length) * 4 % 1 === 0;
+          if (!isQuarterInch) {
+            throw new Error(`Length ${length} for Fish ${i + 1} must be in quarter-inch increments (e.g., 12.75).`);
           }
           formData.append(`fishPhoto${i + 1}`, file); // No resizing
           formData.append(`fishLength${i + 1}`, length);
