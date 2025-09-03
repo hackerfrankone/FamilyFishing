@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Submit Fish - Family Fishing Fun</title>
-  <base href="https://hackerfrankone.github.io/FamilyFishing/">
+  <base href="https://www.familyfishing.fun/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
@@ -76,6 +76,10 @@
       if (!validTypes.includes(file.type)) return `Unsupported image format: ${file.type}. Please use JPEG, PNG, or HEIC.`;
       if (file.size > maxSize) return 'File size exceeds 10MB limit.';
       if (file.size < minSize) return 'Please submit original photo.';
+      if (typeof exifr === 'undefined') {
+        console.warn(`EXIF library not loaded for ${file.name}. Skipping EXIF validation.`);
+        return null; // Allow photo if exifr is not defined
+      }
       try {
         const exifData = await exifr.parse(file);
         const photoTimestamp = exifData?.DateTimeOriginal || exifData?.DateTime;
@@ -349,7 +353,7 @@
           document.getElementById(`preview${i}`).src = '';
         }
         setTimeout(() => {
-          window.location.href = 'https://hackerfrankone.github.io/FamilyFishing/index.html';
+          window.location.href = 'https://www.familyfishing.fun/index.html';
         }, 1000);
       } catch (error) {
         console.error('Submission error:', error.message);
@@ -362,6 +366,10 @@
       }
     }
     document.addEventListener('DOMContentLoaded', () => {
+      // Check if exifr is loaded
+      if (typeof exifr === 'undefined') {
+        console.warn('EXIFR library failed to load. EXIF validation will be skipped.');
+      }
       populateAnglerDropdown();
       populateFishCountDropdown();
       document.getElementById('fishForm').addEventListener('submit', handleSubmit);
@@ -386,6 +394,7 @@
             if (!anglerName) {
               document.getElementById('errorMessage').textContent = 'Please select an angler before uploading a photo.';
               document.getElementById('errorMessage').style.display = 'block';
+              alert('Please select an angler before uploading a photo.');
               e.target.value = '';
               await validateForm();
               return;
