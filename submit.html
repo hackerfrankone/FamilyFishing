@@ -5,7 +5,7 @@
   <title>Submit Fish - Family Fishing Fun</title>
   <base href="https://www.familyfishing.fun/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://fish-angler.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://*.cloudflare.com data:; connect-src 'self' https://hackerfrankone.github.io https://www.familyfishing.fun https://angler-list.familyfishingfun2025.workers.dev; form-action 'self'; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -98,7 +98,7 @@
       for (let attempt = 1; attempt <= retries; attempt++) {
         try {
           console.log(`Attempt ${attempt} to save PIN for ${anglerName}`);
-          const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/update_pin', {
+          const response = await fetch('https://angler-list.familyfishingfun2025.workers.dev/update_pin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: anglerName, pin })
@@ -119,7 +119,7 @@
       for (let attempt = 1; attempt <= retries; attempt++) {
         try {
           console.log(`Attempt ${attempt} to verify PIN for ${anglerName}`);
-          const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/verify_pin', {
+          const response = await fetch('https://angler-list.familyfishingfun2025.workers.dev/verify_pin', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: anglerName, pin })
@@ -127,7 +127,7 @@
           const data = await response.json();
           if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
           console.log(`PIN verification for ${anglerName}: ${data.isValid}`);
-          return data.isValid ? true : data.error === "No PIN set for this angler" ? "no_pin" : false;
+          return data.isValid ? true : data.error === 'No PIN set for this angler' ? 'no_pin' : false;
         } catch (error) {
           console.error(`Attempt ${attempt} failed to verify PIN for ${anglerName}: ${error.message}`);
           if (attempt === retries) return false;
@@ -139,7 +139,7 @@
     async function checkFirstSubmission(anglerName) {
       try {
         console.log(`Checking first submission for ${anglerName}`);
-        const response = await fetch(`https://fish-angler.familyfishingfun2025.workers.dev/check_first_submission?angler=${encodeURIComponent(anglerName)}`, { cache: 'no-cache', headers: { 'Accept': 'application/json' } });
+        const response = await fetch(`https://angler-list.familyfishingfun2025.workers.dev/check_first_submission?angler=${encodeURIComponent(anglerName)}`, { cache: 'no-cache', headers: { 'Accept': 'application/json' } });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         console.log(`First submission check for ${anglerName}: ${data.isFirstSubmission}`);
@@ -152,7 +152,7 @@
     async function fetchAnglerList() {
       try {
         console.log('Fetching angler list');
-        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/angler_list', { cache: 'no-cache', headers: { 'Accept': 'application/json' } });
+        const response = await fetch('https://angler-list.familyfishingfun2025.workers.dev/angler_list', { cache: 'no-cache', headers: { 'Accept': 'application/json' } });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const anglers = await response.json();
         if (!Array.isArray(anglers)) throw new Error('Invalid angler list format');
@@ -282,7 +282,7 @@
           }
         }
         console.log(`Submitting form for ${anglerName} with PIN ${storedPin}`);
-        const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/submit_fish', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
+        const response = await fetch('https://angler-list.familyfishingfun2025.workers.dev/submit_fish', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
         successMessage.textContent = 'Fish submitted successfully! Redirecting to leaderboard...';
@@ -361,7 +361,7 @@
 </head>
 <body>
   <h1>Submit Your Fish</h1>
-  <form id="fishForm" class="submit-form" action="https://fish-angler.familyfishingfun2025.workers.dev/submit_fish" method="POST" enctype="multipart/form-data">
+  <form id="fishForm" class="submit-form" action="https://angler-list.familyfishingfun2025.workers.dev/submit_fish" method="POST" enctype="multipart/form-data">
     <label for="anglerName">Angler Name:</label>
     <select id="anglerName" name="name" required><option value="">Loading anglers...</option></select>
     <p id="successMessage" class="success-message"></p>
