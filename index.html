@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <meta charset="UTF-8">
   <title>Family Fishing Fun</title>
   <base href="https://www.familyfishing.fun/">
@@ -107,6 +107,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .paypal-form input[type="text"] {
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      color: #000;
     }
     .prize-container {
       position: fixed;
@@ -377,6 +384,10 @@
         gap: 0.5rem;
         width: 100%;
         text-align: center;
+      }
+      .paypal-form input[type="text"] {
+        width: 90%;
+        margin: 0 auto 0.5rem;
       }
       .pp-MQGR2KDA2VZP4 {
         min-width: 9rem;
@@ -783,6 +794,34 @@
           }
         });
       }
+
+      // Handle PayPal form submission
+      const paypalForm = document.getElementById('paypalForm');
+      if (paypalForm) {
+        paypalForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const anglerName = document.getElementById('anglerName').value.trim();
+          if (!anglerName) {
+            alert('Please enter your name.');
+            return;
+          }
+          try {
+            const response = await fetch('https://fish-angler.familyfishingfun2025.workers.dev/register_angler', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: anglerName, tournament_code: getTournamentCode(new Date().getFullYear(), new Date().getMonth()) })
+            });
+            if (response.ok) {
+              e.target.submit(); // Proceed to PayPal
+            } else {
+              alert('Failed to register name. Try again.');
+            }
+          } catch (error) {
+            console.error('Registration error:', error);
+            alert('Error connecting to server. Try again later.');
+          }
+        });
+      }
     });
   </script>
 </head>
@@ -795,7 +834,11 @@
   </div>
   <div class="top-bar">
     <div class="paypal-form">
-      <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank">
+      <p style="color: #FFD700; font-size: 1rem; text-align: center; margin-bottom: 0.5rem;">
+        Enter your name to join the tournament ($30 includes $5 PayPal fee).
+      </p>
+      <form id="paypalForm" action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank">
+        <input type="text" name="angler_name" id="anglerName" placeholder="Your Name" required>
         <input type="hidden" name="amount" value="25.00">
         <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $30" />
       </form>
@@ -812,23 +855,4 @@
     <a href="https://www.facebook.com/share/g/18orZuMkch/" target="_blank" rel="noopener noreferrer" class="facebook-button">
       <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook logo" width="80" height="80">
     </a>
-    <a href="https://www.youtube.com/@usafamilyfishingfun" target="_blank" rel="noopener noreferrer" class="youtube-button">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube logo" width="80" height="80">
-    </a>
-    <a href="https://discord.gg/SWxsq4q8wH" target="_blank" rel="noopener noreferrer" class="discord-button">Discord</a>
-    <a href="winners.html" target="_blank" rel="noopener" class="archive-button">Archive</a>
-    <a href="/submit.html?v=6" target="_blank" rel="noopener" class="submit-fish-button">📷</a>
-    <a id="installButton" class="install-button" style="display: none;">Install App</a>
-  </div>
-  <div class="bible-verse-container">
-    <div class="bible-verse-content">
-      <p class="bible-verse" id="bibleVerse">Loading verse...</p>
-      <p class="bible-reference" id="bibleReference">Loading reference...</p>
-    </div>
-    <a href="#" class="learn-more-button" onclick="alert('Coming Soon'); return false;">Learn More</a>
-  </div>
-  <div class="privacy-policy-container">
-    <a href="PDFs/PRIVACY-POLICY.pdf" target="_blank" rel="noopener" class="privacy-policy">Privacy Policy</a>
-  </div>
-</body>
-</html>
+    <a href="https://www.youtube.com/@
