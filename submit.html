@@ -39,10 +39,10 @@
       // Accept only images, warn for non-images
       console.log(`Validating ${file.name}: Type=${file.type}, Size=${file.size}`);
       if (!file.type.startsWith('image/')) {
-        console.warn(`${file.name} is not an image, submission may fail`);
-        return null; // Allow but warn
+        console.warn(`${file.name} is not an image, submission will fail`);
+        return 'Please upload an image file (e.g., JPEG, PNG, HEIC).';
       }
-      return null; // No size or other checks
+      return null; // No size checks
     }
     function displayPreview(file, previewId) {
       console.log(`Displaying preview for ${file.name}`);
@@ -288,9 +288,13 @@
           signal: controller.signal
         });
         clearTimeout(timeoutId);
-        console.log('Server response status:', response.status, 'Response:', await response.text()); // Enhanced debug
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.log('Server response status:', response.status, 'Error:', errorText);
+          throw new Error(`Server error: ${response.status} - ${errorText}`);
+        }
         const result = await response.json();
-        if (!response.ok) throw new Error(result.error || `HTTP ${response.status}: ${JSON.stringify(result)}`);
+        if (!result.success) throw new Error(`Submission failed: ${JSON.stringify(result)}`);
         successMessage.textContent = 'Fish submitted successfully! Redirecting to leaderboard...';
         successMessage.style.display = 'block';
         alert('Submission successful! Your fish have been uploaded.');
