@@ -7,7 +7,7 @@
   <link rel="icon" type="image/x-icon" href="https://www.familyfishing.fun/images/favicon.jpg">
   <link rel="apple-touch-icon" href="https://www.familyfishing.fun/images/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://www.familyfishing.fun https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self' https://www.paypal.com; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://www.familyfishing.fun https://*.cloudflare.com https://upload.wikimedia.org data:; connect-src 'self' https://www.familyfishing.fun https://fish-anglerfamilyfishingfun2025workersdev.familyfishingfun2025.workers.dev https://winners-familyfishingfun2025.workers.dev https://bible-verse-worker.familyfishingfun2025.workers.dev https://worldtimeapi.org; frame-src 'self'; form-action 'self'; object-src 'none'; base-uri 'self';">
   <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -82,28 +82,6 @@
       align-items: center;
       padding: 1rem 0;
       z-index: 1000;
-    }
-    .paypal-form {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .pp-MQGR2KDA2VZP4 {
-      text-align: center;
-      border: none;
-      border-radius: 0.25rem;
-      min-width: 11.625rem;
-      padding: 0 2rem;
-      height: 2.625rem;
-      font-weight: bold;
-      background-color: #FFD140;
-      color: #000;
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
     .prize-container {
       position: fixed;
@@ -365,18 +343,6 @@
         padding: 0.5rem 0;
         flex-direction: column;
         gap: 0.5rem;
-      }
-      .paypal-form {
-        flex-direction: column;
-        gap: 0.5rem;
-        width: 100%;
-        text-align: center;
-      }
-      .pp-MQGR2KDA2VZP4 {
-        min-width: 9rem;
-        height: 2rem;
-        font-size: 0.8rem;
-        margin: 0 auto;
       }
       .prize-container {
         position: static;
@@ -746,12 +712,6 @@
     <p class="countdown" id="countdown"><span>Tournament ends in: </span><span id="countdown-timer">Calculating...</span></p>
   </div>
   <div class="top-bar">
-    <div class="paypal-form">
-      <form action="https://www.paypal.com/ncp/payment/MQGR2KDA2VZP4" method="post" target="_blank">
-        <input type="hidden" name="amount" value="25.00">
-        <input class="pp-MQGR2KDA2VZP4" type="submit" value="Join Tournament $30" />
-      </form>
-    </div>
   </div>
   <div class="prize-container">
   </div>
